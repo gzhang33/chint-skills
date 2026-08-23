@@ -30,12 +30,13 @@ Include the core brand font and CSS properties:
   --chint-text-dark: #191919;
   --chint-text-soft: #333333;
   --chint-text-muted: #666666;
-  --font-chint: 'CHINTinno', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+  --font-chint: 'CHINTinno', 'Microsoft YaHei', 'PingFang SC', '微软雅黑', sans-serif;
 
-  /* Semantic */
-  --chint-status-success: #16A34A;
-  --chint-status-warning: #D97706;
-  --chint-status-error: #DC2626;
+  /* Semantic (2026 Corporate Standard) */
+  --chint-status-success: #14C832;
+  --chint-status-warning: #F59E0B;
+  --chint-status-error: #D70A32;
+  --chint-status-info: #1E50E6;
 }
 
 body {
@@ -107,12 +108,12 @@ const chintEChartsTheme = {
   color: [
     "#1E50E6", // Electric Blue
     "#50C8FF", // Electric Cyan
-    "#1E50C8", // Deep Blue
-    "#0070C0", // Corporate Blue
+    "#14C832", // Green Energy
+    "#14C8B4", // Smart Low-Carbon Cyan
+    "#2378FF", // Bright Blue
+    "#5ADC19", // Grass Green
     "#F59E0B", // Amber
-    "#10B981", // Emerald Green
-    "#6366F1", // Indigo
-    "#EC4899"  // Pink
+    "#D70A32"  // Accent Red
   ],
   backgroundColor: "#FFFFFF",
   textStyle: {

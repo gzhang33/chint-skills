@@ -45,11 +45,11 @@ CHINT_COLORS: Dict[str, str] = {
     "text_faint": "#94A3B8",       # Placeholder text
     "btn_text": "#FFFFFF",         # Primary button label text
 
-    # Semantic Status Colors
-    "status_success": "#16A34A",   # Verified / Growth / On-target
-    "status_warning": "#D97706",   # Alert / Caution / Replacement in progress
-    "status_error": "#DC2626",     # Decline / Critical / Failure
-    "status_info": "#0284C7",      # Informational notices
+    # Semantic Status Colors (2026 Corporate Standard)
+    "status_success": "#14C832",   # Verified / Growth / On-target (Green Energy)
+    "status_warning": "#F59E0B",   # Alert / Caution / Replacement in progress (Amber)
+    "status_error": "#D70A32",     # Decline / Critical / Failure (Alert Red)
+    "status_info": "#1E50E6",      # Informational notices (CHINT Electric Blue)
 }
 
 # Official 2026 CHINT Corporate Presentation Specification Matrix

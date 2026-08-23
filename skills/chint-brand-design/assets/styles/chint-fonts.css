@@ -1,6 +1,6 @@
 /**
  * Universal CHINT Brand Font Definition
- * Location: /Users/gianni/Documents/chint/resources/品牌资产/chint-fonts.css
+ * Location: assets/styles/chint-fonts.css
  * 
  * Single Source of Truth for CHINTinno (正泰拓新体) font face declarations
  * and shared CSS custom properties across all CHINT Projects.
@@ -11,6 +11,7 @@
   src: local('CHINTinno'),
        local('CHINTinno-Regular'),
        local('CHINTinno Regular'),
+       url('../fonts/CHINTinno-Regular.ttf') format('truetype'),
        url('./fonts/CHINTinno-Regular.ttf') format('truetype'),
        url('/fonts/CHINTinno-Regular.ttf') format('truetype');
   font-weight: 400;
@@ -22,6 +23,7 @@
   font-family: 'CHINTinno';
   src: local('CHINTinno-Bold'),
        local('CHINTinno Bold'),
+       url('../fonts/CHINTinno-Bold.ttf') format('truetype'),
        url('./fonts/CHINTinno-Bold.ttf') format('truetype'),
        url('/fonts/CHINTinno-Bold.ttf') format('truetype');
   font-weight: 700;
@@ -33,6 +35,7 @@
   font-family: 'CHINTinno';
   src: local('CHINTinno-Light'),
        local('CHINTinno Light'),
+       url('../fonts/CHINTinno-Light.ttf') format('truetype'),
        url('./fonts/CHINTinno-Light.ttf') format('truetype'),
        url('/fonts/CHINTinno-Light.ttf') format('truetype');
   font-weight: 300;
@@ -41,7 +44,7 @@
 }
 
 :root {
-  --font-chint: 'CHINTinno', 'Microsoft YaHei', 'PingFang SC', sans-serif;
-  --font-chint-bold: 'CHINTinno', 'Microsoft YaHei', 'PingFang SC', sans-serif;
-  --font-chint-light: 'CHINTinno', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+  --font-chint: 'CHINTinno', 'Microsoft YaHei', 'PingFang SC', '微软雅黑', sans-serif;
+  --font-chint-bold: 'CHINTinno', 'Microsoft YaHei', 'PingFang SC', '微软雅黑', sans-serif;
+  --font-chint-light: 'CHINTinno', 'Microsoft YaHei', 'PingFang SC', '微软雅黑', sans-serif;
 }
