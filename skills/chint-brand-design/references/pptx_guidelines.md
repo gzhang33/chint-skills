@@ -1,6 +1,6 @@
 # CHINT PowerPoint (PPTX) Presentation Design Guidelines
 
-This guide specifies layout, typography, palette, and component positioning standards for creating professional CHINT PowerPoint presentations using `python-pptx` or manual authoring.
+This guide specifies layout, typography, palette, and component positioning standards for creating professional CHINT PowerPoint presentations using `python-pptx`, the **2026 Official Master Template (`chint_2026_template.pptx`)**, or manual authoring.
 
 ---
 
@@ -26,21 +26,33 @@ prs.slide_height = Inches(7.5)
 
 ---
 
-## 2. Standard Layout Master & Margins
+## 2. 2026 Official Master Layouts (`chint_2026_template.pptx`)
 
-### Top Navigation / Title Banner:
-- **Banner Height**: `0.90 in` to `1.00 in`
-- **Banner Background**: Gradient `#50C8FF` -> `#1E50C8` or Solid Electric Blue `#1E50E6` (with white text `#FFFFFF`), OR clean white header on `#F6F6F6` background (with `#191919` text and `#1E50E6` left accent bar).
-- **CHINT Logo Placement**: Top-left `(left=0.8", top=0.3", height=0.4")` or top-right.
-- **Slide Title**: Left `0.8 in`, Top `0.25 in`, Font size `24pt`, Bold, Font `CHINTinno`.
+The bundled 2026 official presentation template contains the following standard layout slides:
 
-### Content Working Area:
-- **Left Margin**: `0.80 in`
-- **Right Margin**: `0.80 in`
-- **Top Margin (below banner)**: `1.25 in`
-- **Bottom Margin**: `0.60 in`
-- **Usable Content Width**: `11.733 in`
-- **Usable Content Height**: `5.65 in`
+1. **Cover Slide (标题幻灯片)**:
+   - High-resolution Aurora Blue corporate brand artwork.
+   - Title Placeholder: `(left=3.95", top=5.06", width=8.72", height=0.67")`, Font: `正泰拓新体` / `CHINTinno`, Size: `28pt - 36pt` Bold `#FFFFFF`.
+   - Subtitle Placeholder: `(left=3.95", top=5.96", width=6.63", height=0.35")`, Font: `正泰拓新体`, Size: `14pt` `#D7F0FF`.
+
+2. **Table of Contents (目录页)**:
+   - 5 structured rounded rectangle cards `(left=5.02", top=1.30" ~ 5.26", width=6.56", height=0.76")`.
+   - Number Badge (`01`, `02`, `03`, `04`, `05`) in Electric Blue `#1E50E6`.
+   - Section Title Box with forward-indicator chevrons.
+
+3. **Section Divider (节标题页)**:
+   - Centered aurora graphic background with high-contrast chapter title placeholder `(left=3.18", top=2.86", width=6.98", height=0.84")`.
+
+4. **Standard Content Slide (标题和副标题正文页)**:
+   - Top Header Title Placeholder `(left=0.54", top=0.21", width=12.21", height=0.79")`.
+   - Subtitle / Content Placeholder `(left=0.54", top=1.42", width=12.21", height=0.44")`.
+   - Usable body working area: Width `12.2 in`, Height `5.2 in`.
+
+5. **Color Matrix Specification Slide (色彩规范页)**:
+   - Comprehensive reference of the 7-step Primary Blue, 4-step Green Energy, 4-step Smart Cyan, 4-step Neutral Gray, and Warning Red.
+
+6. **Ending Slide (末尾幻灯片)**:
+   - Official closing artwork with centered `感谢观看` / `Empower the World` brand title.
 
 ---
 
@@ -71,9 +83,9 @@ Presentations should organize information into clean white surface cards over th
 
 ### 1. KPI Metric Cards
 - **Card Background**: `#FFFFFF`, Border `#E2E8F0` (width 1pt), Corner radius subtle.
-- **Metric Value (Big Number)**: Font size `32pt - 40pt`, Bold, Color `#1E50E6` (or `#16A34A` for positive growth, `#DC2626` for negative).
+- **Metric Value (Big Number)**: Font size `32pt - 40pt`, Bold, Color `#1E50E6` (or `#14C832` for positive growth, `#D70A32` for negative).
 - **Metric Label**: Font size `13pt - 14pt`, Regular, Color `#666666`.
-- **YoY Tag**: Font size `12pt`, Bold, with colored background pill (e.g. green pill `#DCFCE7` with `#16A34A` text).
+- **YoY Tag**: Font size `12pt`, Bold, with colored background pill (e.g. green pill `#DCFCE7` with `#14C832` text).
 
 ### 2. Structured Data Tables
 - **Header Row**: Background `#1E50E6` (text `#FFFFFF` Bold 13pt) OR `#F3F6FE` (text `#191919` Bold 13pt).
@@ -86,51 +98,3 @@ Presentations should organize information into clean white surface cards over th
 - **Color**: `#333333`.
 - **Line Spacing**: `1.3 - 1.4`.
 - **Bullet Style**: Clean square or circular bullets in brand blue `#1E50E6`.
-
----
-
-## 5. End-to-End `python-pptx` Code Blueprint
-
-```python
-from pptx import Presentation
-from pptx.util import Inches, Pt
-from pptx.dml.color import RGBColor
-from pptx.enum.text import PP_ALIGN
-from pptx.enum.shapes import MSO_SHAPE
-
-# 1. Initialize 16:9 Presentation
-prs = Presentation()
-prs.slide_width = Inches(13.333)
-prs.slide_height = Inches(7.5)
-blank_slide_layout = prs.slide_layouts[6]
-slide = prs.slides.add_slide(blank_slide_layout)
-
-# 2. Add Background Canvas
-bg = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, Inches(13.333), Inches(7.5))
-bg.fill.solid()
-bg.fill.fore_color.rgb = RGBColor(246, 246, 246)  # #F6F6F6
-bg.line.color.rgb = RGBColor(246, 246, 246)
-
-# 3. Add Top Header Bar
-header = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, Inches(13.333), Inches(0.95))
-header.fill.solid()
-header.fill.fore_color.rgb = RGBColor(30, 80, 230)  # #1E50E6
-header.line.color.rgb = RGBColor(30, 80, 230)
-
-# 4. Add Title Text
-title_box = slide.shapes.add_textbox(Inches(0.8), Inches(0.2), Inches(10.0), Inches(0.6))
-tf = title_box.text_frame
-tf.word_wrap = True
-p = tf.paragraphs[0]
-p.text = "CHINT Power Distribution Sales Overview"
-p.font.name = "CHINTinno"
-p.font.size = Pt(24)
-p.font.bold = True
-p.font.color.rgb = RGBColor(255, 255, 255)
-
-# 5. Add White Content Card
-card = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.8), Inches(1.3), Inches(5.6), Inches(5.4))
-card.fill.solid()
-card.fill.fore_color.rgb = RGBColor(255, 255, 255)
-card.line.color.rgb = RGBColor(226, 232, 240)  # #E2E8F0
-```

@@ -52,7 +52,7 @@ body {
 ## 2. Minimum UI & Copy Economy Rules
 
 1. **Strict Zero-Emoji Policy**:
-   - ❌ Never use non-professional decorative emojis (e.g. `⚡`, `📊`, `📌`, `🎉`, `✅`, `❌`, `🚀`) in UI buttons, status tags, headers, or toasts.
+   - Never use non-professional decorative emojis in UI buttons, status tags, headers, or toasts.
    - Use unified vector icon libraries (such as `lucide-react` or `lucide`) for all visual state feedback and actions.
 2. **High Information Density**:
    - Maintain compact paddings (`p-3` to `p-4`), tight gaps (`gap-3`), and crisp 1px borders (`border border-slate-200`).

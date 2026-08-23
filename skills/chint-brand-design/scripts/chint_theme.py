@@ -11,7 +11,7 @@ Single Source of Truth for CHINT Brand Visual Standards:
 """
 
 import os
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 SKILL_ROOT = os.path.dirname(CURRENT_DIR)
@@ -52,16 +52,53 @@ CHINT_COLORS: Dict[str, str] = {
     "status_info": "#0284C7",      # Informational notices
 }
 
+# Official 2026 CHINT Corporate Presentation Specification Matrix
+CHINT_2026_MATRIX: Dict[str, Any] = {
+    # 7-Step Primary Blue (主色系 7 阶蓝)
+    "primary_blues": [
+        {"name": "主色蓝-阶1", "hex": "#1437AA", "rgb": (20, 55, 170)},
+        {"name": "极光蓝主色-阶2", "hex": "#1E50E6", "rgb": (30, 80, 230)},
+        {"name": "明亮蓝-阶3", "hex": "#2378FF", "rgb": (35, 120, 255)},
+        {"name": "天空蓝-阶4", "hex": "#3CA0FF", "rgb": (60, 160, 255)},
+        {"name": "极光青蓝-阶5", "hex": "#50C8FF", "rgb": (80, 200, 255)},
+        {"name": "淡青蓝-阶6", "hex": "#A0E6FF", "rgb": (160, 230, 255)},
+        {"name": "冰蓝-阶7", "hex": "#D7F0FF", "rgb": (215, 240, 255)},
+    ],
+    # 4-Step Green Energy (辅助色系 1: 绿色能源)
+    "energy_greens": [
+        {"name": "绿能深绿-阶1", "hex": "#14C832", "rgb": (20, 200, 50)},
+        {"name": "绿能草绿-阶2", "hex": "#5ADC19", "rgb": (90, 220, 25)},
+        {"name": "绿能鲜绿-阶3", "hex": "#A0F000", "rgb": (160, 240, 0)},
+        {"name": "绿能浅绿-阶4", "hex": "#DCFF8C", "rgb": (220, 255, 140)},
+    ],
+    # 4-Step Smart Low-Carbon Cyan (辅助色系 2: 智慧低碳)
+    "smart_cyans": [
+        {"name": "低碳青绿-阶1", "hex": "#14C8B4", "rgb": (20, 200, 180)},
+        {"name": "低碳明青-阶2", "hex": "#2DEEC8", "rgb": (45, 238, 200)},
+        {"name": "低碳水绿-阶3", "hex": "#73FFD2", "rgb": (115, 255, 210)},
+        {"name": "低碳淡青-阶4", "hex": "#C8FFDC", "rgb": (200, 255, 220)},
+    ],
+    # 4-Step Neutral Grays (辅助色系 3: 中性灰)
+    "neutral_grays": [
+        {"name": "中性深灰-阶1", "hex": "#5A5A5A", "rgb": (90, 90, 90)},
+        {"name": "中性中灰-阶2", "hex": "#828282", "rgb": (130, 130, 130)},
+        {"name": "中性浅灰-阶3", "hex": "#D2D2D2", "rgb": (210, 210, 210)},
+        {"name": "中性背景灰-阶4", "hex": "#F0F0F0", "rgb": (240, 240, 240)},
+    ],
+    # Alert / Emphasis Red (警示/强调红)
+    "alert_red": {"name": "警示强调红", "hex": "#D70A32", "rgb": (215, 10, 50)},
+}
+
 # Multi-series data visualization palette
 CHINT_CHART_PALETTE: List[str] = [
     "#1E50E6",  # CHINT Electric Blue
     "#50C8FF",  # Electric Cyan
-    "#1E50C8",  # Deep Accent Blue
-    "#0070C0",  # Classic Corporate Blue
+    "#14C832",  # Green Energy
+    "#14C8B4",  # Smart Low-Carbon Cyan
+    "#2378FF",  # Bright Blue
+    "#5ADC19",  # Grass Green
     "#F59E0B",  # Amber Accent
-    "#10B981",  # Emerald Green
-    "#6366F1",  # Indigo Accent
-    "#EC4899",  # Magenta Accent
+    "#D70A32",  # Accent Red
 ]
 
 CHINT_FONTS: Dict[str, str] = {
@@ -196,3 +233,14 @@ def get_pptx_config() -> dict:
         "card_header_pt": 15,
         "logo_path": get_logo_path("png"),
     }
+
+
+def get_2026_color_matrix() -> Dict[str, Any]:
+    """Returns the official 2026 multi-series corporate color matrix."""
+    return dict(CHINT_2026_MATRIX)
+
+
+def get_template_path(template_name: str = "chint_2026_template.pptx") -> Optional[str]:
+    """Returns the absolute path to the bundled PPTX/HTML template."""
+    path = os.path.abspath(os.path.join(ASSETS_DIR, "templates", template_name))
+    return path if os.path.exists(path) else None
