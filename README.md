@@ -2,7 +2,7 @@
 
 本项目为**正泰电气（CHINT）产品经理（PM）可复用业务技能与领域知识库**集中托管与备份仓库。
 
-宗旨是为正泰海外市场、低压配电及主配电产品线的产品经理提供标准化、高精度、可被 AI Agent 直接调用的业务技能资产（包含样本翻译、产品选型、数据分析与竞品对齐等）。
+宗旨是为正泰海外市场、低压配电及主配电产品线的产品经理提供标准化、高精度、可被 AI Agent 直接调用的业务技能资产（包含样本翻译、产品选型、数据分析、品牌设计规范与竞品对齐等）。
 
 ---
 
@@ -10,6 +10,7 @@
 
 | 技能名称 | 目录路径 | 业务适用场景与核心能力 | 权威标准 / 业务系统依据 |
 |:---|:---|:---|:---|
+| **`chint-brand-design`** | `skills/chint-brand-design/` | **正泰品牌资产与视觉规范系统**<br>专为正泰数字化产出（PPTX 汇报、Web 前端界面、数据图表、HTML/PDF 报告）提供全套自包含的品牌资产治理技能。内置正泰拓新体（CHINTinno）全套字体、极光蓝（`#1E50E6`）配色系统、16:9 版式网格、ECharts/Matplotlib 预设及 Token 导出工具。 | CHINT 官方品牌视觉识别系统（VI） |
 | **`chint-acb-translation`** | `skills/chint-acb-translation/` | **正泰万能式断路器（ACB）海外样本与技术翻译**<br>专为正泰海外市场 PM 打造的万能式断路器（NXA/NA8/NA1/Noark UL）高精度翻译知识库。收录 8 大分域知识库（产品名称、电气参数、脱扣器与智能控制器、内外部附件机构、安装接线与结构、环境与标准、样本高频句式、翻译禁忌词库）及 88 组全量结构化元数据 JSON。 | IEC 60947-2 (2024)<br>GB/T 14048.2 (2020)<br>UL 1066 / IEEE C37.13 |
 | **`chint-data-analysis`** | `skills/chint-data-analysis/` | **正泰主配电销售数据与业务智能分析**<br>专为 PM 业务分析打造的主配电产品销售数据透视、漏斗分析、产品线增长及自动化汇报生成技能。 | 正泰主配电产品线营销数据 |
 
@@ -21,6 +22,9 @@
 将技能目录复制到当前项目工作区的 `.agents/skills/` 目录下：
 
 ```bash
+# 复制品牌设计技能到当前项目
+cp -r skills/chint-brand-design /path/to/your-project/.agents/skills/
+
 # 复制断路器翻译技能到当前项目
 cp -r skills/chint-acb-translation /path/to/your-project/.agents/skills/
 ```
@@ -30,8 +34,23 @@ cp -r skills/chint-acb-translation /path/to/your-project/.agents/skills/
 
 ```bash
 # 部署至 Antigravity 全局技能库
+cp -r skills/chint-brand-design ~/.gemini/config/skills/
 cp -r skills/chint-acb-translation ~/.gemini/config/skills/
 ```
+
+---
+
+## 📌 知识库架构说明 (`chint-brand-design`)
+
+- `assets/fonts/`：内置正泰拓新体（CHINTinno）全套字体（Regular/Bold/Light），支持跨环境即开即用。
+- `assets/logos/`：内置正泰品牌 SVG / PNG 矢量与光栅 Logo 图标资产。
+- `assets/styles/chint-fonts.css`：单点事实来源的 `@font-face` 声明与全局 CSS Custom Properties。
+- `references/color_palette.md`：极光蓝 `#1E50E6`、天青渐变 `#50C8FF` -> `#1E50C8`、灰阶及图表调色盘规范。
+- `references/typography.md`：正泰拓新体层级排版、字号比例与跨平台渲染回退规范。
+- `references/pptx_guidelines.md`：16:9 宽屏版式、母版网格与 `python-pptx` 自动化生成代码模版。
+- `references/web_and_charts.md`：前端极简 UI 规范、Zero-Emoji 规则与 Matplotlib / ECharts 图表样式注入。
+- `scripts/chint_theme.py`：Python 品牌主题管理模块，提供图表样式、PPTX 参数与色彩工具。
+- `scripts/export_tokens.py`：支持一键导出 JSON / CSS Token 文件。
 
 ---
 
@@ -52,4 +71,4 @@ cp -r skills/chint-acb-translation ~/.gemini/config/skills/
 ## 📌 贡献与维护规范
 
 - 本仓库专注收录正泰**产品经理（PM）业务可复用**技能与知识库。
-- 所有新增技能须遵循 `agentskills.io` 规范，且包含完整 `SKILL.md` 指南与数据校验。
+- 所有新增技能须遵循 `agentskills.io` 与 `writing-great-skills` 规范，且包含完整 `SKILL.md` 指南与数据校验。
