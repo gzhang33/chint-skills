@@ -41,7 +41,7 @@
 }
 
 :root {
-  --font-chint: 'CHINTinno', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-  --font-chint-bold: 'CHINTinno', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-  --font-chint-light: 'CHINTinno', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-chint: 'CHINTinno', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+  --font-chint-bold: 'CHINTinno', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+  --font-chint-light: 'CHINTinno', 'Microsoft YaHei', 'PingFang SC', sans-serif;
 }

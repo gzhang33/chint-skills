@@ -18,7 +18,7 @@ Authoritative brand identity governance and asset system for all CHINT digital d
 - **Surface / Card**: `#FFFFFF` with 1px border `#E2E8F0`
 - **Text Hierarchy**: `#191919` (Titles/Headers) | `#333333` (Body text) | `#666666` (Captions/Footnotes)
 - **Corporate Font**: `CHINTinno` (正泰拓新体) — weights `400` (Regular), `700` (Bold), `300` (Light)
-- **CSS Fallback**: `'CHINTinno', 'PingFang SC', 'Microsoft YaHei', '微软雅黑', sans-serif`
+- **CSS Fallback**: `'CHINTinno', 'Microsoft YaHei', 'PingFang SC', '微软雅黑', sans-serif`
 
 > All bundled font files, vector logos, CSS styles, and Python helpers reside in `assets/` and `scripts/`.
 

@@ -30,7 +30,7 @@ Include the core brand font and CSS properties:
   --chint-text-dark: #191919;
   --chint-text-soft: #333333;
   --chint-text-muted: #666666;
-  --font-chint: 'CHINTinno', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-chint: 'CHINTinno', 'Microsoft YaHei', 'PingFang SC', sans-serif;
 
   /* Semantic */
   --chint-status-success: #16A34A;
@@ -116,7 +116,7 @@ const chintEChartsTheme = {
   ],
   backgroundColor: "#FFFFFF",
   textStyle: {
-    fontFamily: "CHINTinno, 'PingFang SC', 'Microsoft YaHei', sans-serif",
+    fontFamily: "CHINTinno, 'Microsoft YaHei', 'PingFang SC', sans-serif",
     color: "#191919"
   },
   title: {

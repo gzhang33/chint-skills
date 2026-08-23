@@ -22,12 +22,12 @@ Always declare the standard fallback stack to ensure consistent font rendering a
 
 ### Web / CSS Stack:
 ```css
-font-family: 'CHINTinno', 'PingFang SC', 'Microsoft YaHei', '微软雅黑', sans-serif;
+font-family: 'CHINTinno', 'Microsoft YaHei', 'PingFang SC', '微软雅黑', sans-serif;
 ```
 
 ### Python (Matplotlib / Seaborn) Font Stack:
 ```python
-plt.rcParams['font.family'] = ['CHINTinno', 'PingFang SC', 'Microsoft YaHei', 'sans-serif']
+plt.rcParams['font.family'] = ['CHINTinno', 'Microsoft YaHei', 'PingFang SC', 'sans-serif']
 ```
 
 ### Presentation (python-pptx) Font Assignment:

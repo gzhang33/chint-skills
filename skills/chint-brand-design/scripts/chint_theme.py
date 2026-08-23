@@ -67,7 +67,7 @@ CHINT_CHART_PALETTE: List[str] = [
 CHINT_FONTS: Dict[str, str] = {
     "brand_family": "CHINTinno",
     "cjk_family": "正泰拓新体",
-    "css_font_family": "'CHINTinno', 'PingFang SC', 'Microsoft YaHei', '微软雅黑', sans-serif",
+    "css_font_family": "'CHINTinno', 'Microsoft YaHei', 'PingFang SC', '微软雅黑', sans-serif",
     "matplotlib_font_family": "CHINTinno",
     "pptx_font_family": "CHINTinno",
 }
@@ -150,7 +150,7 @@ def apply_matplotlib_theme(plt=None):
             except Exception:
                 pass
 
-        plt.rcParams["font.family"] = ["CHINTinno", "PingFang SC", "Microsoft YaHei", "sans-serif"]
+        plt.rcParams["font.family"] = ["CHINTinno", "Microsoft YaHei", "PingFang SC", "sans-serif"]
         plt.rcParams["axes.unicode_minus"] = False
         plt.rcParams["figure.facecolor"] = CHINT_COLORS["surface"]
         plt.rcParams["axes.facecolor"] = CHINT_COLORS["surface"]
