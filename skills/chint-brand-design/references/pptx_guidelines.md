@@ -1,88 +1,126 @@
 # CHINT PowerPoint (PPTX) Presentation Design Guidelines
 
-This guide specifies layout, typography, palette, and component positioning standards for dynamically generating professional, executive-ready CHINT PowerPoint presentations using `python-pptx` and the **2026 Official Master Layouts (`chint_2026_template.pptx`)**.
+This guide establishes the authoritative design principles and modular layout patterns for authoring professional, executive-ready CHINT presentations.
 
 ---
 
-## 1. Canvas Dimensions & Grid System
+## 1. Design Philosophy: Brand Consistency with Content-Driven Freedom
 
-All CHINT presentations MUST use the widescreen **16:9 aspect ratio**:
-
-| Dimension Parameter | Inches | Centimeters | Points (pt) | EMUs |
-|:---|:---|:---|:---|:---|
-| **Slide Width** | `13.333 in` | `33.867 cm` | `960 pt` | `12,192,000` |
-| **Slide Height** | `7.500 in` | `19.050 cm` | `540 pt` | `6,858,000` |
+- **Format & Brand Consistency**: Every presentation strictly preserves the official visual identity (16:9 widescreen canvas, CHINTinno typography, 2026 Electric Blue color matrix, clean light surfaces, and zero-emoji compliance).
+- **Style & Layout Freedom**: There is **no rigid template restriction**. The number of slides, visual structures (cards, tables, timelines, architectures, metric grids), and narrative depth are dynamically tailored to the specific business objective.
 
 ---
 
-## 2. 2026 Master Slide Layouts & Dynamic Slide Construction
+## 2. Brand Non-Negotiables (Core Standards)
 
-When generating presentations for business topics, **always construct slides dynamically** using the corresponding master layout indices from `chint_2026_template.pptx`:
+| Dimension | Standard Specification | Python / Design Parameter |
+|:---|:---|:---|
+| **Canvas Ratio** | 16:9 Widescreen | Width: `13.333 in` (960pt), Height: `7.500 in` (540pt) |
+| **Typography** | `正泰拓新体` / `CHINTinno` | Fallback: `Microsoft YaHei` -> `PingFang SC` |
+| **Canvas Tone** | Light Mode First | Background: `#F6F6F6` (Light Gray), Cards: `#FFFFFF` (White) |
+| **Borders & Dividers** | 1px Clean Border | Border: `#E2E8F0` (RGB: 226, 232, 240) |
+| **Primary Brand Blue** | CHINT Electric Blue | `#1E50E6` (RGB: 30, 80, 230) |
+| **Banner Gradient** | Electric Cyan to Deep Blue | `linear-gradient(90deg, #50C8FF 0%, #1E50C8 100%)` |
+| **Zero-Emoji Policy** | Strict Vector Iconography | Prohibit decorative emojis in UI/headers/cards |
+
+---
+
+## 3. Typographic Hierarchy
+
+- **Deck Title (Cover)**: 32pt – 36pt Bold `#FFFFFF` (on dark/gradient cover) or `#191919` (on light cover)
+- **Slide Header**: 22pt – 24pt Bold `#191919` (Top margin `0.3"`, Left `0.8"`)
+- **Slide Subheader / Category Tag**: 12pt – 13pt Regular `#666666` or `#1E50E6`
+- **Card Title / Section Header**: 15pt – 18pt Bold `#191919`
+- **Body & Bullet Points**: 12pt – 14pt Regular `#333333` (Line spacing `1.3 - 1.4`)
+- **Metric Big Numbers**: 28pt – 40pt Bold `#1E50E6` (or `#14C832` for positive, `#D70A32` for alert)
+- **Footnotes & Captions**: 10pt – 11pt Regular `#94A3B8`
+
+---
+
+## 4. Modular Layout Patterns (Composable Building Blocks)
+
+Combine these modular patterns freely based on your business narrative:
+
+### Pattern A: Multi-Column Card Grid (2, 3, or 4 Columns)
+Organize complex concepts, modules, or features into crisp white cards over the `#F6F6F6` canvas:
+- **3-Column Width**: `width = 3.64"`, `height = 5.20"`, `lefts = [0.80", 4.84", 8.88"]`, `top = 1.40"`
+- **2-Column Width**: `width = 5.65"`, `height = 5.20"`, `lefts = [0.80", 6.88"]`, `top = 1.40"`
+- **Card Style**: Fill `#FFFFFF`, Border 1pt `#E2E8F0`, with a 3px vertical accent line (`#1E50E6` or `#14C8B4`) next to the card title.
+
+### Pattern B: Structured Comparison & Parameter Table
+For product spec comparisons, competitive teardowns, or pricing matrix:
+- **Table Bounds**: `(left=0.80", top=1.45", width=11.73", height=5.20")`
+- **Header Row**: Fill `#1E50E6`, Text `#FFFFFF` Bold 13pt `正泰拓新体`, center-aligned.
+- **Alternating Rows**: `#FFFFFF` and `#F8FAFC`, Text `#333333` 11.5pt–12pt.
+- **Row Borders**: Subtle `#E2E8F0` dividers.
+
+### Pattern C: KPI Executive Metric Dashboard
+For executive summaries, financial metrics, and operational performance:
+- **4-Tile Row**: `(width=2.70", height=2.20", gap=0.30")`
+- **Top Row KPI Tiles + Bottom Row Chart/Table**: High-density executive layout.
+- **Big Stat Number**: 32pt–36pt Bold `#1E50E6`.
+- **Growth Badge**: 11pt Bold `#14C832` inside a light green pill (`#DCFCE7`).
+
+### Pattern D: Horizontal Timeline & Strategic Roadmap
+For project phases, historical milestones, or migration paths:
+- **Horizontal Progress Line**: Height 2px `#CBD5E1` connecting milestone cards.
+- **Milestone Nodes**: Numbered circles (`01`, `02`, `03`, `04`) with `#1E50E6` active state.
+- **Phase Cards**: Placed below each node with stage objectives and deliverables.
+
+### Pattern E: Process Flow & System Architecture
+For operational workflows, technical mechanisms, or value chains:
+- **Step Boxes**: Horizontal interconnected cards with forward arrow indicators.
+- **Key Inputs -> Core Mechanism -> Value Outputs**.
+
+---
+
+## 5. Clean, Zero-Template Python Code Blueprint
+
+Create presentations dynamically from a blank canvas using `python-pptx` and brand tokens without relying on fixed template files:
 
 ```python
 from pptx import Presentation
+from pptx.util import Inches, Pt
+from pptx.dml.color import RGBColor
+from pptx.enum.text import PP_ALIGN
+from pptx.enum.shapes import MSO_SHAPE
 
-# 1. Load the master container
-prs = Presentation(get_template_path("chint_2026_template.pptx"))
+# 1. Initialize 16:9 Canvas
+prs = Presentation()
+prs.slide_width = Inches(13.333)
+prs.slide_height = Inches(7.500)
+blank_layout = prs.slide_layouts[6]
 
-# 2. Clear template starter slides to begin with a clean slate
-while len(prs.slides) > 0:
-    rId = prs.slides._sldIdLst[0].rId
-    prs.part.drop_rel(rId)
-    del prs.slides._sldIdLst[0]
+# 2. Add Standard Content Slide with Brand Header
+slide = prs.slides.add_slide(blank_layout)
 
-# 3. Add custom slides dynamically
-slide_cover = prs.slides.add_slide(prs.slide_layouts[1])    # Layout 1: Cover
-slide_toc   = prs.slides.add_slide(prs.slide_layouts[2])    # Layout 2: 5-Card Agenda
-slide_break = prs.slides.add_slide(prs.slide_layouts[3])    # Layout 3: Section Divider
-slide_body  = prs.slides.add_slide(prs.slide_layouts[8])    # Layout 8: 2_Title (Content)
-slide_end   = prs.slides.add_slide(prs.slide_layouts[7])    # Layout 7: Closing
+# Base Canvas Fill
+bg = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, Inches(13.333), Inches(7.500))
+bg.fill.solid()
+bg.fill.fore_color.rgb = RGBColor(246, 246, 246)  # #F6F6F6
+bg.line.color.rgb = RGBColor(246, 246, 246)
+
+# Top Brand Stripe (4px accent)
+stripe = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, Inches(13.333), Inches(0.06))
+stripe.fill.solid()
+stripe.fill.fore_color.rgb = RGBColor(30, 80, 230)  # #1E50E6
+stripe.line.color.rgb = RGBColor(30, 80, 230)
+
+# Slide Header Box
+title_box = slide.shapes.add_textbox(Inches(0.80), Inches(0.35), Inches(11.73), Inches(0.80))
+tf = title_box.text_frame
+tf.word_wrap = True
+p = tf.paragraphs[0]
+p.text = "01 / 业务分析与战略全景"
+p.font.name = "正泰拓新体"
+p.font.size = Pt(22)
+p.font.bold = True
+p.font.color.rgb = RGBColor(25, 25, 25)
+
+# 3. Add Freeform Business Cards (e.g. 3-column layout)
+for idx, left_pos in enumerate([0.80, 4.84, 8.88]):
+    card = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(left_pos), Inches(1.40), Inches(3.64), Inches(5.40))
+    card.fill.solid()
+    card.fill.fore_color.rgb = RGBColor(255, 255, 255)
+    card.line.color.rgb = RGBColor(226, 232, 240)
 ```
-
-### Layout Index Mapping:
-- **`slide_layouts[1]` (标题幻灯片)**: Official Cover with high-res Aurora Blue artwork background, 拓新体 Title (32pt Bold) & Subtitle (14pt).
-- **`slide_layouts[2]` (目录)**: Standard Table of Contents with 5 card slots and numbered badges (`01`~`05`).
-- **`slide_layouts[3]` (节标题)**: High-contrast chapter transition page.
-- **`slide_layouts[8]` (2_Title / 正文与图表)**: Clean white canvas with official top title bar, logo, and wide working area (`left=0.8"`, `top=1.2"`, `width=11.7"`, `height=5.7"`).
-- **`slide_layouts[7]` (末尾幻灯片)**: Official Closing Slide with artwork background and centered appreciation title.
-
-> **Crucial Rule**: Never output internal design guideline slides (e.g. "色彩的使用") or unedited template placeholders in actual business presentation deliverables. All slides must contain real, structured domain content.
-
----
-
-## 3. High-Density Card & Table Design Patterns
-
-Organize content using high visual contrast cards and tables on top of the content slides:
-
-### Pattern A: 3-Column Card Layout (for Features, Architecture, Modules)
-- **Card 1**: `(left=0.8", top=1.3", width=3.64", height=5.4")`
-- **Card 2**: `(left=4.84", top=1.3", width=3.64", height=5.4")`
-- **Card 3**: `(left=8.88", top=1.3", width=3.64", height=5.4")`
-- **Card Fill**: `#FFFFFF`, Border: 1pt solid `#E2E8F0`
-- **Card Header**: 15pt Bold `#191919` with a 3px left accent line `#1E50E6`.
-
-### Pattern B: 2-Column Comparison Layout (for Strategy vs Execution, Old vs New)
-- **Left Column**: `(left=0.8", top=1.3", width=5.65", height=5.4")`
-- **Right Column**: `(left=6.88", top=1.3", width=5.65", height=5.4")`
-
-### Pattern C: Technical Specification / Comparison Table
-- **Table Position**: `(left=0.8", top=1.4", width=11.73", height=5.2")`
-- **Header Row**: Fill `#1E50E6`, Text `#FFFFFF` Bold 13pt `正泰拓新体`.
-- **Alternating Rows**: `#FFFFFF` / `#F8FAFC`, Text `#333333` 12pt.
-- **Grid Borders**: `#E2E8F0`.
-
-### Pattern D: 4-Metric KPI Summary Card
-- **4 Cards Grid**: `width=2.70"`, `gap=0.3"`, `height=2.2"`
-- **Big Number**: 32pt Bold `#1E50E6` (or `#14C832` for growth, `#D70A32` for alerts).
-- **Metric Label**: 13pt Regular `#666666`.
-- **Badge Pill**: 11pt Bold `#14C832` with `#DCFCE7` background.
-
----
-
-## 4. Typography Hierarchy
-
-- **Presentation Title**: `正泰拓新体` / `CHINTinno` 32pt - 36pt Bold `#FFFFFF` (Cover)
-- **Slide Header**: `正泰拓新体` 22pt - 24pt Bold `#191919`
-- **Card Title / Section Subhead**: `正泰拓新体` 15pt - 16pt Bold `#191919`
-- **Body & Paragraphs**: `正泰拓新体` 12pt - 14pt Regular `#333333` (line spacing 1.3)
-- **Table Header & Captions**: `正泰拓新体` 12pt - 13pt Bold `#FFFFFF` / `#666666`

@@ -5,7 +5,7 @@ description: Official CHINT brand visual identity and design system skill. Use w
 
 # CHINT Brand Identity & Visual Design Skill
 
-Authoritative brand identity governance, on-demand presentation generation, and asset system for all CHINT digital deliverables, presentations (PPTX), web interfaces, data visualizations, and reporting materials, strictly aligned with the **2026 CHINT Corporate Visual Identity Standards**.
+Authoritative brand identity governance, design system tokens, and modular layout guidelines for all CHINT digital deliverables, presentations (PPTX), web interfaces, data visualizations, and reporting materials, strictly aligned with the **2026 CHINT Corporate Visual Identity Standards**.
 
 ---
 
@@ -20,31 +20,30 @@ Authoritative brand identity governance, on-demand presentation generation, and 
 - **Text Hierarchy**: `#191919` (Titles/Headers) | `#333333` (Body text) | `#666666` (Captions/Footnotes)
 - **Corporate Font**: `CHINTinno` (正泰拓新体) — weights `400` (Regular), `700` (Bold), `300` (Light)
 - **CSS Fallback**: `'CHINTinno', 'Microsoft YaHei', 'PingFang SC', '微软雅黑', sans-serif`
-- **Official 2026 Master PPTX Container**: Bundled at `assets/templates/chint_2026_template.pptx`
 
-> All bundled font files, vector logos, 2026 master templates, CSS styles, and Python helpers reside in `assets/` and `scripts/`.
+> All bundled font files, vector logos, CSS styles, and Python helpers reside in `assets/` and `scripts/`.
 
 ---
 
 ## 4-Step Standard Execution Workflow
 
-### Step 1: Scenario Identification & Dynamic Asset Loading
-Identify the target output format and load the corresponding brand tokens or layouts:
+### Step 1: Scenario Identification & Brand Token Loading
+Identify the target output format and load the corresponding brand tokens or design guidelines:
 1. **PowerPoint Presentations (`.pptx`)**:
-   - **Dynamic Authoring**: Instantiate `prs = Presentation(get_template_path())`, drop initial starter slides, and dynamically construct complete business decks based on user requirements using `slide_layouts[1]` (Cover), `slide_layouts[2]` (Agenda), `slide_layouts[3]` (Section Divider), `slide_layouts[8]` (Content / Cards / Tables), and `slide_layouts[7]` (Closing).
-   - **Rule**: Never output internal design guideline slides (e.g. "色彩的使用") or empty template placeholders in business presentations.
+   - **Content-Driven Dynamic Design**: Build presentations dynamically from a 16:9 canvas (`13.333" x 7.500"`) using `python-pptx` and official brand tokens (`CHINT_COLORS`, `CHINT_FONTS`). Design slide layouts (multi-column cards, comparison tables, KPI dashboards, timelines, process flows) tailored to the specific business narrative.
+   - **Core Constraint**: Preserve 100% brand consistency (16:9 aspect ratio, 正泰拓新体 typography, 2026 Electric Blue palette, zero-emoji policy).
 2. **Web / HTML / CSS**: Import `assets/styles/chint-fonts.css` and use `--font-chint: 'CHINTinno', 'Microsoft YaHei', 'PingFang SC', sans-serif;`.
 3. **Data Visualizations (Matplotlib / Seaborn / ECharts)**: Call `apply_matplotlib_theme()` or load `get_chart_palette()`.
-4. **Markdown / HTML / PDF Reports**: Generate standard HTML skeletons via `scripts/generate_template.py`.
+4. **Markdown / HTML / PDF Reports**: Structure with crisp light mode cards, standard typography, and clean vector status indicators.
 
-> **Completion Criterion**: Appropriate brand tokens, layouts, and font configurations are verified and loaded.
+> **Completion Criterion**: Appropriate brand tokens and font configurations are verified and loaded.
 
 ---
 
-### Step 2: Visual Structure & Grid Enforcement
-Enforce standard brand layout principles:
+### Step 2: Visual Structure & Modular Layout Composition
+Apply composable modular layout patterns according to content density:
 - **Presentation (16:9)**: Widescreen width `13.333 in` (960pt) and height `7.5 in` (540pt).
-- **Content Hierarchy**: Place foreground data and content inside `#FFFFFF` cards over the `#F6F6F6` background.
+- **Surface Hierarchy**: Place foreground data and content inside `#FFFFFF` cards over the `#F6F6F6` background.
 - **Zero-Emoji Policy**: Mandate vector icons (e.g. `lucide` / `lucide-react` / SVG) for UI actions and status indicators. Never use decorative emojis in enterprise deliverables.
 - **Typographic Scale**: Slide titles `22pt - 24pt Bold`, card titles `15pt - 18pt Bold`, body text `12pt - 14pt Regular`.
 
@@ -78,7 +77,6 @@ Verify all generated artifacts against the brand checklist or run the automated 
 
 ## Utility Tools & Scripts
 
-- **`scripts/generate_template.py`**: On-demand presentation generator (`--type [pptx|html|all] --outdir <path>`).
 - **`scripts/lint_brand.py`**: Audits codebase/files for decorative emoji violations, non-brand blues, and typography fallback order.
 - **`scripts/export_tokens.py`**: Exports design tokens to standalone `chint_tokens.json` and `chint_tokens.css`.
 - **`scripts/chint_theme.py`**: Core Python API exposing colors, 2026 matrix, fonts, asset paths, and Matplotlib theme setups.
@@ -89,5 +87,5 @@ Verify all generated artifacts against the brand checklist or run the automated 
 
 - **Color Palette & 2026 Matrix**: [references/color_palette.md](references/color_palette.md)
 - **Typography & Font Hierarchy**: [references/typography.md](references/typography.md)
-- **PPTX 16:9 Layout & Dynamic Presentation Guidelines**: [references/pptx_guidelines.md](references/pptx_guidelines.md)
+- **PPTX 16:9 Modular Design & Layout Patterns**: [references/pptx_guidelines.md](references/pptx_guidelines.md)
 - **Web Frontend & Chart Visualizations**: [references/web_and_charts.md](references/web_and_charts.md)

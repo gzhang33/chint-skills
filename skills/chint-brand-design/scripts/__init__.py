@@ -15,7 +15,6 @@ from .chint_theme import (
     get_template_path,
     hex_to_rgb,
 )
-from .generate_template import generate_pptx_deck, generate_html_template
 from .lint_brand import lint_path, lint_file
 
 __all__ = [
@@ -33,9 +32,6 @@ __all__ = [
     "get_2026_color_matrix",
     "get_template_path",
     "hex_to_rgb",
-    "generate_pptx_deck",
-    "generate_html_template",
     "lint_path",
     "lint_file",
 ]
-
