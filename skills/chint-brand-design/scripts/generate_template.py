@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 """
-CHINT Official Template Generator
+CHINT Official Presentation & Template Generator
 Location: skills/chint-brand-design/scripts/generate_template.py
 
-Generates standardized CHINT presentation decks (PPTX) and web reports (HTML)
-strictly aligned with the 2026 CHINT Corporate Visual Identity Standards.
+Dynamic generator for professional CHINT presentation decks (PPTX) and HTML reports,
+strictly adhering to the 2026 CHINT Corporate Visual Identity Standards.
 """
 
 import os
 import sys
 import shutil
 import argparse
-from typing import List, Optional
+from typing import List, Dict, Any, Optional
 
 try:
     from chint_theme import (
@@ -20,7 +20,7 @@ try:
         CHINT_2026_MATRIX,
         get_template_path,
         get_logo_path,
-        get_font_file,
+        hex_to_rgb,
     )
 except ImportError:
     from .chint_theme import (
@@ -29,82 +29,135 @@ except ImportError:
         CHINT_2026_MATRIX,
         get_template_path,
         get_logo_path,
-        get_font_file,
+        hex_to_rgb,
     )
 
 
-def generate_pptx_deck(
-    output_path: str,
-    title: str = "正泰低压配电与新能源业务报告",
-    subtitle: str = "2026 年度经营战略与产品演进方案",
-    sections: Optional[List[str]] = None,
-) -> str:
+def create_clean_prs() -> Any:
     """
-    Generates a standardized 16:9 CHINT corporate slide deck based on the 2026 official master.
+    Creates a Presentation object using the 2026 official master layouts,
+    with all placeholder slides removed to start with a clean slate.
     """
-    if sections is None:
-        sections = [
-            "宏观市场与业务大盘总览",
-            "万能式断路器 (ACB) 替换推进",
-            "新能源与智慧低碳产品线布局",
-            "行业客户与重点标杆项目解析",
-            "下阶段行动计划与资源保障",
-        ]
-
+    from pptx import Presentation
     template_file = get_template_path("chint_2026_template.pptx")
-    out_dir = os.path.dirname(os.path.abspath(output_path))
-    if out_dir and not os.path.exists(out_dir):
-        os.makedirs(out_dir, exist_ok=True)
+    if not template_file or not os.path.exists(template_file):
+        raise FileNotFoundError(f"Official template not found: {template_file}")
 
-    try:
-        from pptx import Presentation
+    prs = Presentation(template_file)
+    # Remove existing slides from the master container
+    while len(prs.slides) > 0:
+        rId = prs.slides._sldIdLst[0].rId
+        prs.part.drop_rel(rId)
+        del prs.slides._sldIdLst[0]
+    return prs
 
-        if template_file and os.path.exists(template_file):
-            prs = Presentation(template_file)
-            
-            # 1. Update Title Slide (Slide 1)
-            if len(prs.slides) > 0:
-                s1 = prs.slides[0]
-                for shape in s1.shapes:
-                    if shape.has_text_frame:
-                        txt = shape.text.strip()
-                        if "文档标题" in txt or "标题" in shape.name:
-                            shape.text = title
-                            for p in shape.text_frame.paragraphs:
-                                p.font.name = "正泰拓新体"
-                        elif "副标题" in txt or "副标题" in shape.name:
-                            shape.text = subtitle
-                            for p in shape.text_frame.paragraphs:
-                                p.font.name = "正泰拓新体"
 
-            # 2. Update Table of Contents (Slide 2)
-            if len(prs.slides) > 1:
-                s2 = prs.slides[1]
-                # Collect text box content shapes in TOC
-                content_boxes = []
-                for shape in s2.shapes:
-                    if shape.has_text_frame:
-                        txt = shape.text.strip()
-                        if "单击添加文本" in txt or "单击此处添加" in txt:
-                            content_boxes.append(shape)
-                
-                for idx, box in enumerate(content_boxes):
-                    if idx < len(sections):
-                        box.text = sections[idx]
-                        for p in box.text_frame.paragraphs:
-                            p.font.name = "正泰拓新体"
+def add_cover_slide(prs: Any, title: str, subtitle: str) -> Any:
+    """Adds a standardized 2026 Cover Slide (Layout 1)."""
+    from pptx.util import Pt
+    slide = prs.slides.add_slide(prs.slide_layouts[1])
+    for shp in slide.shapes:
+        if shp.is_placeholder:
+            ph_type = shp.placeholder_format.type
+            if ph_type == 3 or "标题 1" in shp.name:  # CENTER_TITLE
+                shp.text = title
+                for p in shp.text_frame.paragraphs:
+                    p.font.name = "正泰拓新体"
+                    p.font.size = Pt(32)
+                    p.font.bold = True
+            elif ph_type == 2 or "副标题" in shp.name:  # SUBTITLE / BODY
+                shp.text = subtitle
+                for p in shp.text_frame.paragraphs:
+                    p.font.name = "正泰拓新体"
+                    p.font.size = Pt(14)
+    return slide
 
-            prs.save(output_path)
-            return os.path.abspath(output_path)
-        else:
-            raise FileNotFoundError("Official master template not found")
 
-    except ImportError:
-        # Graceful fallback: copy base template directly if python-pptx is not available
-        if template_file and os.path.exists(template_file):
-            shutil.copyfile(template_file, output_path)
-            return os.path.abspath(output_path)
-        raise RuntimeError("Neither python-pptx nor the base PPTX template is available.")
+def add_toc_slide(prs: Any, sections: List[str]) -> Any:
+    """Adds a 5-card Table of Contents Slide (Layout 2)."""
+    from pptx.util import Inches, Pt
+    from pptx.dml.color import RGBColor
+    from pptx.enum.shapes import MSO_SHAPE
+
+    slide = prs.slides.add_slide(prs.slide_layouts[2])
+    # Add 5 structured agenda cards
+    top_starts = [1.30, 2.29, 3.28, 4.27, 5.26]
+    for idx, sec_text in enumerate(sections[:5]):
+        t_pos = top_starts[idx]
+        # Outer Card Box
+        card = slide.shapes.add_shape(
+            MSO_SHAPE.ROUNDED_RECTANGLE,
+            Inches(5.02), Inches(t_pos), Inches(6.56), Inches(0.76)
+        )
+        card.fill.solid()
+        card.fill.fore_color.rgb = RGBColor(255, 255, 255)
+        card.line.color.rgb = RGBColor(226, 232, 240)
+
+        # Number Badge Box
+        num_box = slide.shapes.add_textbox(Inches(5.19), Inches(t_pos + 0.08), Inches(0.68), Inches(0.60))
+        p_num = num_box.text_frame.paragraphs[0]
+        p_num.text = f"{idx+1:02d}"
+        p_num.font.name = "正泰拓新体"
+        p_num.font.size = Pt(18)
+        p_num.font.bold = True
+        p_num.font.color.rgb = RGBColor(30, 80, 230)
+
+        # Text Label Box
+        txt_box = slide.shapes.add_textbox(Inches(6.15), Inches(t_pos + 0.12), Inches(5.20), Inches(0.50))
+        p_txt = txt_box.text_frame.paragraphs[0]
+        p_txt.text = sec_text
+        p_txt.font.name = "正泰拓新体"
+        p_txt.font.size = Pt(14)
+        p_txt.font.color.rgb = RGBColor(25, 25, 25)
+    return slide
+
+
+def add_chapter_slide(prs: Any, chapter_title: str) -> Any:
+    """Adds a Chapter Transition Slide (Layout 3)."""
+    from pptx.util import Pt
+    slide = prs.slides.add_slide(prs.slide_layouts[3])
+    for shp in slide.shapes:
+        if shp.is_placeholder and (shp.placeholder_format.type == 1 or "标题" in shp.name):
+            shp.text = chapter_title
+            for p in shp.text_frame.paragraphs:
+                p.font.name = "正泰拓新体"
+                p.font.size = Pt(28)
+                p.font.bold = True
+    return slide
+
+
+def add_content_slide(prs: Any, title: str, subtitle: Optional[str] = None) -> Any:
+    """Adds a Content Slide (Layout 8) with clean Header and Logo."""
+    from pptx.util import Pt
+    slide = prs.slides.add_slide(prs.slide_layouts[8])
+    for shp in slide.shapes:
+        if shp.is_placeholder and "标题" in shp.name:
+            shp.text = title
+            for p in shp.text_frame.paragraphs:
+                p.font.name = "正泰拓新体"
+                p.font.size = Pt(24)
+                p.font.bold = True
+        elif shp.is_placeholder and "文本" in shp.name:
+            shp.text = subtitle if subtitle else ""
+            for p in shp.text_frame.paragraphs:
+                p.font.name = "正泰拓新体"
+                p.font.size = Pt(13)
+    return slide
+
+
+def add_closing_slide(prs: Any, closing_text: str = "感谢观看") -> Any:
+    """Adds a Closing Slide (Layout 7)."""
+    from pptx.util import Inches, Pt
+    from pptx.dml.color import RGBColor
+    slide = prs.slides.add_slide(prs.slide_layouts[7])
+    txt_box = slide.shapes.add_textbox(Inches(3.40), Inches(2.80), Inches(6.53), Inches(1.20))
+    p = txt_box.text_frame.paragraphs[0]
+    p.text = closing_text
+    p.font.name = "正泰拓新体"
+    p.font.size = Pt(36)
+    p.font.bold = True
+    p.font.color.rgb = RGBColor(255, 255, 255)
+    return slide
 
 
 def generate_html_template(
@@ -112,9 +165,7 @@ def generate_html_template(
     title: str = "正泰业务分析与决策报告",
     subtitle: str = "CHINT Corporate Executive Report",
 ) -> str:
-    """
-    Generates a responsive, zero-emoji, high-density HTML corporate report skeleton.
-    """
+    """Generates a responsive HTML report template."""
     out_dir = os.path.dirname(os.path.abspath(output_path))
     if out_dir and not os.path.exists(out_dir):
         os.makedirs(out_dir, exist_ok=True)
@@ -176,25 +227,15 @@ def generate_html_template(
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 2px 8px rgba(30, 80, 230, 0.15);
     }}
     .brand-title h1 {{
       font-size: 24px;
       font-weight: 700;
-      letter-spacing: -0.02em;
     }}
     .brand-title p {{
       font-size: 13px;
       opacity: 0.9;
       margin-top: 4px;
-    }}
-    .header-tag {{
-      background: rgba(255, 255, 255, 0.18);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      padding: 4px 12px;
-      border-radius: 4px;
-      font-size: 12px;
-      font-weight: 600;
     }}
     main {{
       max-width: 1380px;
@@ -205,45 +246,24 @@ def generate_html_template(
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap: 20px;
-      margin-bottom: 24px;
     }}
     .card {{
       background: var(--chint-surface);
       border: 1px solid var(--chint-border);
       border-radius: 6px;
       padding: 20px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-    }}
-    .card-header {{
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid var(--chint-border);
-      padding-bottom: 12px;
-      margin-bottom: 14px;
     }}
     .card-title {{
       font-size: 15px;
       font-weight: 700;
       color: var(--chint-text-dark);
-    }}
-    .metric-value {{
-      font-size: 28px;
-      font-weight: 700;
-      color: var(--chint-primary);
-      margin: 8px 0;
-    }}
-    .metric-delta {{
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--chint-status-success);
+      margin-bottom: 12px;
     }}
     footer {{
       text-align: center;
       padding: 24px;
       font-size: 12px;
       color: var(--chint-text-muted);
-      border-top: 1px solid var(--chint-border);
       margin-top: 40px;
     }}
   </style>
@@ -259,25 +279,16 @@ def generate_html_template(
   <main>
     <div class="grid-container">
       <div class="card">
-        <div class="card-header">
-          <span class="card-title">万能式断路器 (ACB) 订货总额</span>
-        </div>
-        <div class="metric-value">¥128.4M</div>
-        <div class="metric-delta">+14.6% YoY 稳步增长</div>
+        <div class="card-title">万能式断路器 (ACB) 订货总额</div>
+        <p>¥128.4M (+14.6% YoY 稳步增长)</p>
       </div>
       <div class="card">
-        <div class="card-header">
-          <span class="card-title">NXA 系列切换率</span>
-        </div>
-        <div class="metric-value">68.2%</div>
-        <div class="metric-delta">+8.5% 达成年度替代目标</div>
+        <div class="card-title">NXA 系列切换率</div>
+        <p>68.2% (+8.5% 达成年度替代目标)</p>
       </div>
       <div class="card">
-        <div class="card-header">
-          <span class="card-title">新能源行业占比</span>
-        </div>
-        <div class="metric-value">34.8%</div>
-        <div class="metric-delta">光伏与储能板块驱动</div>
+        <div class="card-title">新能源行业占比</div>
+        <p>34.8% (光伏与储能板块驱动)</p>
       </div>
     </div>
   </main>
@@ -292,28 +303,49 @@ def generate_html_template(
     return os.path.abspath(output_path)
 
 
+def generate_clean_starter_deck(output_path: str, title: str, subtitle: str) -> str:
+    """Generates a clean starter slide deck with Cover, Agenda, and Sample Content."""
+    prs = create_clean_prs()
+    add_cover_slide(prs, title, subtitle)
+    add_toc_slide(prs, [
+        "业务与市场背景总览",
+        "核心产品架构与技术优势",
+        "主力产品系列对比与参数矩阵",
+        "重点行业与标杆应用场景",
+        "演进规划与落地行动方案",
+    ])
+    add_content_slide(prs, "业务与市场背景总览", "请在此处构建核心业务观点与数据卡片")
+    add_closing_slide(prs, "感谢观看")
+
+    out_dir = os.path.dirname(os.path.abspath(output_path))
+    if out_dir and not os.path.exists(out_dir):
+        os.makedirs(out_dir, exist_ok=True)
+    prs.save(output_path)
+    return os.path.abspath(output_path)
+
+
 def main():
-    parser = argparse.ArgumentParser(description="CHINT Template Generator")
+    parser = argparse.ArgumentParser(description="CHINT Presentation & Template Generator")
     parser.add_argument(
         "--type",
         choices=["pptx", "html", "all"],
         default="all",
-        help="Template format to generate ('pptx', 'html', or 'all')",
+        help="Format to generate ('pptx', 'html', or 'all')",
     )
     parser.add_argument(
         "--outdir",
         default="./dist",
-        help="Directory to save generated template files",
+        help="Target directory for generated files",
     )
     parser.add_argument(
         "--title",
         default="正泰低压配电与新能源业务报告",
-        help="Main presentation or report title",
+        help="Main deck title",
     )
     parser.add_argument(
         "--subtitle",
         default="2026 年度经营战略与产品演进方案",
-        help="Presentation or report subtitle",
+        help="Deck subtitle",
     )
     args = parser.parse_args()
 
@@ -321,8 +353,8 @@ def main():
     generated = []
 
     if args.type in ["pptx", "all"]:
-        pptx_out = os.path.join(args.outdir, "chint_presentation_2026.pptx")
-        res = generate_pptx_deck(pptx_out, title=args.title, subtitle=args.subtitle)
+        pptx_out = os.path.join(args.outdir, "chint_starter_2026.pptx")
+        res = generate_clean_starter_deck(pptx_out, title=args.title, subtitle=args.subtitle)
         generated.append(f"PPTX: {res}")
 
     if args.type in ["html", "all"]:
