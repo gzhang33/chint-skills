@@ -1,6 +1,6 @@
 ---
 name: chint-brand-design
-description: Official CHINT brand visual identity and design system skill. Use when designing, styling, or generating CHINT presentations (PPTX), Web UIs, CSS typography with CHINTinno font, data visualizations (Matplotlib, Seaborn, ECharts), reports, or marketing/product collateral under CHINT Electric Blue visual guidelines.
+description: Design CHINT brand deliverables under official 2026 VI standards. Use when creating or styling CHINT presentations (PPTX), web interfaces (CSS), charts (Matplotlib, ECharts), reports, or when applying CHINTinno font, Electric Blue (#1E50E6), or brand color tokens.
 ---
 
 # CHINT Brand Identity & Visual Design Skill
@@ -28,26 +28,30 @@ Authoritative brand identity governance, design system tokens, and modular layou
 ## 4-Step Standard Execution Workflow
 
 ### Step 1: Scenario Identification & Brand Token Loading
-Identify the target output format and load the corresponding brand tokens or design guidelines:
+Identify the target deliverable medium and load the corresponding brand tokens:
 1. **PowerPoint Presentations (`.pptx`)**:
-   - **Content-Driven Dynamic Design**: Build presentations dynamically from a 16:9 canvas (`13.333" x 7.500"`) using `python-pptx` and official brand tokens (`CHINT_COLORS`, `CHINT_FONTS`). Design slide layouts (multi-column cards, comparison tables, KPI dashboards, timelines, process flows) tailored to the specific business narrative.
-   - **Core Constraint**: Preserve 100% brand consistency (16:9 aspect ratio, 正泰拓新体 typography, 2026 Electric Blue palette, zero-emoji policy).
-2. **Web / HTML / CSS**: Import `assets/styles/chint-fonts.css` and use `--font-chint: 'CHINTinno', 'Microsoft YaHei', 'PingFang SC', sans-serif;`.
-3. **Data Visualizations (Matplotlib / Seaborn / ECharts)**: Call `apply_matplotlib_theme()` or load `get_chart_palette()`.
-4. **Markdown / HTML / PDF Reports**: Structure with crisp light mode cards, standard typography, and clean vector status indicators.
+   - Initialize 16:9 canvas (`13.333" x 7.500"`) using `python-pptx` and import official brand tokens from `scripts/chint_theme.py` (`CHINT_COLORS`, `CHINT_FONTS`).
+   - Consult [pptx_guidelines.md](references/pptx_guidelines.md) to choose modular layout patterns (multi-column cards, comparison tables, KPI dashboards, timelines, or process flows) tailored to the specific business narrative.
+2. **Web / HTML / CSS**:
+   - Link `assets/styles/chint-fonts.css` and use `--font-chint: 'CHINTinno', 'Microsoft YaHei', 'PingFang SC', '微软雅黑', sans-serif;`.
+   - Consult [web_and_charts.md](references/web_and_charts.md) for shared CSS custom properties and UI density patterns.
+3. **Data Visualizations (Matplotlib / Seaborn / ECharts)**:
+   - Call `apply_matplotlib_theme()` or load `get_chart_palette()`. Consult [web_and_charts.md](references/web_and_charts.md).
+4. **Markdown / HTML / PDF Reports**:
+   - Structure with crisp light mode cards, standard typography, and clean vector status indicators.
 
-> **Completion Criterion**: Appropriate brand tokens and font configurations are verified and loaded.
+> **Completion Criterion**: Target medium is identified and official brand tokens (`CHINT_COLORS`, `CHINT_FONTS`) or CSS variables are imported and verified.
 
 ---
 
 ### Step 2: Visual Structure & Modular Layout Composition
 Apply composable modular layout patterns according to content density:
-- **Presentation (16:9)**: Widescreen width `13.333 in` (960pt) and height `7.5 in` (540pt).
+- **Presentation Canvas (16:9)**: Set width `13.333 in` (960pt) and height `7.5 in` (540pt).
 - **Surface Hierarchy**: Place foreground data and content inside `#FFFFFF` cards over the `#F6F6F6` background.
-- **Zero-Emoji Policy**: Mandate vector icons (e.g. `lucide` / `lucide-react` / SVG) for UI actions and status indicators. Never use decorative emojis in enterprise deliverables.
-- **Typographic Scale**: Slide titles `22pt - 24pt Bold`, card titles `15pt - 18pt Bold`, body text `12pt - 14pt Regular`.
+- **Zero-Emoji Policy**: Mandate vector iconography (e.g. `lucide` / `lucide-react` / SVG) for all UI actions, badges, and status indicators. Never use non-professional decorative emojis in enterprise deliverables.
+- **Typographic Scale**: Slide titles `22pt - 24pt Bold`, card titles `15pt - 18pt Bold`, body text `12pt - 14pt Regular`. Consult [typography.md](references/typography.md).
 
-> **Completion Criterion**: Layout adheres to the 16:9 grid, multi-card structure, and typographic hierarchy.
+> **Completion Criterion**: Layout strictly adheres to 16:9 widescreen dimensions, white card surface hierarchy, typographic scale, and zero-emoji compliance.
 
 ---
 
@@ -56,7 +60,8 @@ Apply official corporate colors strictly according to semantic meaning:
 - **Hero & Primary Elements**: `#1E50E6` (Buttons, active tabs, main series).
 - **Multi-Series Data Charts**: Use the 8-color corporate palette in order:
   `['#1E50E6', '#50C8FF', '#14C832', '#14C8B4', '#2378FF', '#5ADC19', '#F59E0B', '#D70A32']`
-- **Semantic Indicators**: Growth/Success `#14C832` | Alert/Warning `#F59E0B` | Decline/Error `#D70A32`.
+- **Semantic Indicators**: Growth/Success `#14C832` | Alert/Warning `#F59E0B` | Decline/Error `#D70A32` | Info `#1E50E6`.
+- Consult [color_palette.md](references/color_palette.md) for the complete 2026 multi-series step matrix.
 
 > **Completion Criterion**: Chart and UI colors match official hex values without unapproved arbitrary palettes.
 
@@ -71,21 +76,21 @@ Verify all generated artifacts against the brand checklist or run the automated 
 - [ ] Clean vector logos referenced from `assets/logos/` when logo placement is required.
 - [ ] Conversational delivery to user is strictly in **Chinese**, high-density, with zero raw code blocks.
 
-> **Completion Criterion**: Artifacts pass all automated and manual verification points.
+> **Completion Criterion**: `python3 scripts/lint_brand.py .` executes with 0 violations and user-facing delivery is strictly in Chinese with zero raw code blocks.
 
 ---
 
 ## Utility Tools & Scripts
 
 - **`scripts/lint_brand.py`**: Audits codebase/files for decorative emoji violations, non-brand blues, and typography fallback order.
-- **`scripts/export_tokens.py`**: Exports design tokens to standalone `chint_tokens.json` and `chint_tokens.css`.
+- **`scripts/export_tokens.py`**: Exports design tokens and 2026 matrix to standalone `chint_tokens.json` and `chint_tokens.css`.
 - **`scripts/chint_theme.py`**: Core Python API exposing colors, 2026 matrix, fonts, asset paths, and Matplotlib theme setups.
 
 ---
 
-## References
+## Progressive Disclosure References
 
-- **Color Palette & 2026 Matrix**: [references/color_palette.md](references/color_palette.md)
-- **Typography & Font Hierarchy**: [references/typography.md](references/typography.md)
-- **PPTX 16:9 Modular Design & Layout Patterns**: [references/pptx_guidelines.md](references/pptx_guidelines.md)
-- **Web Frontend & Chart Visualizations**: [references/web_and_charts.md](references/web_and_charts.md)
+- **[references/color_palette.md](references/color_palette.md)**: Consult when needing exact hex/RGB values for the 2026 7-step Blue, 4-step Green Energy, 4-step Smart Cyan, 4-step Neutral Gray, and semantic status badges.
+- **[references/typography.md](references/typography.md)**: Consult when configuring font faces, typographic hierarchies, or cross-platform font fallbacks.
+- **[references/pptx_guidelines.md](references/pptx_guidelines.md)**: Consult when authoring PowerPoint presentations for modular card grids, parameter tables, KPI dashboards, timelines, and process flows.
+- **[references/web_and_charts.md](references/web_and_charts.md)**: Consult when building Web frontends, CSS custom properties, ECharts JSON themes, or Matplotlib figures.
