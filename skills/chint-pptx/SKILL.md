@@ -38,6 +38,7 @@ The Agent MUST dynamically evaluate the semantic intent and information structur
 - **Completion Criterion**: Every slide explicitly mapped to the optimal archetype ID (`ARCH_01` to `ARCH_34`) based on content semantics.
 
 ### Phase 3: Content Synthesizing & Proactive Field Population Protocol
+- **Slide Schema Specification**: Each slide in the `slides` list MUST specify `"archetype": "ARCH_XX_..."` (e.g. `"ARCH_01_COVER"`, `"ARCH_05_MULTI_COLUMN_CARDS"`; `"type"` is also supported).
 - **Proactive Field Population Rule (Zero Default Leakage)**: The Agent MUST proactively synthesize and populate 100% of all required fields in the payload JSON for the chosen archetype. The Agent MUST NOT rely on engine default fallbacks or pass empty lists (`[]`).
   - `ARCH_01_COVER`: Provide `title`, `subtitle`, `date`, `author`.
   - `ARCH_02_TOC`: Provide `items`: `[{"title": "...", "bullets": [...]}]`.

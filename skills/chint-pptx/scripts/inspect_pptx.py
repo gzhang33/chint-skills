@@ -93,6 +93,35 @@ def inspect_presentation(pptx_path):
         print("[WARN] Typography Note: Text runs use inherited template master fonts.")
 
     print("-" * 70)
+    print("Semantic & Structural Slide Integrity Checks:")
+    cover_like_slides = []
+    unfilled_default_titles = []
+    
+    for idx, slide in enumerate(prs.slides, start=1):
+        texts = [p.text.strip() for shape in slide.shapes if shape.has_text_frame for p in shape.text_frame.paragraphs if p.text.strip()]
+        if any("演示文稿标题" in t for t in texts):
+            unfilled_default_titles.append(f"Slide {idx:02d} contains unfilled default title '演示文稿标题'")
+        # Check if non-first slides look like duplicate cover slides (5 shapes: picture, 2 rects, 2 textboxes)
+        if idx > 1 and len(slide.shapes) == 5:
+            shape_types = [s.shape_type for s in slide.shapes]
+            if shape_types.count(13) == 1 and shape_types.count(1) == 2 and shape_types.count(17) == 2:
+                cover_like_slides.append(idx)
+
+    if unfilled_default_titles:
+        print(f"[FAIL] Unfilled Defaults: Detected {len(unfilled_default_titles)} instances of unpopulated default titles!")
+        for u in unfilled_default_titles:
+            print(f"  - {u}")
+        has_error = True
+    else:
+        print("[PASS] Content Population: Zero unpopulated default titles detected.")
+
+    if cover_like_slides:
+        print(f"[FAIL] Slide Diversity: Non-first slides {cover_like_slides} detected as duplicate cover slides!")
+        has_error = True
+    else:
+        print("[PASS] Slide Diversity: Valid distribution of slide archetypes.")
+
+    print("-" * 70)
     print("OpenXML Package Hygiene Checks:")
     with zipfile.ZipFile(pptx_path, 'r') as zf:
         pres_xml = zf.read('ppt/presentation.xml').decode('utf-8')

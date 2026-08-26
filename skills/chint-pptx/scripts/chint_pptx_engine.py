@@ -2313,7 +2313,7 @@ class ChintPresentationEngine:
         }
 
         for s_data in slides_data:
-            arch = s_data.get("archetype", "ARCH_01_COVER").upper()
+            arch = (s_data.get("archetype") or s_data.get("type") or s_data.get("layout") or s_data.get("arch") or "ARCH_01_COVER").upper()
             slide = self.prs.slides.add_slide(self.blank_layout)
 
             # Purge placeholder ghost shapes
