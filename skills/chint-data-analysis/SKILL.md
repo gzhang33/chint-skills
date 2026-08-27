@@ -83,6 +83,7 @@ In conversation responses, deliver results formatted strictly in **pure Chinese*
 
 ## References
 
+- **Executive Reporting Copywriting Standard**: [`chint-pm-copywriter`](../chint-pm-copywriter/SKILL.md)
 - **Business Rules & Isolation Standards**: [references/business_rules.md](references/business_rules.md)
 - **CLI Reference & Scenario Dictionary**: [references/cli_reference.md](references/cli_reference.md)
 - **Multi-Dimensional Analysis Dimensions**: [references/dimensions.md](references/dimensions.md)

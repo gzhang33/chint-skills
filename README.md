@@ -14,6 +14,7 @@
 | **`chint-pptx`** | `skills/chint-pptx/` | **正泰企业级 PPTX 智能演示文稿生成技能**<br>专为低压电气产品经理（PM）打造的符合 2026 VI 规范的 PPTX 生成技能。内置正泰拓新体（CHINTinno）全套 TrueType 字体包、34 种全场景版式原型库（ARCH_01 ~ ARCH_34）、12 组核心排版引擎、10 种矢量图表构建器、python-pptx 自动化生成引擎及 `/grill-me` 互动需求对齐 SOP。 | CHINT 2026 VI 视觉规范指导手册<br>2026年正泰PPT通用基础模版 |
 | **`chint-acb-translation`** | `skills/chint-acb-translation/` | **正泰万能式断路器（ACB）海外样本与技术翻译**<br>专为正泰海外市场 PM 打造的万能式断路器（NXA/NA8/NA1/Noark UL）高精度翻译知识库。收录 8 大分域知识库（产品名称、电气参数、脱扣器与智能控制器、内外部附件机构、安装接线与结构、环境与标准、样本高频句式、翻译禁忌词库）及 88 组全量结构化元数据 JSON。 | IEC 60947-2 (2024)<br>GB/T 14048.2 (2020)<br>UL 1066 / IEEE C37.13 |
 | **`chint-data-analysis`** | `skills/chint-data-analysis/` | **正泰主配电销售数据与业务智能分析**<br>专为 PM 业务分析打造的主配电产品销售数据透视、漏斗分析、产品线增长及自动化汇报生成技能。 | 正泰主配电产品线营销数据 |
+| **`chint-pm-copywriter`** | `skills/chint-pm-copywriter/` | **B2B 工业品产品经理通用文案与汇报语法引擎**<br>专为工业制造与配电产品经理打造的向上汇报、QBR复盘、PRD价值主张与产品样本提炼技能。内置极简量化三要素、三段式负向建设性语法、黑白名单词典与5项出稿门禁，坚决杜绝浮夸黑话与战役化暗喻。 | 正泰高管汇报标准<br>B2B 工业品 PM 务实文案规范 |
 
 ---
 

@@ -65,7 +65,7 @@ The Agent MUST dynamically evaluate the semantic intent and information structur
     - `ARCH_16_FUNNEL`: Provide `stages`, `values`, `conversion_rates`, `unit`, `insights`.
     - `ARCH_16_GAUGE`: Provide `current_val`, `target_val`, `min_val`, `max_val`, `subtitle`, `unit`, `insights`.
     - `ARCH_16_STACKED_AREA`: Provide `categories`, `series`: `[{"name", "values", "color"}]`, `unit`, `insights`.
-- **High Information Density & Positive Phrasing**: Structure raw content into bold leading keywords followed by metric-backed bullet points.
+- **High Information Density & Executive Phrasing**: Structure raw content into bold leading keywords followed by metric-backed bullet points. Strictly enforce plain, data-driven executive language per [`chint-pm-copywriter`](../chint-pm-copywriter/SKILL.md); prohibit consulting melodrama, combat metaphors, and academic jargon.
 - **2026 VI Grid Standards**: Enforce 0.8" side margins, color tokens (`#1E50E6`, `#50C8FF`, `#D70A32`, `#1E2024`, `#5A5A5A`, `#F6F8FA`), and clean hierarchy (refer to [`references/vi_and_typography.md`](references/vi_and_typography.md)).
 - **Completion Criterion**: Clean presentation JSON payload constructed with 100% explicitly populated fields and zero fallback dependencies.
 
@@ -108,6 +108,7 @@ python3 scripts/chint_pptx_engine.py <path_to_payload.json> <output_path.pptx>
 - **Official 2026 VI Media Assets**: `assets/media/` (`cover_26_bg.png`, `toc_26_bg.png`, `chapter_26_bg.png`, `closing_26_bg.png`, `chint_badge.png`, 3D panoramic cityscapes)
 - **Base Templates**: `assets/templates/26年模板拓新体.pptx`, `assets/templates/chint_archetypes_master.pptx`
 - **Visual VI Reference**: [`references/vi_and_typography.md`](references/vi_and_typography.md)
+- **Executive Copywriting Standard**: [`chint-pm-copywriter`](../chint-pm-copywriter/SKILL.md)
 - **Layout Archetypes Reference**: [`references/layout_archetypes.md`](references/layout_archetypes.md)
 - **Legacy PPTX Modernization Guide**: [`references/legacy_pptx_migration_guide.md`](references/legacy_pptx_migration_guide.md)
 - **Asset Library Guide**: [`references/asset_library_guide.md`](references/asset_library_guide.md)
