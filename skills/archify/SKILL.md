@@ -19,6 +19,10 @@ Use this bounded path for ordinary generation. Do not read the optional Viewer R
 1. Choose `architecture`, `workflow`, `sequence`, `dataflow`, or `lifecycle` from the question.
 2. Read one matching schema in `schemas/`, `schemas/common.schema.json`, and one matching JSON example in `examples/`. Read only those files. Fresh authorship means new stable IDs, domain wording, and layout; use the example for field shape, not facts. New workflow sources use `schema_version: 2` and its readable layout contract; keep `schema_version: 1` only when preserving an existing workflow's fixed geometry. When real product identity matters, query `node bin/archify.mjs brands "<name>" --json`; read `references/brand-marks.md` only for an unknown brand with a user-provided URL.
 3. Artifact first: the next tool action must write the candidate. Write the candidate before inspecting renderer internals. Do not plan exact coordinates in prose. Start with one clear main path, short side branches, sparse labels, and at most 12 primary nodes. Set `meta.quality_profile` to `"showcase"` unless the user explicitly requests a dense `standard` map. Start with automatic routes and labels. Do not add `via`, `channelX`, `channelY`, or `labelAt` before a diagnostic calls for one; apply at most one diagnosed geometry control per repair.
+   - **Copy Economy & Minimum UI Directives**:
+     - Do NOT add `subtitle` in `meta` (eliminate redundant explanatory subtitles under main headings).
+     - Do NOT prepend "CHINT" brand prefix to diagram `meta.title` unless explicitly requested by the user.
+     - Enforce CHINT VI light theme palette (#1E50E6 Primary Blue, #5CB531 Secondary Green, #F8FAFC clean canvas).
 4. Validate after every candidate edit and immediately before handoff:
 
    ```bash
