@@ -3040,7 +3040,7 @@
        TOOLBAR (theme toggle + export menu)
        ========================================================== */
     .toolbar {
-      position: fixed;
+      position: absolute;
       top: 1rem;
       right: 1rem;
       display: flex;
@@ -3853,7 +3853,7 @@
         height: calc(100dvh - 1rem);
       }
       html[data-present="true"]:not([data-embed="true"]) .toolbar {
-        position: fixed;
+        position: absolute;
         top: 0.5rem;
         right: 0.5rem;
         margin: 0;
@@ -5197,7 +5197,7 @@
           </button>
         </div>
         <div class="diagram-guide-shortcuts" aria-label="{{i18n:viewer.guide.shortcuts}}">
-          <span><kbd>E</kbd> {{i18n:viewer.guide.shortcut.export}}</span><span><kbd>T</kbd> {{i18n:viewer.guide.shortcut.theme}}</span><span><kbd>S</kbd> {{i18n:viewer.guide.shortcut.style}}</span><span><kbd>0</kbd> {{i18n:viewer.guide.shortcut.reset}}</span><span><kbd>+</kbd> {{i18n:viewer.guide.shortcut.zoomIn}}</span><span><kbd>-</kbd> {{i18n:viewer.guide.shortcut.zoomOut}}</span><span><kbd>Esc</kbd> {{i18n:viewer.guide.shortcut.close}}</span>
+          <span><kbd>E</kbd> {{i18n:viewer.guide.shortcut.export}}</span><span><kbd>T</kbd> {{i18n:viewer.guide.shortcut.theme}}</span><span><kbd>S</kbd> {{i18n:viewer.guide.shortcut.style}}</span><span><kbd>0</kbd> {{i18n:viewer.guide.shortcut.reset}}</span><span><kbd>+</kbd> {{i18n:viewer.guide.shortcut.zoomIn}}</span><span><kbd>-</kbd> {{i18n:viewer.guide.shortcut.zoomOut}}</span><span><kbd>← / →</kbd> {{i18n:viewer.guide.shortcut.stepNav}}</span><span><kbd>Enter</kbd> {{i18n:viewer.guide.shortcut.zoomFocus}}</span><span><kbd>Esc</kbd> {{i18n:viewer.guide.shortcut.close}}</span>
         </div>
         <p class="diagram-guide-feedback" id="diagram-guide-feedback" aria-live="polite"></p>
       </div>
@@ -10722,10 +10722,79 @@
         });
       }
 
+      function nextStep() {
+        if (activeIndex < 0) {
+          if (!views.length) return false;
+          activate(0);
+          if (storySteps.length) selectStoryBeat(0);
+          return true;
+        }
+        if (storyBeatIndex < 0) {
+          if (storySteps.length) selectStoryBeat(0);
+          return true;
+        }
+        if (storyBeatIndex < storySteps.length - 1) {
+          selectStoryBeat(storyBeatIndex + 1);
+          return true;
+        }
+        if (activeIndex < views.length - 1) {
+          activate(activeIndex + 1);
+          if (storySteps.length) selectStoryBeat(0);
+          return true;
+        }
+        return false;
+      }
+
+      function prevStep() {
+        if (activeIndex < 0) return false;
+        if (storyBeatIndex > 0) {
+          selectStoryBeat(storyBeatIndex - 1);
+          return true;
+        }
+        if (storyBeatIndex === 0) {
+          if (activeIndex > 0) {
+            activate(activeIndex - 1);
+            if (storySteps.length) selectStoryBeat(storySteps.length - 1);
+            return true;
+          }
+          settleStoryBeats();
+          return true;
+        }
+        return false;
+      }
+
+      function toggleZoomFocus() {
+        if (!Archify.view || typeof Archify.view.reveal !== 'function') return false;
+        var currentState = Archify.view.state ? Archify.view.state() : { scale: 1 };
+        var currentScale = currentState.scale || 1;
+        if (currentScale > 1.25) {
+          if (activeIndex >= 0 && views[activeIndex] && views[activeIndex].focus && views[activeIndex].focus.length) {
+            Archify.view.reveal(views[activeIndex].focus, { reason: 'story-overview', duration: 320 });
+          } else {
+            Archify.view.reset();
+          }
+          return false;
+        } else {
+          var targetId = (storyBeatIndex >= 0 && storySteps[storyBeatIndex])
+            ? storySteps[storyBeatIndex].nodeId
+            : (activeIndex >= 0 && views[activeIndex] && views[activeIndex].focus && views[activeIndex].focus[0]);
+          if (targetId) {
+            Archify.view.reveal([targetId], { includeNeighbors: true, maxScale: 2.2, minScale: 1.8, duration: 360, reason: 'zoom-focus' });
+            return true;
+          } else {
+            Archify.view.zoomIn();
+            return true;
+          }
+        }
+      }
+
       return {
         count: views.length,
         activate: activateById,
         showAll: showAll,
+        nextStep: nextStep,
+        prevStep: prevStep,
+        toggleZoomFocus: toggleZoomFocus,
         play: startPlayback,
         playCurrent: startCurrentViewPlayback,
         pause: pausePlayback,
@@ -13802,6 +13871,8 @@
         copyLink: copyLink,
         playJourney: playJourney,
         pauseJourney: pauseJourney,
+        nextJourney: nextJourney,
+        previousJourney: previousJourney,
         showOverview: showJourneyOverview,
         selectJourneyIndex: selectJourneyIndex,
         syncMotion: syncJourneyMotion,
@@ -14742,6 +14813,56 @@
       } else if (e.key === '0') {
         e.preventDefault();
         Archify.view.reset();
+      } else if (!((Archify.finder && Archify.finder.isOpen && Archify.finder.isOpen()) || (Archify.guide && Archify.guide.isOpen && Archify.guide.isOpen()) || (Archify.preset && Archify.preset.isOpen && Archify.preset.isOpen()) || (Archify.exportMenu && Archify.exportMenu.isOpen && Archify.exportMenu.isOpen()) || (Archify.radar && Archify.radar.isOpen && Archify.radar.isOpen()) || (Archify.semanticLens && Archify.semanticLens.isOpen && Archify.semanticLens.isOpen())) && (e.key === 'ArrowRight' || e.key === 'j' || e.key === 'J' || e.key === 'n' || e.key === 'N')) {
+        if (Archify.routeProbe && Archify.routeProbe.active() === 'result' && typeof Archify.routeProbe.nextJourney === 'function') {
+          e.preventDefault();
+          Archify.routeProbe.nextJourney();
+        } else if (Archify.guidedViews && typeof Archify.guidedViews.nextStep === 'function' && Archify.guidedViews.count > 0) {
+          e.preventDefault();
+          Archify.guidedViews.nextStep();
+        }
+      } else if (!((Archify.finder && Archify.finder.isOpen && Archify.finder.isOpen()) || (Archify.guide && Archify.guide.isOpen && Archify.guide.isOpen()) || (Archify.preset && Archify.preset.isOpen && Archify.preset.isOpen()) || (Archify.exportMenu && Archify.exportMenu.isOpen && Archify.exportMenu.isOpen()) || (Archify.radar && Archify.radar.isOpen && Archify.radar.isOpen()) || (Archify.semanticLens && Archify.semanticLens.isOpen && Archify.semanticLens.isOpen())) && (e.key === 'ArrowLeft' || e.key === 'k' || e.key === 'K' || e.key === 'b' || e.key === 'B')) {
+        if (Archify.routeProbe && Archify.routeProbe.active() === 'result' && typeof Archify.routeProbe.previousJourney === 'function') {
+          e.preventDefault();
+          Archify.routeProbe.previousJourney();
+        } else if (Archify.guidedViews && typeof Archify.guidedViews.prevStep === 'function' && Archify.guidedViews.count > 0 && Archify.guidedViews.active()) {
+          e.preventDefault();
+          Archify.guidedViews.prevStep();
+        }
+      } else if (e.key === 'Enter') {
+        var isFormElement = t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable || (t.tagName === 'BUTTON' && !t.hasAttribute('data-node-id') && !t.classList.contains('diagram-container')));
+        var isAnyModalOpen = (Archify.finder && Archify.finder.isOpen && Archify.finder.isOpen()) || (Archify.guide && Archify.guide.isOpen && Archify.guide.isOpen()) || (Archify.preset && Archify.preset.isOpen && Archify.preset.isOpen()) || (Archify.exportMenu && Archify.exportMenu.isOpen && Archify.exportMenu.isOpen()) || (Archify.radar && Archify.radar.isOpen && Archify.radar.isOpen()) || (Archify.semanticLens && Archify.semanticLens.isOpen && Archify.semanticLens.isOpen());
+        if (!isFormElement && !isAnyModalOpen) {
+          if (Archify.guidedViews && typeof Archify.guidedViews.toggleZoomFocus === 'function' && Archify.guidedViews.active()) {
+            e.preventDefault();
+            Archify.guidedViews.toggleZoomFocus();
+          } else if (Archify.routeProbe && Archify.routeProbe.active() === 'result') {
+            e.preventDefault();
+            var probeResult = Archify.routeProbe.result ? Archify.routeProbe.result() : null;
+            var currentScale = Archify.view && Archify.view.state ? Archify.view.state().scale : 1;
+            if (currentScale > 1.25) {
+              Archify.routeProbe.showOverview({ reveal: true });
+            } else if (probeResult && probeResult.nodes && probeResult.nodes.length) {
+              var targetIdx = Math.max(0, probeResult.journey || 0);
+              var nodeId = probeResult.nodes[targetIdx] || probeResult.nodes[0];
+              Archify.view.reveal([nodeId], { includeNeighbors: true, maxScale: 2.2, minScale: 1.8, duration: 360, reason: 'route-zoom-focus' });
+            }
+          } else if (Archify.focus && Archify.focus.active && Archify.focus.active()) {
+            e.preventDefault();
+            var activeFocus = Archify.focus.active();
+            var focusIds = Array.isArray(activeFocus) ? activeFocus : [activeFocus];
+            var scaleNow = Archify.view && Archify.view.state ? Archify.view.state().scale : 1;
+            if (scaleNow > 1.25) {
+              Archify.view.reset();
+            } else {
+              Archify.view.reveal(focusIds, { includeNeighbors: true, maxScale: 2.2, minScale: 1.8, duration: 360, reason: 'focus-zoom' });
+            }
+          } else if (Archify.guidedViews && typeof Archify.guidedViews.toggleZoomFocus === 'function' && Archify.guidedViews.count > 0) {
+            e.preventDefault();
+            Archify.guidedViews.activate(0);
+            Archify.guidedViews.toggleZoomFocus();
+          }
+        }
       } else if (e.key === 'Escape' && Archify.preset.isOpen()) {
         e.preventDefault();
         Archify.preset.close(true);

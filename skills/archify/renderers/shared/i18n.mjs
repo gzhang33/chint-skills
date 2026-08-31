@@ -302,6 +302,8 @@ const MESSAGE_PAIRS = {
   'viewer.guide.shortcut.reset': ['Reset', '重置'],
   'viewer.guide.shortcut.zoomIn': ['Zoom in', '放大'],
   'viewer.guide.shortcut.zoomOut': ['Zoom out', '缩小'],
+  'viewer.guide.shortcut.stepNav': ['Next/Previous step', '上一步/下一步'],
+  'viewer.guide.shortcut.zoomFocus': ['Toggle focus zoom', '放大聚焦/取消聚焦'],
   'viewer.guide.shortcut.close': ['Close', '关闭'],
   'viewer.guide.facts': ['{nodes} · {relationships} · {views}', '{nodes} · {relationships} · {views}'],
   'viewer.guide.fact.node.one': ['{count} semantic node', '{count} 个语义节点'],
