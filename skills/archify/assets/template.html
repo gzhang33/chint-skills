@@ -6139,7 +6139,7 @@
           bgRect.setAttribute('class', 'c-bg-rect');
         } else {
           // Raster path: lock to the viewer's current theme.
-          var theme = document.documentElement.getAttribute('data-theme') || 'dark';
+          var theme = document.documentElement.getAttribute('data-theme') || 'light';
           var themeHost = document.querySelector('[data-theme="' + theme + '"]') || document.documentElement;
           var computed = getComputedStyle(themeHost);
           var vars = varNames.map(function (n) {
@@ -6341,7 +6341,7 @@
                     })
                   : subtitleNode ? subtitleNode.textContent : '';
               var preset = document.documentElement.getAttribute('data-preset') || 'classic';
-              var theme = document.documentElement.getAttribute('data-theme') || 'dark';
+              var theme = document.documentElement.getAttribute('data-theme') || 'light';
               var presetKey = preset === 'signal-flow'
                 ? 'viewer.preset.flow.short'
                 : 'viewer.preset.' + preset;

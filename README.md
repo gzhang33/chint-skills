@@ -30,6 +30,9 @@ cp -r skills/chint-brand-design /path/to/your-project/.agents/skills/
 
 # 复制断路器翻译技能到当前项目
 cp -r skills/chint-acb-translation /path/to/your-project/.agents/skills/
+
+# 复制正泰系统架构与工作流交互图谱技能到当前项目
+cp -r skills/archify /path/to/your-project/.agents/skills/
 ```
 
 ### 2. 用户级全局安装
@@ -39,7 +42,19 @@ cp -r skills/chint-acb-translation /path/to/your-project/.agents/skills/
 # 部署至 Antigravity 全局技能库
 cp -r skills/chint-brand-design ~/.gemini/config/skills/
 cp -r skills/chint-acb-translation ~/.gemini/config/skills/
+cp -r skills/archify ~/.gemini/config/skills/
 ```
+
+---
+
+## 📌 知识库架构说明 (`archify`)
+
+- `bin/archify.mjs`：原生 Node.js CLI 编译器与校验入口，支持 `render`, `compare`, `deliver`, `validate`, `doctor` 命令。
+- `assets/template.html`：正泰企业级轻量 HTML 渲染母版，内置 `#1E50E6` 正泰蓝、`#5CB531` 诺雅克绿调色盘与 `CHINTinno` 字体栈。
+- `schemas/`：包含 5 大图表类型（`architecture`, `workflow`, `sequence`, `dataflow`, `lifecycle`）的 JSON Schema 定义。
+- `renderers/`：自包含的图表生成与布局引擎（含自动路由、正泰语义色谱注入与无障碍文本计算）。
+- `delta/architecture-delta.mjs`：架构版本快照（Before / Delta / After）差异比对与交互审查器。
+- `references/`：包含品牌标识、场景配方与设计模式参考文档。
 
 ---
 
