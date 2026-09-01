@@ -29,7 +29,7 @@
 | Chinese Term | ❌ Forbidden Literal Term | ✅ Mandatory Professional English | Description |
 | :--- | :--- | :--- | :--- |
 | **板前接线 (固定式)** | Front wiring | **Front Connection (Fixed mounted)** | Standard front busbar / cable lug connection. |
-| **板后接线** | Back wiring | **Rear Connection (Stud / Flat bar)** | Rear terminal studs for switchboard compartment. |
+| **板后水平/垂直接线** | Back wiring | **Rear Connection (Rear horizontal HR / Rear vertical VR studs)** | Rear terminal studs for switchboard compartment. |
 | **插入式安装** | Insert installation | **Plug-in Mounting (Plug-in Base)** | Allows quick replacement without disconnecting busbars. |
 | **抽屉式安装 (拔出式)** | Drawer type | **Drawout Mounting / Withdrawable Base** | Withdrawable chassis with safety shutters. |
 | **旋转操作手柄 (直接/门部)** | Rotate handle | **Rotary Handle (Direct / Extended / Door-mounted)** | Direct handle on breaker or door coupling mechanism. |

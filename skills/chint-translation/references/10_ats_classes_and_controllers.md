@@ -25,8 +25,8 @@
 
 | Parameter / Mode | Chinese Term | Standard English Definition | Technical Meaning |
 | :--- | :--- | :--- | :--- |
-| **Open Transition** | 先断后通 (开路转换) | **Open Transition (Break-Before-Make)** | Primary source disconnects completely before secondary source connects. Zero phase synchronization risk. |
-| **Closed Transition** | 先通后断 (闭路转换) | **Closed Transition (Make-Before-Break)** | Momentary paralleling (<100 ms) of synchronized dual sources without power interruption. |
+| **Open Transition (BBM)** | 先断后通 (开路转换) | **Open Transition (Break-Before-Make / BBM)** | Primary source disconnects completely before secondary source connects. Zero phase synchronization risk. |
+| **Closed Transition (MBB)** | 先通后断 (闭路转换) | **Closed Transition (Make-Before-Break / MBB)** | Momentary paralleling (<100 ms) of synchronized dual sources without power interruption. |
 | **Transfer Time** | 转换动作时间 | **Total Operating Time / Transfer Time (t)** | Time interval from initiation of switching to final contact closure on alternate source. |
 | **Return Transfer Time** | 恢复转换延时 | **Return Transfer Delay (RTD)** | Delay time before auto-switching back to primary normal utility power after restoration. |
 | **Mechanical Interlock** | 机械联锁 | **Mechanical Interlocking Mechanism** | Physical barrier preventing simultaneous closing of normal (Source I) and emergency (Source II) supplies. |
