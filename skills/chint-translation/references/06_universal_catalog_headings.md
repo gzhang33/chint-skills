@@ -1,4 +1,4 @@
-# Standard Catalog Headings & Marketing Claims Reference (Source: 07_样本高频句式与栏目)
+# Standard Catalog Headings & Marketing Claims Reference
 
 ## 1. Standard Catalog Section Headings
 

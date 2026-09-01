@@ -18,9 +18,9 @@
 | **电子脱扣器 / 智能脱扣器** | **Electronic Trip Unit (ETU)** | Electronic Trip Unit | Microprocessor-based trip unit providing precise L/S/I/G protection curves. |
 | **电磁脱扣器 (单磁式)** | **Magnetic-Only Trip Unit (MA / M)** | Instantaneous-Only / MCP | Motor circuit protector without thermal element, paired with thermal overload relay. |
 | **剩余电流保护脱扣器 (漏电)** | **Residual Current Protection Release (RCD)** | Ground Fault / ELCB Module | Integrated or add-on residual current / earth leakage trip unit (NXMLE series). |
-| **过载长延时整定 (Ir)** | **Overload setting / Long-time pickup Ir** | Long-time pickup setting | Adjustable current threshold ($0.7 \sim 1.0 	imes I_n$). |
-| **短路短延时整定 (Isd)** | **Short-time delay pickup Isd** | Short-time pickup setting | Selective short-circuit current threshold ($2 \sim 10 	imes I_r$). |
-| **短路瞬时整定 (Ii)** | **Instantaneous pickup Ii** | Instantaneous trip setting | Fast short-circuit tripping threshold ($5 \sim 10 	imes I_n$). |
+| **过载长延时整定 (Ir)** | **Overload setting / Long-time pickup Ir** | Long-time pickup setting | Adjustable current threshold ($0.7 \sim 1.0  imes I_n$). |
+| **短路短延时整定 (Isd)** | **Short-time delay pickup Isd** | Short-time pickup setting | Selective short-circuit current threshold ($2 \sim 10  imes I_r$). |
+| **短路瞬时整定 (Ii)** | **Instantaneous pickup Ii** | Instantaneous trip setting | Fast short-circuit tripping threshold ($5 \sim 10  imes I_n$). |
 
 ---
 

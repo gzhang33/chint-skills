@@ -27,7 +27,7 @@ Aligned with ABB Formula AIR / Emax2, Schneider Masterpact / EasyPact MVS, and L
 | **Mechanical Endurance** | 机械寿命 | **Mechanical endurance (operations / cycles)** | Total operating cycles with maintenance ($10,000 \sim 500,000$). |
 | **Electrical Endurance** | 电寿命 | **Electrical endurance (operations under load)** | Operating cycles at rated operational current $I_e$ ($1,000 \sim 50,000$). |
 | **Power Dissipation** | 功率损耗 / 功耗 | **Power loss / Power dissipation (W / pole)** | Thermal heat dissipation per pole at rated current. |
-| **Arcing Distance** | 飞弧距离 (零飞弧) | **Arcing distance / Zero arcing distance** | Safety clearance required above arc chutes ($0\text{ mm}$). |
+| **Arcing Distance** | 飞弧距离 (零飞弧) | **Arcing distance / Zero arcing distance** | Safety clearance required above arc chutes ($0 \text{ mm}$). |
 | **Utilization Category** | 使用类别 (A类/B类) | **Utilization category (Category A / Category B)** | Cat A: non-selective instantaneous; Cat B: selective with $I_{cw}$. |
 
 ---

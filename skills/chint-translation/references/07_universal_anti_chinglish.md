@@ -1,6 +1,6 @@
 # Anti-Chinglish Industrial Catalog Dictionary & False Friends
 
-## 1. High-Frequency Forbidden Terms & Anti-Hallucination Guardrails (Source: 08_翻译禁忌与防呆词库)
+## 1. High-Frequency Forbidden Terms & Anti-Hallucination Guardrails
 
 | Code | Chinese Term | ❌ Strictly FORBIDDEN Translation | ✅ Mandatory Professional English | Standard Rationale |
 | :--- | :--- | :--- | :--- | :--- |

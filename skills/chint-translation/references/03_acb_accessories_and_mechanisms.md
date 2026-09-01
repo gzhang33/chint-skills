@@ -25,7 +25,7 @@ Aligned with ABB Formula AIR / Emax2, Schneider Masterpact / EasyPact, and LS EL
 | **3-Position Contacts (AUP / CE-CD-CT)** | 抽屉座三位置信号触点 | **Connected / Test / Disconnected position contacts** | Microswitches signaling breaker position in cradle (Connected, Test, Disconnected/Isolated). |
 | **Racking Handle** | 摇动手柄 | **Racking handle (Cranking handle)** | Mechanical crank for racking breaker between Connected, Test, and Disconnected positions. |
 | **Safety Shutters** | 安全绝缘活门 | **Safety shutters (Shutter locking device)** | Automatically isolates primary stationary busbar stabs when breaker is withdrawn. |
-| **Door Flange / Escutcheon** | 柜门框 / 面罩 | **Door escutcheon (Door flange)** | Gasketed sealing frame for switchboard door panel cutout ($	ext{IP40 / IP54}$). |
+| **Door Flange / Escutcheon** | 柜门框 / 面罩 | **Door escutcheon (Door flange)** | Gasketed sealing frame for switchboard door panel cutout ($ ext{IP40 / IP54}$). |
 | **Interphase Barrier (PB)** | 相间隔板 | **Interphase barriers (Phase separators)** | Dielectric insulation plates mounted between main rear/front terminal busbars. |
 | **Key Lock in OFF Position** | 钥匙锁 (断开位置锁定) | **Key lock in open position (KLC / VSPO)** | Ronis / Profalux / Castell cylinder lock securing breaker in open position. |
 | **Padlocking Device** | 挂锁装置 (合/分闸锁定) | **Padlocking device (PLC / VBP)** | Accepts up to 3 padlocks securing pushbuttons in open position. |

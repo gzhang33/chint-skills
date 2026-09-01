@@ -1,0 +1,14 @@
+name: chint-translation
+version: 1.0.0
+description: Universal B2B industrial translation standard for CHINT low-voltage power distribution and industrial control apparatus.
+author: CHINT Overseas PM Team
+tags:
+  - translation
+  - localization
+  - low-voltage
+  - acb
+  - mccb
+  - mcb
+  - ats
+  - power-quality
+  - catalog
