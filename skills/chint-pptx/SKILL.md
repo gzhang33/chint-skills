@@ -105,8 +105,8 @@ python3 scripts/chint_pptx_engine.py <path_to_payload.json> <output_path.pptx>
 ## Disclosed References & Assets Index
 
 - **Bundled Fonts**: `assets/fonts/CHINTinno-Bold.ttf`, `CHINTinno-Regular.ttf`, `CHINTinno-Light.ttf`
-- **Official 2026 VI Media Assets**: `assets/media/` (`cover_26_bg.png`, `toc_26_bg.png`, `chapter_26_bg.png`, `closing_26_bg.png`, `chint_badge.png`, 3D panoramic cityscapes)
-- **Base Templates**: `assets/templates/26年模板拓新体.pptx`, `assets/templates/chint_archetypes_master.pptx`
+- **Official 2026 VI Media Assets**: `assets/media/` (`cover_26_bg.jpg`, `toc_26_bg.jpg`, `chapter_26_bg.jpg`, `closing_26_bg.jpg`, `chint_badge.png`)
+- **Base Templates**: `assets/templates/26年模板拓新体.pptx`
 - **Visual VI Reference**: [`references/vi_and_typography.md`](references/vi_and_typography.md)
 - **Executive Copywriting Standard**: [`chint-pm-copywriter`](../chint-pm-copywriter/SKILL.md)
 - **Layout Archetypes Reference**: [`references/layout_archetypes.md`](references/layout_archetypes.md)

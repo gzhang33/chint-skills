@@ -132,10 +132,17 @@ class ChintPresentationEngine:
             for s in master.shapes
         )
 
+    def _find_media(self, base_name: str) -> Optional[str]:
+        for ext in [".jpg", ".jpeg", ".png"]:
+            p = os.path.join(self.media_dir, base_name + ext)
+            if os.path.exists(p):
+                return p
+        return None
+
     def _add_body_master(self, slide, title: str, category: Optional[str] = None):
         if not getattr(self, "has_master_logo", False):
-            badge_path = os.path.join(self.media_dir, "chint_badge.png")
-            if os.path.exists(badge_path):
+            badge_path = self._find_media("chint_badge")
+            if badge_path:
                 slide.shapes.add_picture(badge_path, Inches(11.4), Inches(0.0), Inches(1.53), Inches(1.15))
             
         tb = slide.shapes.add_textbox(Inches(0.8), Inches(0.45), Inches(10.5), Inches(0.8))
@@ -165,13 +172,9 @@ class ChintPresentationEngine:
     def _render_master_frame(self, slide, s_data: Dict[str, Any], arch: str):
         """Engine 1: Master Frames (Cover, TOC, Chapter, Closing, Contact)"""
         if arch.startswith("ARCH_01"):
-            cover_bg = os.path.join(self.media_dir, "cover_26_bg.png")
-            if os.path.exists(cover_bg):
+            cover_bg = self._find_media("cover_26_bg") or self._find_media("image2")
+            if cover_bg:
                 slide.shapes.add_picture(cover_bg, Inches(0), Inches(0), Inches(13.333), Inches(7.5))
-            else:
-                cover_img = os.path.join(self.media_dir, "image2.jpeg")
-                if os.path.exists(cover_img):
-                    slide.shapes.add_picture(cover_img, Inches(0), Inches(0), Inches(13.333), Inches(7.5))
 
             bar1 = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(3.93), Inches(4.85), Inches(9.4), Inches(1.05))
             bar1.fill.solid()
@@ -194,8 +197,8 @@ class ChintPresentationEngine:
             set_para(tf_sub.paragraphs[0], s_data.get("subtitle", ""), font_size=13, bold=False, color_rgb=C_WHITE)
 
         elif arch.startswith("ARCH_02"):
-            toc_bg = os.path.join(self.media_dir, "toc_26_bg.png")
-            if os.path.exists(toc_bg):
+            toc_bg = self._find_media("toc_26_bg")
+            if toc_bg:
                 slide.shapes.add_picture(toc_bg, Inches(0), Inches(0), Inches(13.333), Inches(7.5))
             else:
                 ribbon = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0), Inches(0), Inches(4.7), Inches(7.5))
@@ -207,8 +210,8 @@ class ChintPresentationEngine:
                 set_para(tb_c.text_frame.paragraphs[0], "CONTENTS", font_size=32, bold=True, color_rgb=C_WHITE, align=PP_ALIGN.CENTER)
 
             if not getattr(self, "has_master_logo", False):
-                badge_path = os.path.join(self.media_dir, "chint_badge.png")
-                if os.path.exists(badge_path):
+                badge_path = self._find_media("chint_badge")
+                if badge_path:
                     slide.shapes.add_picture(badge_path, Inches(11.4), Inches(0.0), Inches(1.53), Inches(1.15))
 
             items = s_data.get("items", [])
@@ -301,11 +304,8 @@ class ChintPresentationEngine:
                         chv.line.fill.background()
 
         elif arch == "ARCH_03_CHAPTER":
-            chap_banner = os.path.join(self.media_dir, "image7.jpeg")
-            if not os.path.exists(chap_banner):
-                chap_banner = os.path.join(self.media_dir, "chapter_26_bg.png")
-            
-            if os.path.exists(chap_banner):
+            chap_banner = self._find_media("chapter_26_bg") or self._find_media("image7")
+            if chap_banner:
                 slide.shapes.add_picture(chap_banner, Inches(0), Inches(1.71), Inches(13.333), Inches(3.42))
             else:
                 band = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0), Inches(1.71), Inches(13.333), Inches(3.42))
@@ -319,8 +319,8 @@ class ChintPresentationEngine:
             line.line.fill.background()
 
             if not getattr(self, "has_master_logo", False):
-                badge_path = os.path.join(self.media_dir, "chint_badge.png")
-                if os.path.exists(badge_path):
+                badge_path = self._find_media("chint_badge")
+                if badge_path:
                     slide.shapes.add_picture(badge_path, Inches(11.4), Inches(0.0), Inches(1.53), Inches(1.15))
 
             title_text = s_data.get("title") or s_data.get("headline") or "添加章节标题"
@@ -341,14 +341,10 @@ class ChintPresentationEngine:
                 set_para(tf_c.paragraphs[0], title_text, font_size=32, bold=True, color_rgb=C_WHITE, align=PP_ALIGN.CENTER)
 
         elif arch.startswith("ARCH_11"):
-            closing_bg = os.path.join(self.media_dir, "closing_26_bg.png")
-            if os.path.exists(closing_bg):
+            closing_bg = self._find_media("closing_26_bg") or self._find_media("image6")
+            if closing_bg:
                 slide.shapes.add_picture(closing_bg, Inches(0), Inches(0), Inches(13.333), Inches(7.5))
             else:
-                closing_img = os.path.join(self.media_dir, "image6.jpeg")
-                if os.path.exists(closing_img):
-                    slide.shapes.add_picture(closing_img, Inches(0), Inches(0), Inches(13.333), Inches(7.5))
-
                 band = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0), Inches(5.2), Inches(13.333), Inches(0.8))
                 band.fill.solid()
                 band.fill.fore_color.rgb = C_BLUE
