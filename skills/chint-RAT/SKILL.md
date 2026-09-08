@@ -1,9 +1,9 @@
 ---
-name: chint-rat-one-pager
+name: chint-RAT
 description: Use when 需要编写或生成立项资料 / 立项一页纸 PPT（RAT、IRT 立项评审、产品开发立项、项目立项汇报、新产品立项 pptx），或用户给出项目简报/调研材料并要求产出立项资料时。覆盖立项看板版式复刻与立项内容方法论（数字化、痛点对应、交叉验证、风险预案）。
 ---
 
-# CHINT 立项资料一页纸生成（chint-rat-one-pager）
+# CHINT 立项资料一页纸生成（chint-RAT）
 
 ## Overview
 

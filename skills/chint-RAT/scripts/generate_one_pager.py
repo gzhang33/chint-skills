@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-CHINT RAT 立项资料一页纸生成器（chint-rat-one-pager）
+CHINT RAT 立项资料一页纸生成器（chint-RAT）
 
 用法:
     python3 generate_one_pager.py <spec.json> <output.pptx>

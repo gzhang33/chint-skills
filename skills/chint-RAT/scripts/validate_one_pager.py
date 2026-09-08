@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-立项一页纸校验器（chint-rat-one-pager）
+立项一页纸校验器（chint-RAT）
 
 用法:
     python3 validate_one_pager.py <output.pptx> [--spec spec.json]
