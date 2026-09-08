@@ -33,7 +33,7 @@ description: Use when 需要编写或生成立项资料 / 立项一页纸 PPT（
    - spec 含销售预测 → `cross_validation` 必填；行业数据拿不到 → steps 写可推算部分，`数据来源` 标 `"待补充（行业协会/盘厂调研）"`。
    - `verdict` 只允许 `可行` / `部分可行` / `不可行`，禁止"基本可行"等模糊词。
 4. **生成**：`python3 scripts/generate_one_pager.py spec.json out.pptx`
-5. **校验**：`python3 scripts/validate_one_pager.py out.pptx --spec spec.json` → 必须 `== PASS`；FAIL 逐条修复后重跑。
+5. **校验**：`python3 scripts/validate_one_pager.py out.pptx --spec spec.json` → 必须 `== PASS`；FAIL 逐条修复后重跑。PASS 后如仍有 WARN，逐条给出处理方式（占位并写入附录A / 待确认清单 / 解释口径），**禁止静默交付带 WARN 的文件**。
 6. **目检**：`soffice --headless --convert-to pdf` + `pdftoppm -png -r 90` 渲染，检查文字溢出/重叠/截断。
 7. **六问自检**：逐条回答 `content-methodology.md` 的领导常问六问；答不上的回改 spec。
 8. **交付**：给可点击文件链接，并列出所有"待确认"占位字段清单。
