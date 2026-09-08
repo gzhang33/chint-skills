@@ -100,6 +100,24 @@ def main():
                     failures.append(f"第{i}页形状越界: {sh.name}")
             except TypeError:
                 pass
+    # 7.5 字体合规（防手改漂移；None=继承默认，放行）
+    bad_fonts = set()
+    for slide in prs.slides:
+        for sh in slide.shapes:
+            if sh.has_text_frame:
+                for p in sh.text_frame.paragraphs:
+                    for r in p.runs:
+                        if r.font.name and r.font.name != "CHINTinno":
+                            bad_fonts.add(r.font.name)
+            elif sh.has_table:
+                for row in sh.table.rows:
+                    for c in row.cells:
+                        for p in c.text_frame.paragraphs:
+                            for r in p.runs:
+                                if r.font.name and r.font.name != "CHINTinno":
+                                    bad_fonts.add(r.font.name)
+    if bad_fonts:
+        failures.append(f"存在非 CHINTinno 字体: {sorted(bad_fonts)}（VI 红线）")
     # 8. 痛点↔产品定义对应性提示
     if spec_path:
         import json
