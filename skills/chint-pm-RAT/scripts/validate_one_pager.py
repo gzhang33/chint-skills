@@ -1,16 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-立项一页纸校验器（chint-RAT）
+立项一页纸校验器（chint-pm-RAT · PM 范围）
 
 用法:
     python3 validate_one_pager.py <output.pptx> [--spec spec.json]
 
 按 references/zone-spec.md 的分区规范检查生成的 pptx：
   1. 16:9 尺寸、至少 1 页
-  2. 一页纸 12 个分区标题齐全
+  2. 一页纸分区标题齐全（主表单元格扫描）
   3. 顶部三标签牌（需求来源/规划方向/产品平台）齐全，产品平台 ∈ {昆仑, 新锐, 诺雅克}
-  4. 财务摘要含 投入/回收期/盈亏平衡 关键数字表述
   5. 标题含【项目类别】
   6. verdict 含"部分可行/不"时必须存在风险预案附录页
   7. 无形状越出画布
@@ -40,6 +39,10 @@ def slide_texts(slide):
     for sh in slide.shapes:
         if sh.has_text_frame:
             texts.append(sh.text_frame.text)
+        elif sh.has_table:
+            for row in sh.table.rows:
+                for c in row.cells:
+                    texts.append(c.text_frame.text)
     return "\n".join(texts)
 
 
@@ -75,12 +78,6 @@ def main():
     m = re.search(r"产品平台[：:](\S+)", s1_texts)
     if m and m.group(1) not in VALID_PLATFORMS:
         failures.append(f"产品平台非标准命名 '{m.group(1)}'（只允许: 昆仑/新锐/诺雅克）")
-    # 4. 财务关键数字
-    for kw in ["项目投入", "盈亏平衡"]:
-        if kw not in s1_texts:
-            failures.append(f"财务摘要缺少: {kw}")
-    if "收回投资" not in s1_texts and "回收期" not in s1_texts:
-        failures.append("财务摘要缺少投资回收期表述")
     # 5. 标题类别
     if not re.search(r"【[^】]+】", s1_texts):
         failures.append("标题缺少【项目类别】前缀（如【改良改进】）")
@@ -100,24 +97,51 @@ def main():
                     failures.append(f"第{i}页形状越界: {sh.name}")
             except TypeError:
                 pass
-    # 7.5 字体合规（防手改漂移；None=继承默认，放行）
-    bad_fonts = set()
-    for slide in prs.slides:
+    # 7.5 字体合规：以基座字体集为白名单（模板自身混用微软雅黑/等线等），
+    # 只拦产物中新增的字体（防漂移；None=继承默认，放行）
+    def fonts_of(prs_):
+        got = set()
+        for slide in prs_.slides:
+            for sh in slide.shapes:
+                if sh.has_text_frame:
+                    for p in sh.text_frame.paragraphs:
+                        for r in p.runs:
+                            if r.font.name:
+                                got.add(r.font.name)
+                elif sh.has_table:
+                    for row in sh.table.rows:
+                        for c in row.cells:
+                            for p in c.text_frame.paragraphs:
+                                for r in p.runs:
+                                    if r.font.name:
+                                        got.add(r.font.name)
+        return got
+
+    base_path = Path(__file__).parent.parent / "template" / "one_pager_base.pptx"
+    allowed = {"CHINTinno"}
+    if base_path.exists():
+        allowed |= fonts_of(Presentation(str(base_path)))
+    bad_fonts = fonts_of(prs) - allowed
+    if bad_fonts:
+        failures.append(f"存在基座白名单之外的字体: {sorted(bad_fonts)}（防漂移红线）")
+    # 7.7 模板残留检查（NXA 原内容必须被 spec 全量覆盖，含表格）
+    def table_texts(slide):
+        out_ = []
         for sh in slide.shapes:
-            if sh.has_text_frame:
-                for p in sh.text_frame.paragraphs:
-                    for r in p.runs:
-                        if r.font.name and r.font.name != "CHINTinno":
-                            bad_fonts.add(r.font.name)
-            elif sh.has_table:
+            if sh.has_table:
                 for row in sh.table.rows:
                     for c in row.cells:
-                        for p in c.text_frame.paragraphs:
-                            for r in p.runs:
-                                if r.font.name and r.font.name != "CHINTinno":
-                                    bad_fonts.add(r.font.name)
-    if bad_fonts:
-        failures.append(f"存在非 CHINTinno 字体: {sorted(bad_fonts)}（VI 红线）")
+                        out_.append(c.text_frame.text)
+        return "\n".join(out_)
+
+    all_texts = "\n".join(slide_texts(s) + "\n" + table_texts(s) for s in prs.slides)
+    # 高特异性模板内容词（短词/千分位数字/日期已移除：浮动表删除后无残留源，且易误伤合法内容）
+    RESIDUE = ["NXA系列", "电感应炉", "德力西", "CDW5", "CDW1", "PANTONE",
+               "严 1", "李 2", "3相", "叶 5", "黄 6升", "蔡 3", "金 2",
+               "低压研究院框架", "昆仑平台", "从3个维度", "面价比德力东", "节能减排"]
+    hits = [r_ for r_ in RESIDUE if r_ in all_texts]
+    if hits:
+        failures.append(f"模板残留未覆盖: {hits}（spec 未覆盖的槽位或锚点漂移）")
     # 8. 痛点↔产品定义对应性提示
     if spec_path:
         import json
@@ -130,10 +154,21 @@ def main():
         for idx, p in enumerate(pains, 1):
             if not re.search(r"\d", p):
                 warnings.append(f"痛点{idx}未量化（无数字），违反数字化红线: {p[:18]}…")
+        INDUSTRY_ENUM = [
+            '信息与通讯行业业务', 'OEM业务', '电网业务', '发电与新能源业务',
+            '基础能源与流程工业业务', '基础设施业务', '盘柜厂业务', '建筑地产业务',
+            '交通与运输业务', '流通业务',
+        ]
+        ind = str(spec.get("quick_facts", {}).get("目标行业", ""))
+        if ind and ind not in INDUSTRY_ENUM:
+            warnings.append(f"目标行业 '{ind}' 不在行业口径枚举内（10 项，见 spec-schema.md）")
+        comp = str(spec.get("quick_facts", {}).get("竞争对手", ""))
+        if comp and any(sep in comp for sep in ('/', '、', ';', '；', ',', '，')):
+            warnings.append("竞争对手应只列最大的一家")
         cv = spec.get("cross_validation")
         if cv and not str(cv.get("对比结论", "")).strip():
             failures.append("交叉验证缺少对比结论")
-        # 9. 价格-成本-毛利率口径勾稽（±5pp）
+        # 9. 价格-成本-毛利率口径勾稽（±5pp；v3 PM spec 无 price_cost 则跳过）
         st = spec.get("price_cost", {}).get("spec_table", {})
         headers = [str(h) for h in st.get("headers", [])]
         def _find(*keys):
