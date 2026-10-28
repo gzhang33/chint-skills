@@ -18,7 +18,7 @@
     {
       "name": "chint-data",
       "source": "./plugins/chint-data",
-      "description": "CHINT 数据：销售分析、口径核对、数据可视化"
+      "description": "CHINT 数据：口径核对与数据可视化"
     },
     {
       "name": "chint-ops",
