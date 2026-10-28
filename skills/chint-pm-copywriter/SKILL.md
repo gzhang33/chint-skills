@@ -1,6 +1,6 @@
 ---
 name: chint-pm-copywriter
-description: Universal B2B industrial Product Manager (PM) copywriting standard, domain taxonomy, and logic engine for Low-Voltage Electrical Power Distribution (ACB, MCCB, MCB, Power Quality, ATS, SST/SSCB). Synthesizes Wintelligence 2026 whitepaper, Xingshangke trends, 26H1 macro insights, brand competitive landscape, and 12-customer cost-reduction engineering practices. Use when authoring executive PPT titles/insights, business reviews (QBR), PRDs, decision memos, or product brochure copy across industrial manufacturing, power distribution, new energy, and enterprise hardware domains.
+description: Universal B2B industrial Product Manager (PM) copywriting standard, domain taxonomy, and logic engine for Low-Voltage Electrical Power Distribution (ACB, MCCB, MCB, Power Quality, ATS, SST/SSCB). Covers industry taxonomy, market tiers, competitive framing, cost-reduction expression patterns, and quantified executive-report syntax. Use when authoring executive PPT titles/insights, business reviews (QBR), PRDs, decision memos, or product brochure copy across industrial manufacturing, power distribution, new energy, and enterprise hardware domains.
 ---
 
 # B2B Industrial PM Copywriting & Executive Reporting Engine (`chint-pm-copywriter`)
@@ -9,20 +9,13 @@ A universal copywriting standard, industry taxonomy dictionary, and logic engine
 
 ---
 
-## 1. Enterprise Knowledge Base & Progressive Disclosure Pointers (知识库与参考资料指针)
+## 1. Progressive Disclosure Pointers (参考资料指针)
+遵循 `writing-great-skills` 渐进式暴露（Progressive Disclosure）原则，长篇明细下沉至 `references/` 目录，按场景动态调阅：
+- **降本测算表达规范**：撰写客户降本方案、QBR 降本汇报时，读取 [cost_reduction_cases.md](references/cost_reduction_cases.md)。
+- **竞品梯队与六星矩阵**：撰写竞品 Battlecard、调阅六星市场模型时，读取 [brand_tier_matrix.md](references/brand_tier_matrix.md)。
 
-### 1.1 基础蒸馏知识源
-- [01_低压大盘与细分行业洞察.md](file:///Users/gianni/Downloads/知识沉淀/蒸馏知识库/01_低压大盘与细分行业洞察.md)
-- [02_市场竞争格局与品牌梯队.md](file:///Users/gianni/Downloads/知识沉淀/蒸馏知识库/02_市场竞争格局与品牌梯队.md)
-- [03_高压固态技术与运营降本实战.md](file:///Users/gianni/Downloads/知识沉淀/蒸馏知识库/03_高压固态技术与运营降本实战.md)
-- [2026年中国低压电器白皮书.md](file:///Users/gianni/Downloads/知识沉淀/md/2026年中国低压电器白皮书.md)
-- [26H1外部宏观洞察260723.md](file:///Users/gianni/Downloads/知识沉淀/md/26H1外部宏观洞察260723.md)
-- [【芯上科】2026年低压电器行业发展状况及趋势.md](file:///Users/gianni/Downloads/知识沉淀/md/【芯上科】2026年低压电器行业发展状况及趋势20250612_纯文字版本.md)
+具体客户名称、报价、成本与毛利数据不入库，需用时从业务口径文档另行调取。
 
-### 1.2 专项参考文件指针 (Context Pointers)
-遵循 `writing-great-skills` 渐进式暴露（Progressive Disclosure）原则，以下长篇明细下沉至 `references/` 目录，按场景动态调阅：
-- **降本工程实战明细**：当需要撰写具体客户降本方案、调阅 12 项重点客户降本参数或工程路径时，读取 [cost_reduction_cases.md](file:///Users/gianni/Documents/chint/.agents/skills/chint-pm-copywriter/references/cost_reduction_cases.md)。
-- **竞品梯队与六星矩阵**：当需要撰写竞品 Battlecard、调阅六星市场模型评定或友商细分战术矩阵时，读取 [brand_tier_matrix.md](file:///Users/gianni/Documents/chint/.agents/skills/chint-pm-copywriter/references/brand_tier_matrix.md)。
 
 ---
 
@@ -107,13 +100,13 @@ A universal copywriting standard, industry taxonomy dictionary, and logic engine
 - **第三梯队（20-50亿级）**：良信电器、天正电气、常熟开关、中熔电气、伊顿电气（含巴斯曼）。
 - **第四梯队（10-20亿级）**：宏发股份、人民电器、首瑞天津、泰永长征。
 - **第五梯队（10亿级以下）**：士林电机、金莱勒、华嘉电器、美高电气等。
-> *注：完整六星市场模型与各品牌星级评分参见 [brand_tier_matrix.md](file:///Users/gianni/Documents/chint/.agents/skills/chint-pm-copywriter/references/brand_tier_matrix.md)。*
+> *注：完整六星市场模型与各品牌星级评分参见 [brand_tier_matrix.md](references/brand_tier_matrix.md)。*
 
 ### 5.2 友商竞争动向标杆范式
 - **施耐德（大盘第一）**：`依托 AIDC 算力红利，绑定 NVIDIA 联合开发预制化配电，深化海博思创光储充合作，拉动高附加值 Masterpact MTZ 销量。`
 - **ABB（大盘第二）**：`锁定海外 EPC 及中东/北美数据中心，深耕流程工业（石化/冶金）高端对标，保有固态断路器（SSCB）先发技术储备。`
 - **良信（国内增速第一）**：`深度绑定新能源头部客户（阳光电源、华为、汇川），中标国网抽蓄与沙特红海新城，推出 NDW5 高压框架（AC1140V/DC1500V）抢占份额。`
-- **德力西（渠道价格战冲击）**：`采取“领航者+6系列”低价战术，盘厂端下浮率比正泰高出 8-16 个小点（2-4 个大点），面价让利高达 25 折并开具保价函，侵蚀中端盘厂市场。`
+- **德力西（渠道价格战冲击）**：`以低价系列组合与灵活的渠道价格策略强攻中端盘厂，下浮率与让利幅度显著高于外资与国产头部，侵蚀中端盘厂市场。`
 - **常熟开关（稳健防护）**：`深耕国网/南网供电局基本盘，协同阿尔珐纳拓展高压框架，推进锂电与特钢厂房技改替代外资。`
 
 ### 5.3 内部业务异动归因四步法
@@ -129,20 +122,22 @@ A universal copywriting standard, industry taxonomy dictionary, and logic engine
 ### 6.1 降本测算标准 5 步表达式
 `[目标大客户/领域] ──► [竞品型号与市场价] ──► [正泰成本与毛利现状] ──► [目标降本比例] ──► [工程/技术路径]`
 
-### 6.2 典型项目降本测算案例句式
-- **上能电气（储能 ACB 物料）**：
-  `对标良信 NDW5-2000（含税市场价 ¥3,850），当前正泰不含税成本 ¥2,420（毛利率 28.5%），目标降本 -12.0%，通过极柱模块化与触头节银结构优化落地。`
-- **汇川技术（光伏逆变器 ACB 物料）**：
-  `对标德力西 CDW6-1600（含税市场价 ¥2,900），当前正泰不含税成本 ¥1,980（毛利率 24.0%），目标降本 -15.0%，通过青峰平台替代降本落地。`
-- **远景能源（风电箱变 ACB 物料）**：
-  `对标常熟 CW3-3200 1140V（含税市场价 ¥7,200），当前正泰不含税成本 ¥4,650（毛利率 30.0%），目标降本 -10.0%，通过 1140V 专用灭弧室结构优化落地。`
-> *注：12 项重点合作客户全量降本明细与参数参见 [cost_reduction_cases.md](file:///Users/gianni/Documents/chint/.agents/skills/chint-pm-copywriter/references/cost_reduction_cases.md)。*
+### 6.2 典型项目降本测算句式（模板，占位符照填实际业务数据）
+- **储能 ACB 物料**：
+  `对标{竞品型号}（含税市场价 ¥{价格}），当前不含税成本 ¥{成本}（毛利率 {毛利率}），目标降本 -{比例}，通过{工程技术路径}落地。`
+- **光伏逆变器 ACB 物料**：
+  `对标{竞品型号}（含税市场价 ¥{价格}），当前不含税成本 ¥{成本}（毛利率 {毛利率}），目标降本 -{比例}，通过{平台替代路径}落地。`
+- **风电箱变 ACB 物料**：
+  `对标{竞品型号}（含税市场价 ¥{价格}），当前不含税成本 ¥{成本}（毛利率 {毛利率}），目标降本 -{比例}，通过{灭弧室结构优化路径}落地。`
+> *注：句式规范见 [cost_reduction_cases.md](references/cost_reduction_cases.md)。具体客户与报价数据不入库，从业务口径文档另行调取。*
+
 
 ---
 
 ## 7. Executive Report Examples (通用高密句式范例)
 
-### 向上汇报与 QBR 经营分析总结
-1. `26H1正泰ACB未税收入4.33亿元（中国区82%/海外18%），对比大盘掉队20个点，主要受渠道价格战与新能源大客户订单缩水双重拖累。`
-2. `德力西以“领航者+6系列”下浮率高出8-16个小点（2-4个大点）强攻盘厂，导致部分区域盘厂流失率超60%；良信依托NDW5高压框架在光储领域实现快速挤占。`
-3. `闭环措施：重启青峰平台对标德力西低价战术，加速 NA5NE（AC1140V/DC1500V）与 ExASD 储能塑壳上市，推进12项重点客户降本8.5%-18.0%，修复综合毛利率。`
+### 向上汇报与 QBR 经营分析总结（模板，方括号内填实际数值）
+1. `[期间][产品线]未税收入[金额]亿元（中国区[比例]/海外[比例]），对比大盘[增减幅度]，主要受[归因一]与[归因二]双重拖累。`
+2. `[竞品]以[战术组合]下浮率高出[点数]强攻盘厂，导致[区域]盘厂流失率超[比例]；[友商]依托[产品]在[领域]实现快速挤占。`
+3. `闭环措施：[对策一]，[对策二]，推进[范围]降本[区间]，修复综合毛利率。`
+
