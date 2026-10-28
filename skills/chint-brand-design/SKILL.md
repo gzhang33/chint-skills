@@ -1,11 +1,13 @@
 ---
 name: chint-brand-design
-description: Design CHINT brand deliverables under official 2026 VI standards. Use when creating or styling CHINT presentations (PPTX), web interfaces (CSS), charts (Matplotlib, ECharts), reports, or when applying CHINTinno font, Electric Blue (#1E50E6), or brand color tokens.
+description: Provide CHINT 2026 VI tokens and visual guidance for brand deliverables. For actual CHINT PPTX generation or editing, route to the most specific existing CHINT presentation skill and generator.
 ---
 
 # CHINT Brand Identity & Visual Design Skill
 
 Authoritative brand identity governance, design system tokens, and modular layout guidelines for all CHINT digital deliverables, presentations (PPTX), web interfaces, data visualizations, and reporting materials, strictly aligned with the **2026 CHINT Corporate Visual Identity Standards**.
+
+For native PowerPoint creation or editing, this skill supplies brand guidance only. Use `chint-pptx`, `chint-data-analysis`, `chint-pm-RAT`, or another more specific existing CHINT generator; do not create a parallel PPTX generation script here.
 
 ---
 
@@ -30,7 +32,7 @@ Authoritative brand identity governance, design system tokens, and modular layou
 ### Step 1: Scenario Identification & Brand Token Loading
 Identify the target deliverable medium and load the corresponding brand tokens:
 1. **PowerPoint Presentations (`.pptx`)**:
-   - Initialize 16:9 canvas (`13.333" x 7.500"`) using `python-pptx` and import official brand tokens from `scripts/chint_theme.py` (`CHINT_COLORS`, `CHINT_FONTS`).
+   - Route actual file creation and editing to the most specific existing CHINT presentation skill. Use this skill for token and visual guidance; do not initialize a parallel PPTX generator.
    - Consult [pptx_guidelines.md](references/pptx_guidelines.md) to choose modular layout patterns (multi-column cards, comparison tables, KPI dashboards, timelines, or process flows) tailored to the specific business narrative.
 2. **Web / HTML / CSS**:
    - Link `assets/styles/chint-fonts.css` and use `--font-chint: 'CHINTinno', 'Microsoft YaHei', 'PingFang SC', '微软雅黑', sans-serif;`.

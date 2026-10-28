@@ -87,22 +87,28 @@ Identify the product category and load the corresponding technical reference mod
   - $U_{imp}$ $\rightarrow$ `Rated impulse withstand voltage` (Never "impact")
   - $I_{th}$ $\rightarrow$ `Conventional free air thermal current` (Never "pure air" / "agreed-upon")
   - $U_e$ / $I_e$ $\rightarrow$ `Rated operational voltage` / `Rated operational current`
-  - $I_{cu}$ / $I_{cs}$ / $I_{cw}$ / $I_{cm}$ / $I_{cn}$ $\rightarrow$ `Rated ultimate / service / short-time withstand / making / short-circuit capacity`
+  - $I_{nm}$ $\rightarrow$ `Frame current / Frame rating` (Clarify vs `Frame size`)
+  - $I_{cu}$ / $I_{cs}$ / $I_{cw}$ / $I_{cm}$ / $I_{cn}$ $\rightarrow$ `Rated ultimate / service / short-time withstand / making / short-circuit capacity` (Table headers: `Ultimate breaking capacity Vac 50/60 Hz`)
+  - 分断能力型号 $\rightarrow$ `Breaking capacity type` (e.g. Type N, Type S, Type H; never "breaking capacity levels")
   - 使用类别 $\rightarrow$ `Utilization category` (e.g. AC-15, DC-13, AC-3, Cat B)
   - 机械/电寿命 $\rightarrow$ `Mechanical / Electrical endurance: 500,000 operations` (Convert "万次" into exact operations)
-- Standardize all metric units with a half-width space (`250 V`, `2.5 kV`, `15 A`, `0.5 N·m`, `6300 A`), except temperatures (`-5°C to +40°C`, `-45°C ~ +70°C`) and tolerances (`±2 mm`).
+- **Standardize all numbers and physical units with a half-width space**:
+  - `1600 A`, `400 V`, `50 Hz`, `250 V`, `2.5 kV`, `15 A`, `0.5 N·m`, `6300 A` (Never omit spaces like `1600A`, `400V`).
+  - Standardize temperature with half-width space and degree symbol `°C`: `-35 °C`, `-5 °C to +40 °C`, `-45 °C ~ +70 °C` (Never full-width `℃` or `35C`).
 
 ### Step 4: Native Engineering Localization & Logic Structuring
-- **Product Descriptions**: Rewrite passive/literal Chinese into active, value-driven technical descriptions (`The [Model] is designed for automatic [Function] in [Applications] using [Operating Principle]...`).
+- **Product Descriptions & Catalog Rephrasing**: Rewrite passive/literal Chinese into active, value-driven technical descriptions. Eliminate Chinglish word orders:
+  - ❌ *"Below 0.1In, the measurement is inaccurate."* $\rightarrow$ ✅ *"Measurement unspecified below 0.1 In"*
+  - ❌ *"The time-delay undervoltage release is used when the line experiences short-time low voltage or loss of power, and can delay opening the circuit breaker."* $\rightarrow$ ✅ *"The time-delay undervoltage release delays circuit-breaker tripping for short-term line low-voltage conditions or power loss."*
 - **Contact & Wiring Schemes**: Standardize changeover (SPDT/DPDT) logic with strict symmetrical pairs:
   - *Tank Filling Mode (Auto-Fill)*: Common (COM) + Normally Closed (NC). Contact closes (ON) at low level to start pump; opens (OFF) at high level to stop pump.
   - *Sump Drainage Mode (Auto-Drain)*: Common (COM) + Normally Open (NO). Contact opens (OFF) at low level to stop pump; closes (ON) at high level to start pump.
-- **Safety Instructions**: Transform into verb-led imperative directives (`Direct motor control:`, `Discharge clearance:`, `Inlet clearance:`).
+- **Safety Instructions & Drawing Callouts**: Transform into verb-led imperative directives (`Direct motor control:`, `Discharge clearance:`, `Inlet clearance:`) and native CAD annotations (`Datum`, `Mounting surface`, `Inner side of door`, `Disconnected position`).
 
 ### Step 5: Anti-Chinglish Quality Audit & Final Verification
 - Filter the translated text against `07_universal_anti_chinglish.md` and category-specific forbidden terms.
 - Strip all Chinese full-width punctuation (`；`, `（ ）`, `：`) and replace with half-width English equivalents.
-- Unify corporate branding: **`CHINT`** (all caps), Slogan: **`CHINT - Smart Energy Solutions Provider`**.
+- Unify corporate branding: **`CHINT`** (all caps), Series: **`CHINT NXA Series ACB / NXA Series`** (for Kunlun ACB overseas deliverables), Slogan: **`CHINT - Smart Energy Solutions Provider`**.
 
 ---
 
@@ -110,19 +116,31 @@ Identify the product category and load the corresponding technical reference mod
 
 | Chinese Source | ❌ Forbidden Literal Translation | ✅ Mandatory Professional English | Category Scope |
 | :--- | :--- | :--- | :--- |
+| **正泰昆仑 / 昆仑系列** | CHINT Kunlun / Kunlun series | **CHINT NXA Series ACB / NXA Series** | ACB Branding |
 | **万能式断路器** | Universal Circuit Breaker | **Air Circuit Breaker (ACB)** / LVPCB | ACB (IEC 60947-2) |
 | **塑壳断路器** | Plastic shell breaker | **Molded Case Circuit Breaker (MCCB)** | MCCB (IEC 60947-2 / UL 489) |
 | **微型断路器** | Mini circuit breaker / Small breaker | **Miniature Circuit Breaker (MCB)** | MCB (IEC 60898-1 / UL 489) |
 | **漏电断路器** | Leakage breaker | **Residual Current Circuit Breaker (RCBO / RCCB)** | Modular Devices |
 | **双电源自动转换开关** | Dual power auto switch | **Automatic Transfer Switch (ATS / TSE)** | ATS (IEC 60947-6-1) |
 | **交流接触器** | AC connector / AC switcher | **AC Contactor** | Controlgear (IEC 60947-4-1) |
+| **抽屉式** | Drawer / Drawer type | **Drawout / Drawout type / Withdrawable** | ACB / MCCB |
+| **电动操作机构 (电操)** | Operating device / Motor hand | **Motor Operator Device (MOD) / Motor Mechanism** | ACB / MCCB |
+| **灭弧室** | Interrupter / Arc room | **Arc-extinguishing chamber / Arc chute** | ACB / MCCB |
 | **闭合电磁铁** | Closed electromagnet | **Closing Release (CC / CEM / XF)** | ACB / Switchgear |
 | **分励脱扣器** | Excitation release / Shunting release | **Shunt Release (SHT / MX / YO)** | ACB / MCCB |
 | **欠电压脱扣器** | Less voltage trip / Lack voltage | **Undervoltage Release (UVR / MN / YU)** | ACB / MCCB |
 | **抽屉座** | Drawer box / Slide box | **Guide frame (Cradle / Drawout Chassis)** | ACB / MCCB |
+| **摇手柄存放孔** | Storage hole | **Racking handle storage slot / Storage slot** | ACB Accessories |
+| **智能控制器** | Intelligent controller (literal) | **Controller / Electronic Trip Unit (ETU)** | ACB Protection |
+| **按钮 (合闸/分闸按钮)** | Device button / Press key | **Pushbutton (Closing/Opening pushbutton)** | ACB / Panel |
+| **分断能力型号** | Breaking capacity levels | **Breaking capacity type (Type N / S / H)** | IEC Parameters |
+| **指示灯 (如 Ig 指示灯)** | Ig indicator light / lamp | **Ig indicator / Status indicator** | Trip Units / Panels |
+| **本体钥匙锁** | Body key lock | **ACB Key Lock (KLC)** | ACB Accessories |
 | **相间隔板** | Phase space plate | **Interphase Barriers (Phase Separators)** | ACB / MCCB / MCB |
 | **门框 / 柜门面罩** | Face mask / Door frame | **Door Escutcheon (Door Flange)** | Switchboard Panel |
 | **区域选择性联锁** | Area choice lock | **Zone Selective Interlocking (ZSI)** | Electronic Trip Units |
+| **基准 (图纸标注)** | Base / Reference mark | **Datum** | CAD / Dimensions |
+| **壳架电流 (澄清)** | Frame size (when referring to Inm) | **Frame current / Frame rating (Inm)** | IEC Parameters |
 | **电工辅料 / 附件** | Auxiliary Materials | **Electrical Accessories / Installation Accessories** | General Low-Voltage |
 | **重锤 / 配重块** | Heavy Hammer / Heavy weight | **Counterweight / Balance Weight** | Sensors / Level Control |
 | **约定自由空气发热电流** | Agreed-upon heating current in pure air | **Conventional free air thermal current Ith** | IEC 60947-1 |
