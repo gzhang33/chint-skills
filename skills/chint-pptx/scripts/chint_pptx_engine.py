@@ -5,16 +5,24 @@ CHINT PPTX Generation Engine (2026 VI Standard Master Edition - Modularized 12-E
 Features:
 - Modularized 12 Core Composition Engines (_render_*) handling all 34 Slide Layout Archetypes cleanly.
 - 100% Backward-Compatible Semantic Dispatch Routing for all 34 Archetype Aliases (ARCH_01 to ARCH_34).
-- Full 1:1 Alignment with 2026 Master Template (26年模板拓新体.pptx - 109 pages).
+- Full 1:1 alignment with the six-slide 2026 master template (26年模板拓新体.pptx).
 - Official 2026 VI Color Palette Tokens & Multi-series 8-stage Chart Palette.
 """
 
 import os
 import io
 import json
+import math
+import re
+import sys
+import tempfile
+import zipfile
+import hashlib
 from copy import deepcopy
+from pathlib import Path
 from typing import Dict, Any, List, Optional, Union
 
+from lxml import etree
 from pptx import Presentation
 from pptx.util import Inches, Pt
 from pptx.dml.color import RGBColor
@@ -25,23 +33,26 @@ from pptx.chart.data import CategoryChartData
 
 from chint_vector_chart_builder import ChintVectorChartBuilder
 
-# Official 2026 VI Brand Palette Tokens
-C_BLUE = RGBColor(30, 80, 230)            # CHINT Electric Blue #1E50E6 (Primary)
-C_CYAN = RGBColor(80, 200, 255)           # CHINT Light Cyan #50C8FF (Auxiliary / Accent)
+# Official VI theme values have one source: spec/brand_tokens.json.
+from _brand_tokens import TOKENS as _BRAND_TOKENS
+
+_theme_hex = _BRAND_TOKENS
+C_BLUE = RGBColor.from_string(_theme_hex["blue"])
+C_CYAN = RGBColor.from_string(_theme_hex["cyan"])
 C_RED_TEXT = RGBColor(215, 10, 50)        # CHINT Alert Red #D70A32 (Alert / Threat)
 C_RED_BG = RGBColor(255, 235, 238)        # Soft Red Alert Background #FFEBEB
 C_GREEN = RGBColor(20, 200, 50)           # Growth Green #14C832 (Opportunity / Growth)
 C_GREEN_BG = RGBColor(232, 248, 238)      # Soft Green Background #E8F8EE
 C_TEAL = RGBColor(20, 200, 180)           # Smart Teal #14C8B4
-C_DEEP_BLUE = RGBColor(20, 55, 170)       # Deep Corporate Blue #1437AA (Base / Dark Header)
+C_DEEP_BLUE = RGBColor.from_string(_theme_hex["navy"])
 C_BLUE_BG = RGBColor(235, 243, 255)       # Soft Blue Container #EBF3FF
-C_ICE_BLUE = RGBColor(215, 240, 255)       # Ice Blue #D7F0FF
+C_ICE_BLUE = RGBColor.from_string(_theme_hex["ice"])
 C_ORANGE = RGBColor(245, 158, 11)         # Warning Orange #F59E0B
 C_DARK = RGBColor(30, 32, 36)             # Primary Dark Text #1E2024
-C_MUTED = RGBColor(90, 90, 90)            # Slate Gray #5A5A5A
-C_LIGHT_BG = RGBColor(246, 248, 250)      # Container Background #F6F8FA
-C_BORDER = RGBColor(208, 215, 222)        # Card Border #D0D7DE
-C_WHITE = RGBColor(255, 255, 255)         # Pure White #FFFFFF
+C_MUTED = RGBColor.from_string(_theme_hex["muted"])
+C_LIGHT_BG = RGBColor.from_string(_theme_hex["light_bg"])
+C_BORDER = RGBColor.from_string(_theme_hex["card_border"])
+C_WHITE = RGBColor.from_string(_theme_hex["white"])
 C_CARD_HEADER_BG = RGBColor(228, 238, 255)# Card Header Light Blue #E4EEFF
 
 # Multi-series Data Chart 8-stage Palette
@@ -56,11 +67,206 @@ CHART_PALETTE = [
     C_RED_TEXT                 # 8. Alert #D70A32
 ]
 
-FONT_FAMILY = "正泰拓新体"
+FONT_FAMILY = _theme_hex["font"]
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 ASSETS_DIR = os.path.join(os.path.dirname(SCRIPT_DIR), "assets")
 MEDIA_DIR = os.path.join(ASSETS_DIR, "media")
-TEMPLATES_DIR = os.path.join(ASSETS_DIR, "templates")
+SKILL_ROOT = os.path.dirname(SCRIPT_DIR)
+TEMPLATES_DIR = os.path.join(SKILL_ROOT, "assets", "templates")
+if SKILL_ROOT not in sys.path:
+    sys.path.insert(0, SKILL_ROOT)
+from core.output_paths import default_output_dir, ensure_output_path
+
+_REQUIRED_FIELDS = {
+    "ARCH_01": ("title",), "ARCH_02": ("items",), "ARCH_03": ("title",),
+    "ARCH_15": ("channels", "offices"),
+    "ARCH_07": ("pain_points", "solutions", "pain_summary", "solution_summary"),
+    "ARCH_21": ("before_items", "after_items", "before_summary", "after_summary"),
+    "ARCH_22": ("problems", "improvements", "problem_summary", "improve_summary"),
+    "ARCH_10": ("client_name", "hero_metric", "hero_desc", "bullets"),
+    "ARCH_13": ("coverage_title", "stats", "offices", "network_title"),
+    "ARCH_19": ("hero_label", "hero_number", "hero_unit", "hero_desc", "bullets"),
+    "ARCH_04": ("kpi_cards",), "ARCH_05": ("columns",), "ARCH_12": ("members",),
+    "ARCH_18": ("metrics",), "ARCH_23": ("risks",), "ARCH_24": ("pillars",),
+    "ARCH_33": ("honors",), "ARCH_25": ("steps",), "ARCH_27": ("steps",),
+    "ARCH_28": ("gates",), "ARCH_30": ("milestones",), "ARCH_26": ("stages",),
+    "ARCH_20": ("strengths", "weaknesses", "opportunities", "threats"),
+    "ARCH_09": ("modules",), "ARCH_34": ("partners",), "ARCH_08": ("layers",),
+    "ARCH_31": ("pillars", "base_title", "base_desc"), "ARCH_32": ("nodes",),
+    "ARCH_29": ("tasks",),
+}
+
+
+
+def _validate_slide_payload(arch, data):
+    if not isinstance(data, dict):
+        raise ValueError(f"Slide payload for {arch} must be an object")
+    if not arch.startswith(("ARCH_02", "ARCH_11")) and not (data.get("title") or data.get("headline")):
+        raise ValueError(f"{arch} requires a source-backed title")
+
+    required = next((fields for prefix, fields in _REQUIRED_FIELDS.items()
+                     if arch.startswith(prefix)), ())
+    if arch.startswith("ARCH_06"):
+        required = ("nodes",) if arch == "ARCH_06_CONCENTRIC_HUB" else ("stages",)
+    if arch.startswith("ARCH_14"):
+        required = ("nodes",)
+    if arch.startswith("ARCH_17"):
+        required = ("slices", "center_metric", "center_label")
+
+    chart_kind = (data.get("chart_type") or "").strip().lower()
+    if arch.startswith("ARCH_16") and not chart_kind:
+        for marker, value in (("RADAR", "radar"), ("COMBO", "combo"), ("DUAL_AXIS", "combo"),
+                              ("DIVERGING", "diverging"), ("EVOLUTION", "evolution"),
+                              ("HEATMAP", "heatmap"), ("MATRIX", "heatmap"),
+                              ("WATERFALL", "waterfall"), ("SANKEY", "sankey"),
+                              ("FUNNEL", "funnel"), ("GAUGE", "gauge"), ("BULLET", "gauge"),
+                              ("STACKED_AREA", "stacked_area"), ("AREA", "area")):
+            if marker in arch:
+                chart_kind = value
+                break
+    chart_fields = ()
+    if arch in ("ARCH_16_CHART_BAR_TREND", "ARCH_16_BAR_CHART", "ARCH_16_CHART_TREND"):
+        chart_fields = ("categories", "series", "summary_bullets")
+    elif arch.startswith("ARCH_16"):
+        chart_fields = {
+            "radar": ("categories", "series"), "combo": ("categories", "bar_series", "line_series"),
+            "diverging": ("categories", "values", "unit"),
+            "evolution": ("stages", "values", "sub_labels", "unit"),
+            "heatmap": ("row_labels", "col_labels", "data_matrix"),
+            "waterfall": ("categories", "values", "unit"), "sankey": ("flows",),
+            "funnel": ("stages", "values", "unit"),
+            "gauge": ("current_val", "target_val", "min_val", "max_val", "unit"),
+            "stacked_area": ("categories", "series", "unit"), "area": ("categories", "series", "unit"),
+        }.get(chart_kind, ())
+        if not chart_fields:
+            raise ValueError(f"{arch} requires explicit source-backed chart data and a supported chart type")
+
+    missing = [key for key in (*required, *chart_fields) if key not in data or data[key] is None or data[key] == "" or data[key] == []]
+    if missing:
+        raise ValueError(f"{arch} is missing source-backed content: {', '.join(dict.fromkeys(missing))}")
+
+    lists = set(required) | set(chart_fields)
+    limits = {
+        "channels": 4, "kpi_cards": 4, "columns": 5, "members": 5, "metrics": 5,
+        "risks": 4, "honors": 5, "pillars": 4, "stages": 5, "steps": 6, "gates": 6,
+        "milestones": 4, "slices": 6, "layers": 4, "tasks": 5,
+    }
+    for key in lists:
+        value = data.get(key)
+        if isinstance(value, list):
+            if not value:
+                raise ValueError(f"{arch}.{key} cannot be empty")
+            max_count = limits.get(key)
+            if max_count is not None and len(value) > max_count:
+                raise ValueError(f"{arch}.{key} exceeds the visible layout capacity; split the content across slides")
+
+    if arch.startswith("ARCH_02"):
+        if not isinstance(data["items"], list):
+            raise ValueError("ARCH_02.items must be a list of section titles")
+        if len(data["items"]) > 12:
+            raise ValueError("ARCH_02.items exceeds the one-page capacity of 12 readable entries; condense or group section names")
+        for index, item in enumerate(data["items"]):
+            title = item.get("title") if isinstance(item, dict) else item
+            if not isinstance(title, str) or not title.strip():
+                raise ValueError(f"ARCH_02.items[{index}] needs a title")
+    if arch.startswith("ARCH_15"):
+        for index, item in enumerate(data["channels"]):
+            if not isinstance(item, dict) or not item.get("title") or not item.get("desc"):
+                raise ValueError(f"ARCH_15.channels[{index}] needs a source-backed title and description")
+    row_fields = {
+        "ARCH_04": {"kpi_cards": ("number|metric", "label")},
+        "ARCH_05": {"columns": ("header",)},
+        "ARCH_12": {"members": ("name", "title", "role")},
+        "ARCH_18": {"metrics": ("number", "label", "desc")},
+        "ARCH_23": {"risks": ("level", "title", "desc", "impact", "probability", "response", "prevent", "owner", "timeline")},
+        "ARCH_24": {"pillars": ("en_title", "cn_title", "slogan", "details", "commitment")},
+        "ARCH_33": {"honors": ("badge", "title", "org", "metric")},
+        "ARCH_06": {"stages": ("phase", "title", "desc")},
+        "ARCH_25": {"steps": ("phase", "title", "subtitle", "actions", "deliverable", "duration")},
+        "ARCH_27": {"steps": ("ver", "title", "desc")},
+        "ARCH_28": {"gates": ("gate", "title")},
+        "ARCH_30": {"milestones": ("year", "title", "desc")},
+        "ARCH_26": {"stages": ("stage", "value", "desc")},
+        "ARCH_09": {"modules": ("title", "desc")},
+        "ARCH_34": {"partners": ("category", "title", "desc")},
+        "ARCH_08": {"layers": ("layer_name", "headline", "modules")},
+        "ARCH_31": {"pillars": ("title", "desc")},
+        "ARCH_14": {"nodes": ("title", "desc")},
+        "ARCH_32": {"nodes": ("title", "desc")},
+    }
+    if arch == "ARCH_06_CONCENTRIC_HUB":
+        required_rows = {"nodes": ("title", "desc")}
+    else:
+        required_rows = next((fields for prefix, fields in row_fields.items()
+                              if arch.startswith(prefix)), {})
+    for key, fields in required_rows.items():
+        for index, row in enumerate(data.get(key, [])):
+            if not isinstance(row, dict):
+                raise ValueError(f"{arch}.{key}[{index}] must be an object with source-backed fields")
+            for field in fields:
+                alternatives = field.split("|")
+                if not any(row.get(option) not in (None, "", []) for option in alternatives):
+                    raise ValueError(f"{arch}.{key}[{index}] is missing {field}")
+    if arch.startswith("ARCH_25"):
+        for index, step in enumerate(data["steps"]):
+            actions = step["actions"]
+            if not isinstance(actions, list) or not actions or len(actions) > 3:
+                raise ValueError(f"ARCH_25.steps[{index}].actions needs a short source-backed list")
+    if arch.startswith("ARCH_17"):
+        for index, item in enumerate(data["slices"]):
+            if not isinstance(item, dict) or not item.get("label") or item.get("value") is None:
+                raise ValueError(f"ARCH_17.slices[{index}] needs a source-backed label and value")
+    if arch in ("ARCH_16_CHART_BAR_TREND", "ARCH_16_BAR_CHART", "ARCH_16_CHART_TREND"):
+        if not data["series"] or not data["categories"] or not data["summary_bullets"]:
+            raise ValueError(f"{arch} requires categories, populated series, and evidence-based insights")
+        for index, item in enumerate(data["series"]):
+            if not isinstance(item, dict) or not item.get("name") or not item.get("values"):
+                raise ValueError(f"{arch}.series[{index}] needs a name and values")
+            if len(data["categories"]) != len(item["values"]):
+                raise ValueError(f"{arch}.series[{index}] values must match its category count")
+    if arch.startswith("ARCH_16_RICH_CHART") and not (data.get("insights") or data.get("bullets")):
+        raise ValueError("ARCH_16_RICH_CHART requires evidence-based insights or bullets")
+    if arch.startswith("ARCH_29"):
+        for index, row in enumerate(data["tasks"]):
+            if not isinstance(row, list) or len(row) != 6 or not row[0] or not row[1]:
+                raise ValueError(f"ARCH_29.tasks[{index}] needs a task, owner, and all time-period cells")
+    if arch.startswith("ARCH_20"):
+        for field in ("strengths", "weaknesses", "opportunities", "threats"):
+            if len(data[field]) > 3:
+                raise ValueError(f"ARCH_20.{field} has more points than the quadrant displays")
+    if arch.startswith(("ARCH_16", "ARCH_17")):
+        categories = data.get("categories")
+        for series in data.get("series", []):
+            if not isinstance(series, dict) or not series.get("values"):
+                raise ValueError(f"{arch} data series needs source-backed values")
+            if categories is not None and len(categories) != len(series["values"]):
+                raise ValueError(f"{arch} categories and series do not match")
+
+    if arch.startswith("ARCH_16") and chart_kind == "radar":
+        categories = data.get("categories")
+        series_data = data.get("series")
+        if not isinstance(categories, list) or not 3 <= len(categories) <= 6:
+            raise ValueError("Radar charts require 3 to 6 source-backed categories")
+        if any(not isinstance(label, str) or not label.strip() for label in categories):
+            raise ValueError("Radar chart categories must be non-empty strings")
+        if not isinstance(series_data, list) or not series_data:
+            raise ValueError("Radar charts require at least one source-backed series")
+        for index, series in enumerate(series_data):
+            if not isinstance(series, dict) or not isinstance(series.get("name"), str) or not series["name"].strip():
+                raise ValueError(f"Radar series {index} needs a source-backed name")
+            values = series.get("values")
+            if not isinstance(values, list) or len(values) != len(categories):
+                raise ValueError(f"Radar series {index} needs one value for every category")
+            if any(isinstance(value, bool) or not isinstance(value, (int, float))
+                   or not math.isfinite(value) for value in values):
+                raise ValueError(f"Radar series {index} values must be finite numbers")
+
+    if arch.startswith("ARCH_16") and not data.get("full_width", False):
+        insight_content = data.get("insights") or data.get("bullets")
+        if arch in ("ARCH_16_CHART_BAR_TREND", "ARCH_16_BAR_CHART", "ARCH_16_CHART_TREND"):
+            insight_content = insight_content or data.get("summary_bullets")
+        if not insight_content:
+            raise ValueError(f"{arch} requires source-backed insights for its insight panel")
 
 
 def calc_autofit_fontsize(text: str, base_size: float = 11.0, min_size: float = 9.5,
@@ -111,17 +317,27 @@ class ChintPresentationEngine:
     def __init__(self, media_dir: Optional[str] = None, templates_dir: Optional[str] = None):
         self.media_dir = media_dir or MEDIA_DIR
         self.templates_dir = templates_dir or TEMPLATES_DIR
+        self._toc_layout = None
+        self._toc_template_shapes = []
+        self._toc_template_geometry = []
         
         tmpl_file = resolve_template_path(self.templates_dir)
         if tmpl_file and os.path.exists(tmpl_file):
             self.prs = Presentation(tmpl_file)
+            if len(self.prs.slides) < 2:
+                raise ValueError("The CHINT template is missing its contents page")
+            template_toc = self.prs.slides[1]
+            self._toc_layout = template_toc.slide_layout
+            self._toc_template_shapes = [deepcopy(shape._element) for shape in template_toc.shapes]
+            self._toc_template_geometry = [(shape.left, shape.top, shape.width, shape.height)
+                                           for shape in template_toc.shapes]
             for i in range(len(self.prs.slides) - 1, -1, -1):
                 r_id = self.prs.slides._sldIdLst[i].rId
                 self.prs.part.drop_rel(r_id)
                 del self.prs.slides._sldIdLst[i]
         else:
-            self.prs = Presentation()
-            
+            raise FileNotFoundError(f"Required CHINT template was not found: {os.path.join(self.templates_dir, '26年模板拓新体.pptx')}")
+
         self.prs.slide_width = Inches(13.333)
         self.prs.slide_height = Inches(7.5)
         self.blank_layout = self.prs.slide_layouts[0] if len(self.prs.slide_layouts) > 0 else self.prs.slide_layouts[0]
@@ -133,16 +349,98 @@ class ChintPresentationEngine:
         )
 
     def _find_media(self, base_name: str) -> Optional[str]:
-        for ext in [".jpg", ".jpeg", ".png"]:
-            p = os.path.join(self.media_dir, base_name + ext)
-            if os.path.exists(p):
-                return p
+        for extension in (".jpg", ".jpeg", ".png"):
+            path = os.path.join(self.media_dir, base_name + extension)
+            if os.path.isfile(path):
+                return path
         return None
+
+    @staticmethod
+    def _set_existing_text(shape, value: str) -> None:
+        paragraph = shape.text_frame.paragraphs[0]
+        runs = paragraph.runs
+        if runs:
+            runs[0].text = value
+            for run in runs[1:]:
+                run.text = ""
+        else:
+            paragraph.add_run().text = value
+
+    def _add_template_toc_page(self, items):
+        """Fill the original contents artwork on one page; adapt rows and text to fit."""
+        if self._toc_layout is None or len(self._toc_template_shapes) != 35:
+            raise ValueError("The CHINT contents slide does not match the expected 35-shape template layout")
+        if not 1 <= len(items) <= 12:
+            raise ValueError("The CHINT contents page supports up to 12 readable entries. Condense or group the section names to keep one page.")
+
+        shapes_per_row = 7
+        source_row_tops = [self._toc_template_shapes[index * shapes_per_row].xpath("./p:spPr/a:xfrm/a:off")[0]
+                           for index in range(5)]
+        source_card = self._toc_template_shapes[0].xpath("./p:spPr/a:xfrm/a:ext")[0]
+        source_left = int(source_row_tops[0].get("x"))
+        source_top = int(source_row_tops[0].get("y"))
+        source_card_height = int(source_card.get("cy"))
+        content_bottom = int(source_row_tops[4].get("y")) + int(self._toc_template_shapes[28].xpath("./p:spPr/a:xfrm/a:ext")[0].get("cy"))
+        content_height = content_bottom - source_top
+
+        row_step = int(content_height / len(items)) if len(items) > 5 else 0
+        row_height = min(source_card_height, int(row_step * 0.9)) if len(items) > 5 else source_card_height
+        scale_y = row_height / source_card_height
+
+        slide = self.prs.slides.add_slide(self._toc_layout)
+        for placeholder in list(slide.placeholders):
+            placeholder._element.getparent().remove(placeholder._element)
+
+        from core.common import shell_font_path, text_width_in
+        font_path = shell_font_path()
+        for index, source_item in enumerate(items):
+            target_left = source_left
+            source_slot = index % 5
+            source_row_top = int(source_row_tops[source_slot].get("y"))
+            target_top = (source_top + index * row_step + int((row_step - row_height) / 2)
+                          if len(items) > 5 else source_row_top)
+            label = source_item.get("title", "") if isinstance(source_item, dict) else str(source_item)
+
+            for shape_slot in range(shapes_per_row):
+                source_element = self._toc_template_shapes[source_slot * shapes_per_row + shape_slot]
+                element = deepcopy(source_element)
+                for metadata in list(element.iter()):
+                    if metadata.tag == "{http://schemas.openxmlformats.org/presentationml/2006/main}tags":
+                        metadata.getparent().remove(metadata)
+                slide.shapes._spTree.append(element)
+                shape = slide.shapes[-1]
+                source_geometry = self._toc_template_geometry[source_slot * shapes_per_row + shape_slot]
+                shape.left = target_left + source_geometry[0] - source_left
+                shape.top = target_top + int((source_geometry[1] - source_row_top) * scale_y)
+                shape.width = source_geometry[2]
+                shape.height = int(source_geometry[3] * scale_y)
+
+            row_start = index * shapes_per_row
+            self._set_existing_text(slide.shapes[row_start + 2], f"{index + 1:02d}")
+            title_shape = slide.shapes[row_start + 4]
+            self._set_existing_text(title_shape, label)
+            title_shape.text_frame.word_wrap = False
+            title_paragraph = title_shape.text_frame.paragraphs[0]
+            source_size = title_paragraph.runs[0].font.size.pt if title_paragraph.runs and title_paragraph.runs[0].font.size else 18.0
+            text_box_width = max(0.1, title_shape.width / 914400 - 0.08)
+            text_box_height = max(0.1, title_shape.height / 914400 - 0.04)
+            font_size = min(source_size * scale_y, text_box_height * 72 * 0.78)
+            if font_size < 7.5:
+                raise ValueError("TOC entries cannot fit legibly on one page. Reduce the number of sections.")
+            measured = text_width_in(label, font_size, font_path)
+            while measured is not None and measured > text_box_width and font_size > 7.5:
+                font_size -= 0.5
+                measured = text_width_in(label, font_size, font_path)
+            if measured is not None and measured > text_box_width:
+                raise ValueError(f"TOC entry '{label}' is too long to fit legibly on one page. Shorten its title.")
+            for run in title_paragraph.runs:
+                run.font.size = Pt(max(7.5, font_size))
+        return slide
 
     def _add_body_master(self, slide, title: str, category: Optional[str] = None):
         if not getattr(self, "has_master_logo", False):
-            badge_path = self._find_media("chint_badge")
-            if badge_path:
+            badge_path = os.path.join(self.media_dir, "chint_badge.png")
+            if os.path.exists(badge_path):
                 slide.shapes.add_picture(badge_path, Inches(11.4), Inches(0.0), Inches(1.53), Inches(1.15))
             
         tb = slide.shapes.add_textbox(Inches(0.8), Inches(0.45), Inches(10.5), Inches(0.8))
@@ -172,9 +470,13 @@ class ChintPresentationEngine:
     def _render_master_frame(self, slide, s_data: Dict[str, Any], arch: str):
         """Engine 1: Master Frames (Cover, TOC, Chapter, Closing, Contact)"""
         if arch.startswith("ARCH_01"):
-            cover_bg = self._find_media("cover_26_bg") or self._find_media("image2")
+            cover_bg = self._find_media("cover_26_bg")
             if cover_bg:
                 slide.shapes.add_picture(cover_bg, Inches(0), Inches(0), Inches(13.333), Inches(7.5))
+            else:
+                cover_img = os.path.join(self.media_dir, "image2.jpeg")
+                if os.path.exists(cover_img):
+                    slide.shapes.add_picture(cover_img, Inches(0), Inches(0), Inches(13.333), Inches(7.5))
 
             bar1 = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(3.93), Inches(4.85), Inches(9.4), Inches(1.05))
             bar1.fill.solid()
@@ -194,118 +496,35 @@ class ChintPresentationEngine:
             tb_sub = slide.shapes.add_textbox(Inches(4.1), Inches(5.92), Inches(9.0), Inches(0.38))
             tf_sub = tb_sub.text_frame
             tf_sub.word_wrap = True
-            set_para(tf_sub.paragraphs[0], s_data.get("subtitle", ""), font_size=13, bold=False, color_rgb=C_WHITE)
+            cover_details = []
+            for key in ("subtitle", "date", "author"):
+                value = s_data.get(key, "")
+                if value:
+                    if not isinstance(value, str):
+                        raise ValueError(f"ARCH_01_COVER.{key} must be text")
+                    cover_details.append(value.strip())
+            cover_line = " · ".join(value for value in cover_details if value)
+            if cover_line:
+                from core.common import shell_font_path, text_width_in
+                font_size = 13
+                measured = text_width_in(cover_line, font_size, shell_font_path())
+                while measured is not None and measured > 8.8 and font_size > 8:
+                    font_size -= 0.5
+                    measured = text_width_in(cover_line, font_size, shell_font_path())
+                if measured is not None and measured > 8.8:
+                    raise ValueError("Cover subtitle, date, and author do not fit the template; shorten the supplied text")
+                set_para(tf_sub.paragraphs[0], cover_line, font_size=font_size,
+                         bold=False, color_rgb=C_WHITE)
 
         elif arch.startswith("ARCH_02"):
-            toc_bg = self._find_media("toc_26_bg")
-            if toc_bg:
-                slide.shapes.add_picture(toc_bg, Inches(0), Inches(0), Inches(13.333), Inches(7.5))
-            else:
-                ribbon = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0), Inches(0), Inches(4.7), Inches(7.5))
-                ribbon.fill.solid()
-                ribbon.fill.fore_color.rgb = C_BLUE
-                ribbon.line.fill.background()
-
-                tb_c = slide.shapes.add_textbox(Inches(0.8), Inches(3.2), Inches(3.1), Inches(1.2))
-                set_para(tb_c.text_frame.paragraphs[0], "CONTENTS", font_size=32, bold=True, color_rgb=C_WHITE, align=PP_ALIGN.CENTER)
-
-            if not getattr(self, "has_master_logo", False):
-                badge_path = self._find_media("chint_badge")
-                if badge_path:
-                    slide.shapes.add_picture(badge_path, Inches(11.4), Inches(0.0), Inches(1.53), Inches(1.15))
-
-            items = s_data.get("items", [])
-            tmpl_file = resolve_template_path(self.templates_dir)
-            
-            template_copied = False
-            if tmpl_file and os.path.exists(tmpl_file):
-                try:
-                    tmpl_prs = Presentation(tmpl_file)
-                    tmpl_slide2 = tmpl_prs.slides[1]
-                    target_spTree = slide.shapes._spTree
-                    num_items = len(items) if items else 5
-                    delta_w = 1097280
-                    
-                    for i in range(min(num_items, 5)):
-                        item_data = items[i]
-                        raw_title = item_data.get("title", "") if isinstance(item_data, dict) else str(item_data)
-                        clean_title = raw_title.lstrip("0123456789. 、：: ")
-                        
-                        for sub_i in range(7):
-                            src_shp = tmpl_slide2.shapes[i * 7 + sub_i]
-                            new_elem = deepcopy(src_shp._element)
-                            for cust in new_elem.xpath('.//p:custDataLst'):
-                                cust.getparent().remove(cust)
-                            
-                            xfrm = new_elem.xpath('.//a:xfrm')
-                            if xfrm:
-                                ext = xfrm[0].xpath('./a:ext')
-                                off = xfrm[0].xpath('./a:off')
-                                if sub_i in (0, 1, 4) and ext:
-                                    cur_cx = int(ext[0].get('cx'))
-                                    ext[0].set('cx', str(cur_cx + delta_w))
-                                elif sub_i in (5, 6) and off:
-                                    cur_x = int(off[0].get('x'))
-                                    off[0].set('x', str(cur_x + delta_w))
-                            
-                            if sub_i == 2:
-                                t_nodes = new_elem.xpath('.//a:t')
-                                if t_nodes: t_nodes[0].text = f"{i+1:02d}"
-                            if sub_i == 4:
-                                bodyPr = new_elem.xpath('.//a:bodyPr')
-                                if bodyPr: bodyPr[0].set('wrap', 'none')
-                                t_nodes = new_elem.xpath('.//a:t')
-                                if t_nodes: t_nodes[0].text = clean_title
-                            
-                            target_spTree.append(new_elem)
-                    template_copied = True
-                except Exception as e:
-                    print(f"[WARN] Failed to copy TOC template slide: {e}")
-                    template_copied = False
-
-            if not template_copied:
-                num_items = min(len(items), 5) if items else 5
-                base_tops = [Inches(1.30), Inches(2.29), Inches(3.28), Inches(4.27), Inches(5.26)]
-                pill_w, pill_h, pill_left = Inches(7.76), Inches(0.76), Inches(5.02)
-
-                for i in range(num_items):
-                    cur_top = base_tops[i]
-                    raw_title = items[i].get("title", "") if isinstance(items[i], dict) else str(items[i])
-                    clean_title = raw_title.lstrip("0123456789. 、：: ")
-
-                    outer_pill = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, pill_left, cur_top, pill_w, pill_h)
-                    outer_pill.fill.solid()
-                    outer_pill.fill.fore_color.rgb = C_BLUE_BG
-                    outer_pill.line.color.rgb = RGBColor(200, 225, 255)
-                    outer_pill.line.width = Pt(1.5)
-
-                    inner_card = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, pill_left + Inches(1.31), cur_top, pill_w - Inches(1.31), pill_h)
-                    inner_card.fill.solid()
-                    inner_card.fill.fore_color.rgb = C_WHITE
-                    inner_card.line.fill.background()
-
-                    tb_num = slide.shapes.add_textbox(pill_left + Inches(0.15), cur_top + Inches(0.08), Inches(0.7), Inches(0.6))
-                    set_para(tb_num.text_frame.paragraphs[0], f"{i+1:02d}", font_size=28, bold=True, color_rgb=C_BLUE)
-
-                    v_line = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, pill_left + Inches(0.99), cur_top + Inches(0.16), Inches(0.015), Inches(0.44))
-                    v_line.fill.solid()
-                    v_line.fill.fore_color.rgb = C_BORDER
-                    v_line.line.fill.background()
-
-                    tb_title = slide.shapes.add_textbox(pill_left + Inches(1.15), cur_top + Inches(0.13), pill_w - Inches(1.85), Inches(0.5))
-                    tf_title = tb_title.text_frame
-                    tf_title.word_wrap = False
-                    set_para(tf_title.paragraphs[0], clean_title, font_size=20, bold=True, color_rgb=C_DARK)
-
-                    for chv_x in (Inches(7.02), Inches(7.16)):
-                        chv = slide.shapes.add_shape(MSO_SHAPE.CHEVRON, pill_left + chv_x, cur_top + Inches(0.29), Inches(0.15), Inches(0.18))
-                        chv.fill.solid()
-                        chv.fill.fore_color.rgb = C_CYAN
-                        chv.line.fill.background()
+            raise RuntimeError("ARCH_02 must use the template-aware single-page contents renderer")
 
         elif arch == "ARCH_03_CHAPTER":
-            chap_banner = self._find_media("chapter_26_bg") or self._find_media("image7")
-            if chap_banner:
+            # Chapter dividers intentionally suppress the template's master badge.
+            slide._element.set("showMasterSp", "0")
+            chap_banner = os.path.join(self.media_dir, "chapter_26_bg_clean.jpg")
+            
+            if os.path.exists(chap_banner):
                 slide.shapes.add_picture(chap_banner, Inches(0), Inches(1.71), Inches(13.333), Inches(3.42))
             else:
                 band = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0), Inches(1.71), Inches(13.333), Inches(3.42))
@@ -317,11 +536,6 @@ class ChintPresentationEngine:
             line.fill.solid()
             line.fill.fore_color.rgb = C_CYAN
             line.line.fill.background()
-
-            if not getattr(self, "has_master_logo", False):
-                badge_path = self._find_media("chint_badge")
-                if badge_path:
-                    slide.shapes.add_picture(badge_path, Inches(11.4), Inches(0.0), Inches(1.53), Inches(1.15))
 
             title_text = s_data.get("title") or s_data.get("headline") or "添加章节标题"
             subtitle_text = s_data.get("subtitle") or s_data.get("category") or ""
@@ -341,10 +555,14 @@ class ChintPresentationEngine:
                 set_para(tf_c.paragraphs[0], title_text, font_size=32, bold=True, color_rgb=C_WHITE, align=PP_ALIGN.CENTER)
 
         elif arch.startswith("ARCH_11"):
-            closing_bg = self._find_media("closing_26_bg") or self._find_media("image6")
+            closing_bg = self._find_media("closing_26_bg")
             if closing_bg:
                 slide.shapes.add_picture(closing_bg, Inches(0), Inches(0), Inches(13.333), Inches(7.5))
             else:
+                closing_img = os.path.join(self.media_dir, "image6.jpeg")
+                if os.path.exists(closing_img):
+                    slide.shapes.add_picture(closing_img, Inches(0), Inches(0), Inches(13.333), Inches(7.5))
+
                 band = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0), Inches(5.2), Inches(13.333), Inches(0.8))
                 band.fill.solid()
                 band.fill.fore_color.rgb = C_BLUE
@@ -353,22 +571,38 @@ class ChintPresentationEngine:
                 tb_thx = slide.shapes.add_textbox(Inches(1.0), Inches(5.3), Inches(11.33), Inches(0.6))
                 set_para(tb_thx.text_frame.paragraphs[0], "THANKS", font_size=28, bold=True, color_rgb=C_WHITE, align=PP_ALIGN.CENTER)
 
-            tagline = s_data.get("tagline", "")
-            team = s_data.get("team", "")
-            sub_text = f"{tagline}  |  {team}" if tagline and team else (tagline or team or "")
+            contact = s_data.get("contact", "")
+            if contact:
+                tb_sub = slide.shapes.add_textbox(Inches(9.4), Inches(6.42), Inches(3.55), Inches(0.62))
+                tb_sub.text_frame.word_wrap = True
+                set_para(tb_sub.text_frame.paragraphs[0], contact, font_size=9, bold=False, color_rgb=C_MUTED, align=PP_ALIGN.RIGHT)
 
-            if sub_text:
-                tb_sub = slide.shapes.add_textbox(Inches(1.0), Inches(6.8), Inches(11.33), Inches(0.5))
-                set_para(tb_sub.text_frame.paragraphs[0], sub_text, font_size=11, bold=False, color_rgb=C_MUTED, align=PP_ALIGN.CENTER)
+            closing_details = []
+            for key in ("tagline", "team", "call_to_action"):
+                value = s_data.get(key, "")
+                if value:
+                    if not isinstance(value, str):
+                        raise ValueError(f"ARCH_11_CLOSING.{key} must be text")
+                    closing_details.append(value.strip())
+            closing_line = " · ".join(value for value in closing_details if value)
+            if closing_line:
+                from core.common import shell_font_path, text_width_in
+                font_size = 9
+                measured = text_width_in(closing_line, font_size, shell_font_path())
+                while measured is not None and measured > 11.0 and font_size > 7:
+                    font_size -= 0.5
+                    measured = text_width_in(closing_line, font_size, shell_font_path())
+                if measured is not None and measured > 11.0:
+                    raise ValueError("Closing tagline, team, and call to action do not fit the template; shorten the supplied text")
+                detail_box = slide.shapes.add_textbox(Inches(1.0), Inches(5.78), Inches(11.33), Inches(0.18))
+                detail_box.text_frame.word_wrap = False
+                self._set_tf_margins(detail_box.text_frame, top=0, bottom=0, left=4, right=4)
+                set_para(detail_box.text_frame.paragraphs[0], closing_line, font_size=font_size,
+                         bold=False, color_rgb=C_WHITE, align=PP_ALIGN.CENTER)
 
         elif arch.startswith("ARCH_15"):
             self._add_body_master(slide, s_data.get("title", "联系我们与办事处网点"), s_data.get("category", "服务网络"))
-            channels = s_data.get("channels", [
-                {"icon_label": "400", "title": "全国统一服务热线", "desc": "400-8877-666 (7×24h 快速响应)"},
-                {"icon_label": "商务", "title": "全球商务合作", "desc": "sales@chint.com / 渠道合作赋能"},
-                {"icon_label": "技术", "title": "方案与技术支持", "desc": "support@chint.com / 资深专家答疑"},
-                {"icon_label": "门户", "title": "官方门户网站", "desc": "www.chint.com / 获取最新白皮书"}
-            ])
+            channels = s_data["channels"]
             card_w, card_h, gap_y, top_m = Inches(5.6), Inches(1.1), Inches(0.18), Inches(1.6)
             
             for i, ch in enumerate(channels[:4]):
@@ -416,14 +650,7 @@ class ChintPresentationEngine:
             tf_r = tb_r.text_frame
             tf_r.word_wrap = True
             self._set_tf_margins(tf_r, top=8, bottom=8, left=8, right=8)
-            offices = s_data.get("offices", [
-                "华东大区总部：上海市松江区正泰启迪智电港",
-                "华北大区总部：北京市亦庄经济技术开发区",
-                "华南大区总部：广东省广州市天河区高新科技园",
-                "西部大区总部：四川省成都市高新区天府软件园",
-                "欧洲区域总部：德国法兰克福正泰欧洲创新中心",
-                "北美区域总部：美国加利福尼亚州正泰北美研发中心"
-            ])
+            offices = s_data["offices"]
             for j, o in enumerate(offices):
                 p = tf_r.paragraphs[0] if j == 0 else tf_r.add_paragraph()
                 set_para(p, f"• {o}", font_size=11.5, bold=False, color_rgb=C_DARK)
@@ -711,7 +938,7 @@ class ChintPresentationEngine:
         self._set_tf_margins(tf_r, top=8, bottom=8, left=8, right=8)
 
         if arch.startswith("ARCH_13"):
-            offices = s_data.get("offices", ["亚太总部：上海正泰园区", "欧洲总部：德国法兰克福", "北美总部：美国加利福尼亚", "中东总部：阿联酋迪拜"])
+            offices = s_data["offices"]
             set_para(tf_r.paragraphs[0], s_data.get("network_title", "主要区域总部与研发网点"), font_size=15, bold=True, color_rgb=C_BLUE)
             for o in offices:
                 p = tf_r.add_paragraph()
@@ -719,7 +946,7 @@ class ChintPresentationEngine:
                 p.space_before = Pt(10)
                 p.space_after = Pt(2)
         else:
-            bullets = s_data.get("bullets", ["项目背景：核心业务场景与关键改造需求", "解决方案：部署定制化产品与综合解决方案", "商业价值：达成预期运营效益与高可靠回报"])
+            bullets = s_data["bullets"]
             set_para(tf_r.paragraphs[0], s_data.get("narrative_title", "核心价值与项目实践拆解"), font_size=15, bold=True, color_rgb=C_BLUE)
             for j, b in enumerate(bullets):
                 p = tf_r.add_paragraph()
@@ -1983,19 +2210,29 @@ class ChintPresentationEngine:
         img_w_in = 11.73 if full_width else 6.5
         img_h_in = 5.0
         
+        chart_buf = None
         try:
             if chart_kind == "radar":
-                categories = s_data.get("categories", ["极限分断能力", "温升控制", "智能化感知", "低功耗表现", "结构紧凑度", "数字化运维"])
-                series_data = s_data.get("series", [
-                    {"name": "正泰 NXA 新一代", "values": [96, 92, 90, 88, 95, 94], "color": "#1E50E6"},
-                    {"name": "行业主流标杆", "values": [80, 82, 75, 72, 78, 70], "color": "#50C8FF"}
-                ])
-                chart_buf = ChintVectorChartBuilder.render_radar_chart(
-                    categories=categories,
-                    series_data=series_data,
-                    title=s_data.get("chart_title", ""),
-                    figsize=(img_w_in, img_h_in)
-                )
+                chart_data = CategoryChartData()
+                chart_data.categories = s_data["categories"]
+                for series in s_data["series"]:
+                    chart_data.add_series(series["name"], series["values"])
+                chart = slide.shapes.add_chart(
+                    XL_CHART_TYPE.RADAR, Inches(0.8), top_m, chart_w, chart_h, chart_data
+                ).chart
+                chart.has_legend = True
+                chart.legend.position = XL_LEGEND_POSITION.BOTTOM
+                chart.legend.include_in_layout = False
+                chart.value_axis.minimum_scale = min(0, min(min(series["values"]) for series in s_data["series"]))
+                for index, series in enumerate(chart.series):
+                    series.format.line.color.rgb = CHART_PALETTE[index % len(CHART_PALETTE)]
+                    series.format.line.width = Pt(2)
+                plot = chart.plots[0]
+                plot.has_data_labels = True
+                plot.data_labels.show_value = True
+                plot.data_labels.font.name = FONT_FAMILY
+                plot.data_labels.font.size = Pt(8.5)
+                plot.data_labels.font.color.rgb = C_DARK
             elif chart_kind in ("combo", "dual_axis"):
                 categories = s_data.get("categories", ["2022", "2023", "2024", "2025", "2026E"])
                 bar_series = s_data.get("bar_series", {
@@ -2101,12 +2338,8 @@ class ChintPresentationEngine:
                     figsize=(img_w_in, img_h_in)
                 )
             elif chart_kind in ("stacked_area", "area"):
-                categories = s_data.get("categories", ["2021", "2022", "2023", "2024", "2025", "2026E"])
-                series_data = s_data.get("series", [
-                    {"name": "新能源光伏配电", "values": [35, 52, 78, 110, 150, 205], "color": "#1E50E6"},
-                    {"name": "传统电网与工业", "values": [60, 68, 72, 76, 80, 85], "color": "#50C8FF"},
-                    {"name": "算力中心与高精", "values": [12, 20, 35, 55, 82, 120], "color": "#14C832"}
-                ])
+                categories = s_data["categories"]
+                series_data = s_data["series"]
                 chart_buf = ChintVectorChartBuilder.render_stacked_area_chart(
                     categories=categories,
                     series_data=series_data,
@@ -2115,19 +2348,13 @@ class ChintPresentationEngine:
                     figsize=(img_w_in, img_h_in)
                 )
             else:
-                chart_buf = ChintVectorChartBuilder.render_radar_chart(
-                    categories=["维度1", "维度2", "维度3", "维度4", "维度5"],
-                    series_data=[{"name": "正泰方案", "values": [90, 85, 95, 92, 88]}],
-                    figsize=(img_w_in, img_h_in)
-                )
-
-            slide.shapes.add_picture(chart_buf, Inches(0.8), top_m, chart_w, chart_h)
+                raise ValueError(f"Unsupported chart type: {chart_kind}")
         except Exception as e:
-            print(f"[WARN] _render_rich_chart rendering fallback: {e}")
-            fb_shape = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.8), top_m, chart_w, chart_h)
-            fb_shape.fill.solid()
-            fb_shape.fill.fore_color.rgb = C_LIGHT_BG
-            fb_shape.line.color.rgb = C_BORDER
+            raise ValueError(f"{arch} {chart_kind} chart rendering failed: {e}") from e
+
+        if chart_buf is not None:
+            slide.shapes.add_picture(chart_buf, Inches(0.8), top_m, chart_w, chart_h)
+            print(f"[WARN] {arch} is rendered as an image; chart data is not directly editable in PowerPoint.")
 
         if not full_width:
             right_w = Inches(4.9)
@@ -2155,11 +2382,7 @@ class ChintPresentationEngine:
             tf_b.word_wrap = True
             self._set_tf_margins(tf_b, top=6, bottom=6, left=6, right=6)
 
-            takeaways = s_data.get("insights", s_data.get("bullets", [
-                "技术指标全维度领先：在核心分断能力与温升控制上建立显著专利壁垒",
-                "数字化感知赋能：集成边缘 AI 算法，实现微秒级自愈与预测性维护",
-                "生态协同与降本：标准化架构降低系统集成成本达 35%"
-            ]))
+            takeaways = s_data.get("insights") or s_data.get("bullets") or []
 
             for j, t in enumerate(takeaways[:4]):
                 p = tf_b.paragraphs[0] if j == 0 else tf_b.add_paragraph()
@@ -2193,7 +2416,23 @@ class ChintPresentationEngine:
     # =========================================================================
 
     def build_from_payload(self, payload: Dict[str, Any], output_path: str):
+        output_path = str(ensure_output_path(output_path))
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+        if not isinstance(payload, dict):
+            raise ValueError("The JSON payload must be an object")
         slides_data = payload.get("slides", [])
+        if not isinstance(slides_data, list) or not slides_data:
+            raise ValueError("The JSON payload needs a non-empty slides array")
+        toc_count = sum(
+            1 for slide_data in slides_data
+            if isinstance(slide_data, dict)
+            and str(slide_data.get("archetype") or slide_data.get("type") or slide_data.get("layout") or slide_data.get("arch") or "").upper().startswith("ARCH_02")
+        )
+        if toc_count > 1:
+            raise ValueError("The presentation supports one single-page ARCH_02 contents slide; combine all section titles into its items list")
+        template_path = resolve_template_path(self.templates_dir)
+        if template_path and os.path.abspath(output_path) == os.path.abspath(template_path):
+            raise ValueError("The CHINT source template cannot be used as the output path")
 
         # 34 Archetype Semantic Alias Dispatch Router
         ENGINE_ROUTER = {
@@ -2309,7 +2548,14 @@ class ChintPresentationEngine:
         }
 
         for s_data in slides_data:
-            arch = (s_data.get("archetype") or s_data.get("type") or s_data.get("layout") or s_data.get("arch") or "ARCH_01_COVER").upper()
+            arch = (s_data.get("archetype") or s_data.get("type") or s_data.get("layout") or s_data.get("arch") or "").upper()
+            engine_fn = ENGINE_ROUTER.get(arch)
+            if engine_fn is None:
+                raise ValueError(f"Unknown CHINT slide archetype: {arch or '<missing>'}")
+            _validate_slide_payload(arch, s_data)
+            if arch.startswith("ARCH_02"):
+                self._add_template_toc_page(s_data["items"])
+                continue
             slide = self.prs.slides.add_slide(self.blank_layout)
 
             # Purge placeholder ghost shapes
@@ -2318,21 +2564,673 @@ class ChintPresentationEngine:
                     sp = shape._element
                     sp.getparent().remove(sp)
 
-            # Route to matched composition engine or fallback
-            engine_fn = ENGINE_ROUTER.get(arch, self._render_fallback)
             engine_fn(slide, s_data, arch)
 
+        if payload.get("validation_fixture") is True:
+            for slide in self.prs.slides:
+                fixture_mark = slide.shapes.add_shape(
+                    MSO_SHAPE.ROUNDED_RECTANGLE, Inches(4.9), Inches(0.06), Inches(3.6), Inches(0.3))
+                fixture_mark.fill.solid()
+                fixture_mark.fill.fore_color.rgb = C_RED_BG
+                fixture_mark.line.color.rgb = C_RED_TEXT
+                fixture_mark.text_frame.word_wrap = False
+                set_para(fixture_mark.text_frame.paragraphs[0],
+                         "TEST DATA ONLY · NOT PRODUCT CONTENT", font_size=7,
+                         bold=True, color_rgb=C_RED_TEXT, align=PP_ALIGN.CENTER)
+
+        from core.brand import apply_brand
+        badge = self._find_media("chint_badge")
+        if not badge:
+            raise FileNotFoundError("Required CHINT badge assets/media/chint_badge.png is missing")
+        apply_brand(self.prs, badge)
         self.prs.save(output_path)
         return output_path
 
 
+_EDIT_P_NS = "http://schemas.openxmlformats.org/presentationml/2006/main"
+_EDIT_A_NS = "http://schemas.openxmlformats.org/drawingml/2006/main"
+_EDIT_NS = {"p": _EDIT_P_NS, "a": _EDIT_A_NS}
+_EDIT_P_SP = f"{{{_EDIT_P_NS}}}sp"
+_EDIT_P_GRAPHIC_FRAME = f"{{{_EDIT_P_NS}}}graphicFrame"
+_EDIT_P_SP_TREE = f"{{{_EDIT_P_NS}}}spTree"
+_EDIT_A_TBL = f"{{{_EDIT_A_NS}}}tbl"
+_EDIT_CNVPR_PATHS = {
+    _EDIT_P_SP: f"{{{_EDIT_P_NS}}}nvSpPr/{{{_EDIT_P_NS}}}cNvPr",
+    _EDIT_P_GRAPHIC_FRAME: f"{{{_EDIT_P_NS}}}nvGraphicFramePr/{{{_EDIT_P_NS}}}cNvPr",
+    f"{{{_EDIT_P_NS}}}pic": f"{{{_EDIT_P_NS}}}nvPicPr/{{{_EDIT_P_NS}}}cNvPr",
+    f"{{{_EDIT_P_NS}}}cxnSp": f"{{{_EDIT_P_NS}}}nvCxnSpPr/{{{_EDIT_P_NS}}}cNvPr",
+    f"{{{_EDIT_P_NS}}}grpSp": f"{{{_EDIT_P_NS}}}nvGrpSpPr/{{{_EDIT_P_NS}}}cNvPr",
+}
+_EDIT_FILL_TAGS = {
+    f"{{{_EDIT_A_NS}}}{name}"
+    for name in ("noFill", "solidFill", "gradFill", "blipFill", "pattFill", "grpFill")
+}
+_EDIT_RUN_PROPERTY_ORDER = [
+    f"{{{_EDIT_A_NS}}}{name}"
+    for name in (
+        "ln", "noFill", "solidFill", "gradFill", "blipFill", "pattFill", "grpFill",
+        "effectLst", "effectDag", "highlight", "uLnTx", "uLn", "latin", "ea", "cs",
+        "sym", "hlinkClick", "hlinkMouseOver", "rtl", "extLst",
+    )
+]
+_EDIT_ALIGNMENT = {"left": "l", "center": "ctr", "right": "r", "justify": "just"}
+_EDIT_EMU_PER_INCH = 914400
+
+
+def _edit_shape_kind(element):
+    if element.tag == _EDIT_P_SP and element.find(f"{{{_EDIT_P_NS}}}txBody") is not None:
+        return "text"
+    if element.tag == _EDIT_P_GRAPHIC_FRAME and element.find(f".//{_EDIT_A_TBL}") is not None:
+        return "table"
+    return "unsupported"
+
+
+def _edit_text_body_text(text_body):
+    paragraphs = []
+    for paragraph in text_body.findall(f"./{{{_EDIT_A_NS}}}p"):
+        pieces = []
+        for child in paragraph:
+            if child.tag == f"{{{_EDIT_A_NS}}}br":
+                pieces.append("\v")
+            elif child.tag in (f"{{{_EDIT_A_NS}}}r", f"{{{_EDIT_A_NS}}}fld"):
+                text_node = child.find(f"./{{{_EDIT_A_NS}}}t")
+                if text_node is not None:
+                    pieces.append(text_node.text or "")
+        paragraphs.append("".join(pieces))
+    return "\n".join(paragraphs)
+
+
+def _edit_table_text(table):
+    rows = []
+    for row in table.findall(f"./{{{_EDIT_A_NS}}}tr"):
+        cells = []
+        for cell in row.findall(f"./{{{_EDIT_A_NS}}}tc"):
+            text_body = cell.find(f"./{{{_EDIT_A_NS}}}txBody")
+            cells.append(_edit_text_body_text(text_body) if text_body is not None else "")
+        rows.append("\t".join(cells))
+    return "\n".join(rows)
+
+
+def _edit_run_groups(paragraph):
+    """Return adjacent editable text runs, separated by fields or other paragraph markup."""
+    groups = []
+    current = []
+    for child in paragraph:
+        if child.tag == f"{{{_EDIT_A_NS}}}r":
+            text_node = child.find(f"./{{{_EDIT_A_NS}}}t")
+            if text_node is not None:
+                current.append((child, text_node, text_node.text or ""))
+                continue
+        if current:
+            groups.append(current)
+            current = []
+    if current:
+        groups.append(current)
+    return groups
+
+
+def _edit_create_run(source_run, text):
+    run = etree.Element(f"{{{_EDIT_A_NS}}}r")
+    if source_run is not None:
+        r_pr = source_run.find(f"./{{{_EDIT_A_NS}}}rPr")
+        if r_pr is not None:
+            run.append(deepcopy(r_pr))
+    text_node = etree.SubElement(run, f"{{{_EDIT_A_NS}}}t")
+    text_node.text = text
+    if text[:1].isspace() or text[-1:].isspace():
+        text_node.set("{http://www.w3.org/XML/1998/namespace}space", "preserve")
+    return run
+
+
+def _edit_create_break(source_run):
+    line_break = etree.Element(f"{{{_EDIT_A_NS}}}br")
+    if source_run is not None:
+        r_pr = source_run.find(f"./{{{_EDIT_A_NS}}}rPr")
+        if r_pr is not None:
+            line_break.append(deepcopy(r_pr))
+    return line_break
+
+
+def _edit_replace_full_text_body(text_body, replacement, operation_number):
+    old_paragraphs = text_body.findall(f"./{{{_EDIT_A_NS}}}p")
+    paragraph_tags = {
+        f"{{{_EDIT_A_NS}}}pPr", f"{{{_EDIT_A_NS}}}r", f"{{{_EDIT_A_NS}}}fld",
+        f"{{{_EDIT_A_NS}}}br", f"{{{_EDIT_A_NS}}}endParaRPr",
+        f"{{{_EDIT_A_NS}}}extLst",
+    }
+    for paragraph in old_paragraphs:
+        if paragraph.find(f".//{{{_EDIT_A_NS}}}fld") is not None:
+            raise ValueError(f"operation {operation_number}: full-text replacement cannot alter fields")
+        if any(child.tag not in paragraph_tags for child in paragraph):
+            raise ValueError(f"operation {operation_number}: full-text replacement cannot alter custom paragraph markup")
+        if any((run.find(f"./{{{_EDIT_A_NS}}}rPr/{{{_EDIT_A_NS}}}hlinkClick") is not None)
+               for run in paragraph.findall(f"./{{{_EDIT_A_NS}}}r")):
+            raise ValueError(f"operation {operation_number}: full-text replacement cannot alter hyperlinks")
+
+    normalized = replacement.replace("\r\n", "\n").replace("\r", "\n")
+    new_paragraphs = []
+    for index, paragraph_text in enumerate(normalized.split("\n")):
+        source_paragraph = old_paragraphs[min(index, len(old_paragraphs) - 1)] if old_paragraphs else None
+        paragraph = etree.Element(f"{{{_EDIT_A_NS}}}p")
+        source_run = None
+        if source_paragraph is not None:
+            p_pr = source_paragraph.find(f"./{{{_EDIT_A_NS}}}pPr")
+            if p_pr is not None:
+                paragraph.append(deepcopy(p_pr))
+            source_runs = source_paragraph.findall(f"./{{{_EDIT_A_NS}}}r")
+            source_run = source_runs[0] if source_runs else None
+
+        for line_index, line in enumerate(paragraph_text.split("\v")):
+            if line_index:
+                paragraph.append(_edit_create_break(source_run))
+            if line:
+                paragraph.append(_edit_create_run(source_run, line))
+
+        if source_paragraph is not None:
+            end_properties = source_paragraph.find(f"./{{{_EDIT_A_NS}}}endParaRPr")
+            if end_properties is not None:
+                paragraph.append(deepcopy(end_properties))
+            extension = source_paragraph.find(f"./{{{_EDIT_A_NS}}}extLst")
+            if extension is not None:
+                paragraph.append(deepcopy(extension))
+        new_paragraphs.append(paragraph)
+
+    insertion_index = (text_body.index(old_paragraphs[0]) if old_paragraphs else len(text_body))
+    for paragraph in old_paragraphs:
+        text_body.remove(paragraph)
+    for offset, paragraph in enumerate(new_paragraphs):
+        text_body.insert(insertion_index + offset, paragraph)
+
+
+def _edit_replace_text(text_body, current_text, old_text, new_text, operation_number):
+    if old_text == current_text:
+        _edit_replace_full_text_body(text_body, new_text, operation_number)
+        return
+    if not old_text:
+        raise ValueError(f"operation {operation_number}: empty from is allowed only for an empty target")
+    if "\n" in old_text or "\r" in old_text or "\v" in old_text:
+        raise ValueError(f"operation {operation_number}: a partial replacement cannot cross paragraph or line breaks")
+
+    matches = []
+    for paragraph in text_body.findall(f"./{{{_EDIT_A_NS}}}p"):
+        for group in _edit_run_groups(paragraph):
+            combined = "".join(value for _run, _node, value in group)
+            offset = 0
+            while True:
+                start = combined.find(old_text, offset)
+                if start < 0:
+                    break
+                matches.append((paragraph, group, start, start + len(old_text)))
+                offset = start + 1
+    if len(matches) != 1:
+        raise ValueError(f"operation {operation_number}: from must match exactly once within a paragraph")
+
+    paragraph, group, match_start, match_end = matches[0]
+    spans = []
+    offset = 0
+    for run, text_node, value in group:
+        spans.append((run, text_node, value, offset, offset + len(value)))
+        offset += len(value)
+    affected = [item for item in spans if item[3] < match_end and item[4] > match_start]
+    start_run, _start_node, start_value, start_at, _start_end = affected[0]
+    end_run, _end_node, end_value, end_at, _end_end = affected[-1]
+    prefix = start_value[:match_start - start_at]
+    suffix = end_value[match_end - end_at:]
+
+    normalized = new_text.replace("\r\n", "\n").replace("\r", "\n")
+    lines = re.split(r"\n|\v", normalized)
+    replacement_nodes = []
+    first_line = prefix + lines[0]
+    if first_line:
+        replacement_nodes.append(_edit_create_run(start_run, first_line))
+    for line in lines[1:]:
+        replacement_nodes.append(_edit_create_break(start_run))
+        if line:
+            replacement_nodes.append(_edit_create_run(start_run, line))
+    if suffix:
+        replacement_nodes.append(_edit_create_run(end_run, suffix))
+
+    parent = start_run.getparent()
+    siblings = list(parent)
+    start_index, end_index = siblings.index(start_run), siblings.index(end_run)
+    for child in siblings[start_index:end_index + 1]:
+        parent.remove(child)
+    for offset, child in enumerate(replacement_nodes):
+        parent.insert(start_index + offset, child)
+
+
+def _edit_insert_ordered(parent, child):
+    order = {tag: index for index, tag in enumerate(_EDIT_RUN_PROPERTY_ORDER)}
+    child_order = order.get(child.tag, len(order))
+    for index, existing in enumerate(list(parent)):
+        if order.get(existing.tag, len(order)) > child_order:
+            parent.insert(index, child)
+            return
+    parent.append(child)
+
+
+def _edit_ensure_paragraph_properties(paragraph):
+    p_pr = paragraph.find(f"./{{{_EDIT_A_NS}}}pPr")
+    if p_pr is None:
+        p_pr = etree.Element(f"{{{_EDIT_A_NS}}}pPr")
+        paragraph.insert(0, p_pr)
+    return p_pr
+
+
+def _edit_ensure_run_properties(run):
+    r_pr = run.find(f"./{{{_EDIT_A_NS}}}rPr")
+    if r_pr is None:
+        r_pr = etree.Element(f"{{{_EDIT_A_NS}}}rPr")
+        run.insert(0, r_pr)
+    return r_pr
+
+
+def _edit_set_run_property(r_pr, style):
+    if "font_size_pt" in style:
+        r_pr.set("sz", str(round(float(style["font_size_pt"]) * 100)))
+    if "bold" in style:
+        r_pr.set("b", "1" if style["bold"] else "0")
+    if "italic" in style:
+        r_pr.set("i", "1" if style["italic"] else "0")
+    if "font_color" in style:
+        for child in list(r_pr):
+            if child.tag in _EDIT_FILL_TAGS:
+                r_pr.remove(child)
+        solid_fill = etree.Element(f"{{{_EDIT_A_NS}}}solidFill")
+        rgb = etree.SubElement(solid_fill, f"{{{_EDIT_A_NS}}}srgbClr")
+        rgb.set("val", style["font_color"])
+        _edit_insert_ordered(r_pr, solid_fill)
+    if "font_family" in style:
+        for script in ("latin", "ea", "cs"):
+            tag = f"{{{_EDIT_A_NS}}}{script}"
+            node = r_pr.find(f"./{tag}")
+            if node is None:
+                node = etree.Element(tag)
+                _edit_insert_ordered(r_pr, node)
+            node.set("typeface", style["font_family"])
+
+
+def _edit_apply_style(text_body, style, operation_number):
+    if not isinstance(style, dict):
+        raise ValueError(f"operation {operation_number}: style must be an object")
+    style = dict(style)
+    allowed = {"font_family", "font_size_pt", "font_color", "alignment", "bold", "italic"}
+    unknown = set(style) - allowed
+    if unknown:
+        raise ValueError(f"operation {operation_number}: unsupported style fields: {', '.join(sorted(unknown))}")
+    if not style:
+        raise ValueError(f"operation {operation_number}: style cannot be empty")
+    if "font_family" in style and (not isinstance(style["font_family"], str) or not style["font_family"].strip()):
+        raise ValueError(f"operation {operation_number}: font_family must be a non-empty string")
+    if "font_size_pt" in style:
+        size = style["font_size_pt"]
+        if isinstance(size, bool) or not isinstance(size, (int, float)) or not math.isfinite(size) or not 1 <= size <= 200:
+            raise ValueError(f"operation {operation_number}: font_size_pt must be between 1 and 200")
+    if "font_color" in style:
+        if not isinstance(style["font_color"], str):
+            raise ValueError(f"operation {operation_number}: font_color must be a six-digit RGB string")
+        color = style["font_color"].removeprefix("#")
+        if re.fullmatch(r"[0-9A-Fa-f]{6}", color) is None:
+            raise ValueError(f"operation {operation_number}: font_color must be a six-digit RGB color")
+        style["font_color"] = color.upper()
+    if "alignment" in style and (not isinstance(style["alignment"], str)
+                                  or style["alignment"] not in _EDIT_ALIGNMENT):
+        raise ValueError(f"operation {operation_number}: alignment must be left, center, right, or justify")
+    for key in ("bold", "italic"):
+        if key in style and not isinstance(style[key], bool):
+            raise ValueError(f"operation {operation_number}: {key} must be a boolean")
+
+    paragraphs = text_body.findall(f"./{{{_EDIT_A_NS}}}p")
+    if not paragraphs:
+        raise ValueError(f"operation {operation_number}: target has no editable paragraphs")
+    for paragraph in paragraphs:
+        p_pr = paragraph.find(f"./{{{_EDIT_A_NS}}}pPr")
+        if "alignment" in style:
+            p_pr = p_pr if p_pr is not None else _edit_ensure_paragraph_properties(paragraph)
+            p_pr.set("algn", _EDIT_ALIGNMENT[style["alignment"]])
+        if set(style) - {"alignment"}:
+            run_properties = []
+            for run in paragraph:
+                if run.tag in (f"{{{_EDIT_A_NS}}}r", f"{{{_EDIT_A_NS}}}fld"):
+                    run_properties.append(_edit_ensure_run_properties(run))
+            if p_pr is not None:
+                default_rpr = p_pr.find(f"./{{{_EDIT_A_NS}}}defRPr")
+                if default_rpr is not None:
+                    run_properties.append(default_rpr)
+            end_rpr = paragraph.find(f"./{{{_EDIT_A_NS}}}endParaRPr")
+            if end_rpr is not None:
+                run_properties.append(end_rpr)
+            if not run_properties:
+                p_pr = p_pr if p_pr is not None else _edit_ensure_paragraph_properties(paragraph)
+                default_rpr = etree.Element(f"{{{_EDIT_A_NS}}}defRPr")
+                p_pr.append(default_rpr)
+                run_properties.append(default_rpr)
+            for r_pr in run_properties:
+                _edit_set_run_property(r_pr, style)
+
+
+def _edit_apply_geometry(shape, geometry, slide_width, slide_height, operation_number):
+    allowed = {"left", "top", "width", "height"}
+    unknown = set(geometry) - allowed
+    if unknown or not geometry:
+        raise ValueError(f"operation {operation_number}: geometry_in accepts left, top, width, height")
+    if shape.tag == _EDIT_P_SP:
+        xfrm = shape.find(f"./{{{_EDIT_P_NS}}}spPr/{{{_EDIT_A_NS}}}xfrm")
+    else:
+        xfrm = shape.find(f"./{{{_EDIT_P_NS}}}xfrm")
+    if xfrm is None:
+        raise ValueError(f"operation {operation_number}: target has no editable geometry")
+    offset = xfrm.find(f"./{{{_EDIT_A_NS}}}off")
+    extent = xfrm.find(f"./{{{_EDIT_A_NS}}}ext")
+    if offset is None or extent is None:
+        raise ValueError(f"operation {operation_number}: target geometry is incomplete")
+    values = {
+        "left": int(offset.get("x")), "top": int(offset.get("y")),
+        "width": int(extent.get("cx")), "height": int(extent.get("cy")),
+    }
+    for key, value in geometry.items():
+        if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
+            raise ValueError(f"operation {operation_number}: geometry {key} must be a finite number of inches")
+        values[key] = round(value * _EDIT_EMU_PER_INCH)
+    if (values["left"] < 0 or values["top"] < 0 or values["width"] <= 0 or values["height"] <= 0
+            or values["left"] + values["width"] > slide_width
+            or values["top"] + values["height"] > slide_height):
+        raise ValueError(f"operation {operation_number}: geometry must remain within the slide bounds")
+    offset.set("x", str(values["left"]))
+    offset.set("y", str(values["top"]))
+    extent.set("cx", str(values["width"]))
+    extent.set("cy", str(values["height"]))
+
+
+def _edit_shape_fingerprints(root):
+    sp_tree = root.find(f".//{{{_EDIT_P_NS}}}spTree")
+    if sp_tree is None:
+        return {}
+    result = {}
+    for element in sp_tree:
+        path = _EDIT_CNVPR_PATHS.get(element.tag)
+        if path is None:
+            continue
+        c_nv_pr = element.find(path)
+        if c_nv_pr is not None and c_nv_pr.get("id"):
+            result[c_nv_pr.get("id")] = etree.tostring(element, method="c14n")
+    return result
+
+
+def _edit_apply_operation(root, operation, operation_number, expected_slide_part,
+                          slide_width, slide_height):
+    if not isinstance(operation, dict):
+        raise ValueError(f"operation {operation_number} must be an object")
+    allowed = {"slide", "slide_part", "shape_id", "shape_name", "target_type", "expected_text",
+               "cell", "replace_text", "style", "geometry_in"}
+    unknown = set(operation) - allowed
+    if unknown:
+        raise ValueError(f"operation {operation_number} has unsupported fields: {', '.join(sorted(unknown))}")
+    slide_number, shape_id = operation.get("slide"), operation.get("shape_id")
+    if isinstance(slide_number, bool) or not isinstance(slide_number, int) or slide_number < 1:
+        raise ValueError(f"operation {operation_number}: slide must be a one-based integer")
+    if isinstance(shape_id, bool) or not isinstance(shape_id, int) or shape_id < 1:
+        raise ValueError(f"operation {operation_number}: shape_id must be a positive integer")
+    if operation.get("slide_part") != expected_slide_part:
+        raise ValueError(f"operation {operation_number}: slide_part does not match the inspected source")
+    if not isinstance(operation.get("shape_name"), str):
+        raise ValueError(f"operation {operation_number}: shape_name from editable-target inventory is required")
+    if operation.get("target_type") not in {"text", "table"}:
+        raise ValueError(f"operation {operation_number}: target_type must be text or table")
+    if not any(key in operation for key in ("replace_text", "style", "geometry_in")):
+        raise ValueError(f"operation {operation_number}: no edit action was provided")
+
+    sp_tree = root.find(f".//{{{_EDIT_P_NS}}}spTree")
+    if sp_tree is None:
+        raise ValueError(f"operation {operation_number}: slide has no shape tree")
+    matches = []
+    for element in sp_tree.iter():
+        path = _EDIT_CNVPR_PATHS.get(element.tag)
+        if path is None:
+            continue
+        c_nv_pr = element.find(path)
+        if c_nv_pr is not None and c_nv_pr.get("id") == str(shape_id):
+            matches.append((element, c_nv_pr))
+    if len(matches) != 1:
+        raise ValueError(f"operation {operation_number}: shape_id {shape_id} is missing or ambiguous")
+    shape, c_nv_pr = matches[0]
+    if shape.getparent() is not sp_tree:
+        raise ValueError(f"operation {operation_number}: grouped shapes are outside the supported edit scope")
+    kind = _edit_shape_kind(shape)
+    if kind == "unsupported":
+        raise ValueError(f"operation {operation_number}: charts, images, and complex objects cannot be edited")
+    if kind != operation["target_type"]:
+        raise ValueError(f"operation {operation_number}: target_type does not match the source object")
+    if c_nv_pr.get("name", "") != operation["shape_name"]:
+        raise ValueError(f"operation {operation_number}: shape_name no longer matches shape_id {shape_id}")
+
+    cell_spec = operation.get("cell")
+    text_body = None
+    target_text = None
+    table = None
+    if kind == "text":
+        if cell_spec is not None:
+            raise ValueError(f"operation {operation_number}: cell is only valid for table targets")
+        text_body = shape.find(f"./{{{_EDIT_P_NS}}}txBody")
+        target_text = _edit_text_body_text(text_body) if text_body is not None else None
+    else:
+        table = shape.find(f".//{_EDIT_A_TBL}")
+        if table is None:
+            raise ValueError(f"operation {operation_number}: table object no longer exists")
+        if cell_spec is not None:
+            row = cell_spec.get("row") if isinstance(cell_spec, dict) else None
+            column = cell_spec.get("column") if isinstance(cell_spec, dict) else None
+            if any(isinstance(value, bool) or not isinstance(value, int) or value < 0
+                   for value in (row, column)):
+                raise ValueError(f"operation {operation_number}: cell requires zero-based row and column integers")
+            rows = table.findall(f"./{{{_EDIT_A_NS}}}tr")
+            if row >= len(rows):
+                raise ValueError(f"operation {operation_number}: table row {row} does not exist")
+            cells = rows[row].findall(f"./{{{_EDIT_A_NS}}}tc")
+            if column >= len(cells):
+                raise ValueError(f"operation {operation_number}: table column {column} does not exist")
+            cell = cells[column]
+            try:
+                merged = (cell.get("hMerge") == "1" or cell.get("vMerge") == "1"
+                          or int(cell.get("gridSpan", "1")) > 1)
+            except ValueError as exc:
+                raise ValueError(f"operation {operation_number}: table cell gridSpan is invalid") from exc
+            if merged:
+                raise ValueError(f"operation {operation_number}: merged table cells are unsupported")
+            text_body = cell.find(f"./{{{_EDIT_A_NS}}}txBody")
+            target_text = _edit_text_body_text(text_body) if text_body is not None else None
+        else:
+            if "replace_text" in operation or "style" in operation:
+                raise ValueError(f"operation {operation_number}: table text/style edits require a cell target")
+            target_text = _edit_table_text(table)
+
+    if not isinstance(operation.get("expected_text"), str) or operation["expected_text"] != target_text:
+        raise ValueError(f"operation {operation_number}: expected_text does not match the inspected source")
+
+    if "replace_text" in operation:
+        replacement = operation["replace_text"]
+        if not isinstance(replacement, dict) or set(replacement) != {"from", "to"}:
+            raise ValueError(f"operation {operation_number}: replace_text needs exact from/to strings")
+        old_text, new_text = replacement["from"], replacement["to"]
+        if not isinstance(old_text, str) or not isinstance(new_text, str):
+            raise ValueError(f"operation {operation_number}: replacement from/to must be strings")
+        if text_body is None:
+            raise ValueError(f"operation {operation_number}: text replacement needs a text shape or table cell")
+        _edit_replace_text(text_body, target_text, old_text, new_text, operation_number)
+
+    if "style" in operation:
+        style = operation["style"]
+        if not isinstance(style, dict) or not style:
+            raise ValueError(f"operation {operation_number}: style must be a non-empty object")
+        if text_body is None:
+            raise ValueError(f"operation {operation_number}: style edits need a text shape or table cell")
+        _edit_apply_style(text_body, style, operation_number)
+
+    if "geometry_in" in operation:
+        geometry = operation["geometry_in"]
+        if not isinstance(geometry, dict):
+            raise ValueError(f"operation {operation_number}: geometry_in must be an object")
+        _edit_apply_geometry(shape, geometry, slide_width, slide_height, operation_number)
+
+
+def edit_existing_presentation(config, output_override=None):
+    """Apply safe text/style/geometry edits to a copy of an existing PPTX package."""
+    if not isinstance(config, dict):
+        raise ValueError("The edit config must be a JSON object")
+    unknown_config = set(config) - {"source", "source_sha256", "output", "edits"}
+    if unknown_config:
+        raise ValueError(f"unsupported edit config fields: {', '.join(sorted(unknown_config))}")
+    source_value = config.get("source")
+    edits = config.get("edits")
+    if not isinstance(source_value, str) or not source_value:
+        raise ValueError("The edit config needs a source PPTX path")
+    if not isinstance(edits, list) or not edits:
+        raise ValueError("The edit config needs a non-empty edits array")
+    expected_digest = config.get("source_sha256")
+    if not isinstance(expected_digest, str) or re.fullmatch(r"[0-9a-fA-F]{64}", expected_digest) is None:
+        raise ValueError("The edit config needs the source_sha256 from --edit-targets")
+
+    source_path = Path(source_value).expanduser().resolve()
+    if not source_path.is_file() or source_path.suffix.lower() != ".pptx":
+        raise ValueError("source must be an existing .pptx file")
+    actual_digest = hashlib.sha256(source_path.read_bytes()).hexdigest()
+    if actual_digest.lower() != expected_digest.lower():
+        raise ValueError("source_sha256 does not match the inspected source; inspect the current file again")
+
+    output_value = output_override or config.get("output")
+    if output_value:
+        output_path = ensure_output_path(output_value)
+    else:
+        output_path = ensure_output_path(default_output_dir() / f"{source_path.stem}_edited.pptx")
+    same_file = output_path == source_path
+    if output_path.exists():
+        same_file = same_file or os.path.samefile(source_path, output_path)
+    if same_file:
+        raise ValueError("source and output must be different files; the source deck is never overwritten")
+    if output_path.suffix.lower() != ".pptx":
+        raise ValueError("output must use the .pptx extension")
+
+    try:
+        source_prs = Presentation(str(source_path))
+    except Exception as exc:
+        raise ValueError(f"source PPTX could not be opened: {exc}") from exc
+    slide_parts = [str(slide.part.partname).lstrip("/") for slide in source_prs.slides]
+    slide_width, slide_height = source_prs.slide_width, source_prs.slide_height
+    modified_parts = {}
+    targeted_ids = {}
+    roots = {}
+    original_shape_fingerprints = {}
+
+    try:
+        with zipfile.ZipFile(source_path, "r") as source_zip:
+            if any(name.lower().startswith("_xmlsignatures/") for name in source_zip.namelist()):
+                raise ValueError("digitally signed PPTX files cannot be edited without invalidating the signature")
+            for operation_number, operation in enumerate(edits, 1):
+                if not isinstance(operation, dict):
+                    raise ValueError(f"operation {operation_number} must be an object")
+                slide_number = operation.get("slide")
+                if isinstance(slide_number, bool) or not isinstance(slide_number, int) or not 1 <= slide_number <= len(slide_parts):
+                    raise ValueError(f"operation {operation_number}: slide is outside the source deck")
+                part_name = slide_parts[slide_number - 1]
+                if part_name not in roots:
+                    if part_name not in source_zip.namelist():
+                        raise ValueError(f"source slide part is missing: {part_name}")
+                    parser = etree.XMLParser(resolve_entities=False, no_network=True, recover=False,
+                                             remove_blank_text=False)
+                    roots[part_name] = etree.fromstring(source_zip.read(part_name), parser)
+                    targeted_ids[part_name] = set()
+                    original_shape_fingerprints[part_name] = _edit_shape_fingerprints(roots[part_name])
+                if operation.get("slide_part") != part_name:
+                    raise ValueError(f"operation {operation_number}: slide_part does not match the inspected source")
+                shape_id = operation.get("shape_id")
+                if isinstance(shape_id, bool) or not isinstance(shape_id, int):
+                    raise ValueError(f"operation {operation_number}: shape_id must be an integer")
+                targeted_ids[part_name].add(str(shape_id))
+                _edit_apply_operation(roots[part_name], operation, operation_number, part_name,
+                                      slide_width, slide_height)
+
+            for part_name, root in roots.items():
+                original_shapes = original_shape_fingerprints[part_name]
+                edited_shapes = _edit_shape_fingerprints(root)
+                if list(original_shapes) != list(edited_shapes):
+                    raise ValueError(f"shape order or count changed unexpectedly in {part_name}")
+                for shape_id, fingerprint in original_shapes.items():
+                    if shape_id not in targeted_ids[part_name] and edited_shapes[shape_id] != fingerprint:
+                        raise ValueError(f"an unselected shape changed unexpectedly in {part_name}: shape_id {shape_id}")
+                modified_parts[part_name] = etree.tostring(
+                    root, encoding="UTF-8", xml_declaration=True, standalone=True)
+
+            os.makedirs(str(output_path.parent), exist_ok=True)
+            fd, temp_path = tempfile.mkstemp(prefix=".chint-edit-", suffix=".pptx", dir=str(output_path.parent))
+            os.close(fd)
+            try:
+                with zipfile.ZipFile(temp_path, "w") as output_zip:
+                    for info in source_zip.infolist():
+                        payload = modified_parts.get(info.filename)
+                        if payload is None:
+                            payload = source_zip.read(info.filename)
+                        output_zip.writestr(deepcopy(info), payload)
+                with zipfile.ZipFile(temp_path, "r") as output_zip:
+                    bad_part = output_zip.testzip()
+                    if bad_part:
+                        raise ValueError(f"edited PPTX package failed CRC validation at {bad_part}")
+                    for info in source_zip.infolist():
+                        if info.filename not in modified_parts and source_zip.read(info.filename) != output_zip.read(info.filename):
+                            raise ValueError(f"an untouched package part changed unexpectedly: {info.filename}")
+                output_prs = Presentation(temp_path)
+                if len(output_prs.slides) != len(source_prs.slides):
+                    raise ValueError("slide count changed during local edit")
+                os.replace(temp_path, output_path)
+            except Exception:
+                if os.path.exists(temp_path):
+                    os.unlink(temp_path)
+                raise
+    except (zipfile.BadZipFile, etree.XMLSyntaxError) as exc:
+        raise ValueError(f"source PPTX contains an unreadable package part: {exc}") from exc
+
+    return str(output_path)
+
+
+def main(argv=None):
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Create or locally edit an editable CHINT presentation using JSON data.")
+    parser.add_argument("payload_pos", nargs="?", help=argparse.SUPPRESS)
+    parser.add_argument("output_pos", nargs="?", help=argparse.SUPPRESS)
+    parser.add_argument("--config", dest="payload", help="JSON payload file")
+    parser.add_argument("--edit-config", dest="edit_config", help="JSON edit manifest for supported local edits to an existing PPTX")
+    parser.add_argument("--output", dest="output", help="output .pptx path")
+    args = parser.parse_args(argv)
+    if args.edit_config:
+        if args.payload or args.payload_pos or args.output_pos:
+            parser.error("Use --edit-config alone; do not combine it with creation payload paths")
+        try:
+            edit_config_path = Path(args.edit_config).expanduser().resolve()
+            with open(edit_config_path, "r", encoding="utf-8") as source:
+                edit_config = json.load(source)
+            result = edit_existing_presentation(edit_config, args.output)
+        except (OSError, json.JSONDecodeError, ValueError) as exc:
+            print(f"[FAIL] {exc}", file=sys.stderr)
+            return 1
+        print(f"Edited {result} successfully.")
+        return 0
+    if (args.payload and args.payload_pos) or (args.output and args.output_pos):
+        parser.error("Do not combine a named option with its positional equivalent")
+    payload_path = args.payload or args.payload_pos
+    output_path = args.output or args.output_pos
+    if not payload_path or not output_path:
+        parser.error("Provide --config and --output, or the two legacy positional paths")
+    try:
+        payload_path = Path(payload_path).expanduser().resolve()
+        with open(payload_path, "r", encoding="utf-8") as source:
+            payload = json.load(source)
+        result = ChintPresentationEngine().build_from_payload(payload, output_path)
+    except (OSError, json.JSONDecodeError, ValueError) as exc:
+        print(f"[FAIL] {exc}", file=sys.stderr)
+        return 1
+    print(f"Generated {result} successfully.")
+    return 0
+
+
 if __name__ == "__main__":
-    import sys
-    if len(sys.argv) > 2:
-        payload_file = sys.argv[1]
-        out_file = sys.argv[2]
-        with open(payload_file, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-        engine = ChintPresentationEngine()
-        engine.build_from_payload(data, out_file)
-        print(f"Generated {out_file} successfully.")
+    raise SystemExit(main())

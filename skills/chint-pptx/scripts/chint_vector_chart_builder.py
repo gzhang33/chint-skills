@@ -2,7 +2,7 @@
 """
 CHINT Vector Chart Builder (2026 VI Standard Edition)
 
-Generates high-definition, publication-quality vector charts for PPTX presentations.
+Generates high-resolution 2026 VI chart images for PPTX presentations.
 Features:
 - Full registration of 正泰拓新体 (CHINTinno) font family.
 - Official 2026 VI brand color tokens (Electric Blue #1E50E6, Light Cyan #50C8FF, Growth Green #14C832, etc.).
@@ -27,23 +27,25 @@ import matplotlib.patches as mpatches
 from matplotlib.path import Path
 import numpy as np
 
-# 2026 VI Brand Colors (HEX for Matplotlib)
-HEX_BLUE = "#1E50E6"          # Electric Blue Primary
-HEX_CYAN = "#50C8FF"          # Light Cyan Accent
+# 2026 VI theme colors share one source with the slide engine.
+from _brand_tokens import TOKENS as _t
+
+HEX_BLUE = "#" + _t["blue"]
+HEX_CYAN = "#" + _t["cyan"]
 HEX_RED = "#D70A32"           # Alert Red
 HEX_RED_BG = "#FFEBEB"        # Soft Red Alert BG
 HEX_GREEN = "#14C832"         # Growth Green
 HEX_GREEN_BG = "#E8F8EE"      # Soft Green BG
 HEX_TEAL = "#14C8B4"          # Smart Teal
-HEX_DEEP_BLUE = "#1437AA"     # Deep Corporate Blue
+HEX_DEEP_BLUE = "#" + _t["navy"]
 HEX_BLUE_BG = "#EBF3FF"       # Soft Blue Container
-HEX_ICE_BLUE = "#D7F0FF"      # Ice Blue
+HEX_ICE_BLUE = "#" + _t["ice"]
 HEX_ORANGE = "#F59E0B"        # Warning Orange
 HEX_DARK = "#1E2024"          # Primary Dark Text
-HEX_MUTED = "#5A5A5A"         # Slate Gray Text
-HEX_LIGHT_BG = "#F6F8FA"      # Container Light Background
-HEX_BORDER = "#D0D7DE"        # Card Border
-HEX_WHITE = "#FFFFFF"         # Pure White
+HEX_MUTED = "#" + _t["muted"]
+HEX_LIGHT_BG = "#" + _t["light_bg"]
+HEX_BORDER = "#" + _t["card_border"]
+HEX_WHITE = "#" + _t["white"]
 
 # 8-stage Palette
 PALETTE = [
@@ -110,7 +112,7 @@ _init_fonts()
 
 
 class ChintVectorChartBuilder:
-    """Generates 2026 VI compliant vector charts rendered directly into memory."""
+    """Generates 2026 VI chart images directly into memory."""
 
     @staticmethod
     def _save_to_bytes(fig) -> io.BytesIO:
@@ -130,9 +132,19 @@ class ChintVectorChartBuilder:
         Render multi-axis Radar Chart (竞品与技术能力雷达对标图).
         """
         N = len(categories)
-        if N < 3:
-            categories = categories + [f"维度{i+1}" for i in range(3 - N)]
-            N = 3
+        if not 3 <= N <= 6:
+            raise ValueError("Radar charts require 3 to 6 source-backed categories")
+        if any(not isinstance(label, str) or not label.strip() for label in categories):
+            raise ValueError("Radar chart categories must be non-empty strings")
+        if not series_data:
+            raise ValueError("Radar charts require at least one source-backed series")
+        for index, series in enumerate(series_data):
+            values = series.get("values", [])
+            if len(values) != N:
+                raise ValueError(f"Radar series {index} needs one value for every category")
+            if any(isinstance(value, bool) or not isinstance(value, (int, float, np.number))
+                   or not math.isfinite(float(value)) for value in values):
+                raise ValueError(f"Radar series {index} values must be finite numbers")
 
         angles = [n / float(N) * 2 * math.pi for n in range(N)]
         angles += angles[:1]

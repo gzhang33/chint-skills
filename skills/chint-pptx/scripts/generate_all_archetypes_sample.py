@@ -7,18 +7,24 @@ Validates all 34 Archetype layouts with:
 - Plan C: High-definition Vector Charts (Radar, Dual-Axis Combo, Diverging Bar, Capability Matrix).
 """
 
+import argparse
 import os
 import json
 import subprocess
+from pathlib import Path
 from chint_pptx_engine import ChintPresentationEngine
+from core.output_paths import default_output_dir, ensure_output_path
 
 payload = {
+    "validation_fixture": True,
     "slides": [
         # 1. Master Frames
         {"archetype": "ARCH_01_COVER", "title": "正泰 2026 VI 全场景版式全景重构展示", "subtitle": "企业级标准化交付与 2026 VI 视觉规范引擎", "date": "2026年08月", "author": "正泰智能电气产业生态群 PM团队"},
         {"archetype": "ARCH_02_TOC", "items": [{"title": "母版与框架类组件规范"}, {"title": "数据量化与矢量图表看板类"}, {"title": "战略认知与管理诊断类"}, {"title": "流程流水线与漏斗模型类"}, {"title": "项目排期与平台生态类"}]},
         {"archetype": "ARCH_03_CHAPTER", "title": "第一篇：母版框架与基础视觉组件", "subtitle": "MASTER FRAMES & VISUAL BASICS"},
-        {"archetype": "ARCH_15_CONTACT_US", "title": "全球联系方式与办事处网络", "category": "服务网络"},
+        {"archetype": "ARCH_15_CONTACT_US", "title": "测试联系卡片布局（无业务联系信息）", "category": "格式验证",
+            "channels": [{"icon_label": "TEST", "title": "测试联系方式", "desc": "TEST DATA ONLY — NOT FOR CUSTOMER USE"}],
+            "offices": ["验证占位字段 — 非真实地址"], "directory_title": "测试字段验证"},
 
         # 2. Data & KPIs (Reflow Tested: 4 KPI cards)
         {"archetype": "ARCH_04_KPI_DASHBOARD", "title": "核心经营与质量 KPI 看板 (4卡片自适应)", "category": "数据量化", "kpi_cards": [
@@ -29,8 +35,12 @@ payload = {
         ]},
         
         # Native Bar & 5-Slice Doughnut (Reflow Tested: 5 Slices)
-        {"archetype": "ARCH_16_CHART_BAR_TREND", "title": "核心业务收入与战略新品对比", "category": "量化看板"},
-        {"archetype": "ARCH_17_CHART_PIE_DONUT", "title": "业务板块与营收占比分布 (5切片自适应)", "category": "结构拆解", "slices": [
+        {"archetype": "ARCH_16_CHART_BAR_TREND", "title": "测试条形图布局（无业务含义）", "category": "格式验证",
+            "categories": ["TEST A", "TEST B", "TEST C"],
+            "series": [{"name": "测试序列", "values": [1, 2, 3]}],
+            "summary_bullets": ["TEST DATA ONLY — NOT PRODUCT CONTENT"]},
+        {"archetype": "ARCH_17_CHART_PIE_DONUT", "title": "测试环图布局（无业务含义）", "category": "格式验证",
+            "center_metric": "TEST", "center_label": "NOT PRODUCT DATA", "slices": [
             {"label": "新能源与绿色电工", "value": 38, "desc": "光伏、储能与智能配电方案高速增长"},
             {"label": "智能电气核心主业", "value": 30, "desc": "低压元器件与成套设备稳健支撑"},
             {"label": "工业自动化与物联", "value": 16, "desc": "智慧能效管理与工业物联软件平台"},
@@ -58,7 +68,7 @@ payload = {
             "规模效应逐步释放，边际履约成本同比下降 12.4%"
         ]},
 
-        {"archetype": "ARCH_16_DIVERGING", "title": "行业细分赛道渗透率正负增长对比", "category": "行业分岔", "chart_title": "各行业赛道年度增长与承压对比 (%)", "categories": ["新能源光伏", "智能电网", "算力中心", "高端制造", "传统工商业", "高耗能冶金"], "values": [45.2, 32.0, 28.5, 19.4, -6.8, -15.2], "insights": [
+        {"archetype": "ARCH_16_DIVERGING", "title": "行业细分赛道测试数值对比", "category": "格式验证", "chart_title": "仅测试布局（TEST DATA）", "categories": ["TEST A", "TEST B", "TEST C", "TEST D", "TEST E", "TEST F"], "values": [45.2, 32.0, 28.5, 19.4, -6.8, -15.2], "unit": "TEST", "insights": [
             "新能源光伏与算力中心成为核心增长引擎，增速分别高达 +45.2% 与 +28.5%",
             "传统工商业与高耗能冶金赛道承压，正加速向绿色化与能效改造转型",
             "建议集中研发与营销资源全力深耕新能源与算力基础设施"
@@ -117,8 +127,13 @@ payload = {
         ]},
 
         # Metric & Hero Grids
-        {"archetype": "ARCH_18_KPI_METRIC_GRID", "title": "高密度经营指标矩阵看板", "category": "指标网格"},
-        {"archetype": "ARCH_19_HERO_METRIC_SPLIT", "title": "超级单指标里程碑突破", "category": "核心突破"},
+        {"archetype": "ARCH_18_KPI_METRIC_GRID", "title": "高密度指标卡格式验证", "category": "格式验证", "metrics": [
+            {"number": "TEST 1", "label": "测试指标", "desc": "TEST DATA ONLY", "trend": "FIXTURE"},
+            {"number": "TEST 2", "label": "测试指标", "desc": "TEST DATA ONLY", "trend": "FIXTURE"}
+        ]},
+        {"archetype": "ARCH_19_HERO_METRIC_SPLIT", "title": "测试主指标布局（无业务含义）", "category": "格式验证",
+            "hero_label": "TEST ONLY", "hero_number": "TEST", "hero_unit": "FIXTURE",
+            "hero_desc": "TEST DATA ONLY", "bullets": ["仅用于检查布局"]},
 
         # Strategic & Diagnostic Cards (Reflow Tested: 4-Column Cards)
         {"archetype": "ARCH_05_MULTI_COLUMN_CARDS", "title": "业务定位与四大核心战略职责 (4列自适应)", "category": "战略认知", "columns": [
@@ -127,8 +142,10 @@ payload = {
             {"header": "绿色低碳引领", "bullets": ["100% 绿色电力生产制造", "打造国家级零碳示范工厂"]},
             {"header": "生态开放共赢", "bullets": ["全面赋能渠道与生态伙伴", "共建能源互联网产业联盟"]}
         ]},
-        {"archetype": "ARCH_07_PROBLEM_SOLUTION_SWOT", "title": "传统模式挑战 vs 正泰方案剖析", "category": "战略对比", "pain_points": ["运维成本高昂且故障定位困难", "传统断路器无数字化通讯能力", "被动响应导致停电损失扩大"], "solutions": ["全链路 AI 预测性维护与健康度诊断", "内置标准物联协议秒级数据上云", "微秒级自愈切换与远程故障闭环"]},
-        {"archetype": "ARCH_20_SWOT_TOWS_MATRIX", "title": "SWOT 战略态势诊断矩阵", "category": "战略诊断"},
+        {"archetype": "ARCH_07_PROBLEM_SOLUTION_SWOT", "title": "测试左右栏布局（无业务含义）", "category": "格式验证", "pain_points": ["TEST ONLY A", "TEST ONLY B"], "solutions": ["TEST ONLY C", "TEST ONLY D"], "pain_summary": "TEST DATA ONLY", "solution_summary": "TEST DATA ONLY"},
+        {"archetype": "ARCH_20_SWOT_TOWS_MATRIX", "title": "测试四象限布局（无业务含义）", "category": "格式验证",
+            "strengths": ["TEST ONLY"], "weaknesses": ["TEST ONLY"],
+            "opportunities": ["TEST ONLY"], "threats": ["TEST ONLY"]},
         {"archetype": "ARCH_21_BEFORE_AFTER_DIFF", "title": "系统升级前后对比与价值跃升", "category": "对比革新", 
             "before_title": "传统模式 / 改造前 (Before)",
             "before_items": [
@@ -182,9 +199,21 @@ payload = {
             {"phase": "04", "title": "现场联调", "subtitle": "通电联调与云平台接入", "actions": ["现场设备安装与母排搭接", "边缘网关数据采集上云联调", "保护定值校验与带电试运行"], "deliverable": "《系统联调验收签署单》", "duration": "1 周"},
             {"phase": "05", "title": "智慧运营", "subtitle": "全生命周期云端运维", "actions": ["7x24h 智能能效与负荷优化", "AI 故障预测性维护与预警", "定期巡检与主动式备件保障"], "deliverable": "《年度智慧能效运营报告》", "duration": "长效运营"}
         ]},
-        {"archetype": "ARCH_26_FUNNEL_CONVERSION", "title": "营销转化与客户全生命周期漏斗", "category": "漏斗模型"},
-        {"archetype": "ARCH_27_STEP_LADDER_MATURITY", "title": "技术成熟度与演进阶梯", "category": "演进阶梯"},
-        {"archetype": "ARCH_28_WATERFALL_DIAMOND", "title": "IPD 研发门禁与双钻流程", "category": "研发门禁"},
+        {"archetype": "ARCH_26_FUNNEL_CONVERSION", "title": "测试漏斗布局（无业务含义）", "category": "格式验证", "stages": [
+            {"stage": "TEST A", "value": "TEST", "desc": "TEST DATA ONLY"},
+            {"stage": "TEST B", "value": "TEST", "desc": "TEST DATA ONLY"},
+            {"stage": "TEST C", "value": "TEST", "desc": "TEST DATA ONLY"},
+            {"stage": "TEST D", "value": "TEST", "desc": "TEST DATA ONLY"}
+        ]},
+        {"archetype": "ARCH_27_STEP_LADDER_MATURITY", "title": "测试阶梯布局（无业务含义）", "category": "格式验证", "steps": [
+            {"ver": "TEST 1", "title": "验证标题", "desc": "TEST DATA ONLY"},
+            {"ver": "TEST 2", "title": "验证标题", "desc": "TEST DATA ONLY"},
+            {"ver": "TEST 3", "title": "验证标题", "desc": "TEST DATA ONLY"}
+        ]},
+        {"archetype": "ARCH_28_WATERFALL_DIAMOND", "title": "测试门禁流程布局", "category": "格式验证", "gates": [
+            {"gate": "TEST G1", "title": "验证节点一"}, {"gate": "TEST G2", "title": "验证节点二"},
+            {"gate": "TEST G3", "title": "验证节点三"}
+        ]},
         {"archetype": "ARCH_06_TIMELINE_ROADMAP", "title": "五年实施路线与战略演进 (5阶段自适应)", "category": "路线演进", "stages": [
             {"phase": "2022 基础筑基", "title": "技术攻坚", "desc": "攻克核心分断与传感器专利"},
             {"phase": "2023 平台融合", "title": "数智上云", "desc": "发布智慧配电边缘网关平台"},
@@ -192,8 +221,14 @@ payload = {
             {"phase": "2025 全球突破", "title": "全球交付", "desc": "海外 140+ 国家营销网络覆盖"},
             {"phase": "2026 全面领航", "title": "零碳自愈", "desc": "打造全球领先智慧能源解决方案"}
         ]},
-        {"archetype": "ARCH_29_GANTT_SCHEDULE_TABLE", "title": "项目排期与推进进度甘特表", "category": "甘特排期"},
-        {"archetype": "ARCH_30_MILESTONE_LIST_BADGE", "title": "大事记与里程碑纪事", "category": "大事纪事"},
+        {"archetype": "ARCH_29_GANTT_SCHEDULE_TABLE", "title": "测试排期表布局（无实际工期）", "category": "格式验证", "tasks": [
+            ["TEST 任务", "TEST Owner", "TEST", "TEST", "TEST", "TEST"],
+            ["TEST 任务", "TEST Owner", "TEST", "TEST", "TEST", "TEST"]
+        ]},
+        {"archetype": "ARCH_30_MILESTONE_LIST_BADGE", "title": "测试里程碑列表布局", "category": "格式验证", "milestones": [
+            {"year": "TEST", "title": "测试节点", "desc": "TEST DATA ONLY"},
+            {"year": "TEST", "title": "测试节点", "desc": "TEST DATA ONLY"}
+        ]},
 
         # Architecture, Pillars & Ecosystem
         {"archetype": "ARCH_08_PLATFORM_ARCHITECTURE", "title": "分层系统架构与技术底座", "category": "技术架构", "layers": [
@@ -202,9 +237,17 @@ payload = {
             {"layer_name": "物联接入层", "headline": "多协议智能边缘网关", "modules": ["Modbus", "MQTT", "OPC-UA", "IEC 61850"]},
             {"layer_name": "深蓝底座层", "headline": "正泰安全可信云边 OS", "modules": ["硬件加密", "实时 OS", "安全芯片", "自愈引擎"]}
         ]},
-        {"archetype": "ARCH_31_THREE_PILLARS_PLATFORM", "title": "三支柱与平台底座支撑体系", "category": "平台支撑"},
-        {"archetype": "ARCH_32_ECOSYSTEM_CIRCULAR", "title": "产业协同与 4 方生态拓扑", "category": "生态拓扑"},
-        {"archetype": "ARCH_14_CONCENTRIC_HUB", "title": "核心战略闭环体系", "category": "战略闭环"},
+        {"archetype": "ARCH_31_THREE_PILLARS_PLATFORM", "title": "测试三列布局（无业务含义）", "category": "格式验证",
+            "pillars": [{"title": "TEST A", "desc": "TEST ONLY"}, {"title": "TEST B", "desc": "TEST ONLY"}, {"title": "TEST C", "desc": "TEST ONLY"}],
+            "base_title": "TEST ONLY", "base_desc": "NOT PRODUCT DATA"},
+        {"archetype": "ARCH_32_ECOSYSTEM_CIRCULAR", "title": "测试环形布局（无业务含义）", "category": "格式验证", "hub_label": "TEST ONLY", "nodes": [
+            {"title": "TEST A", "desc": "TEST DATA ONLY"}, {"title": "TEST B", "desc": "TEST DATA ONLY"},
+            {"title": "TEST C", "desc": "TEST DATA ONLY"}, {"title": "TEST D", "desc": "TEST DATA ONLY"}
+        ]},
+        {"archetype": "ARCH_14_CONCENTRIC_HUB", "title": "测试中心环形布局", "category": "格式验证", "center_label": "TEST ONLY", "nodes": [
+            {"title": "TEST A", "desc": "TEST DATA ONLY"}, {"title": "TEST B", "desc": "TEST DATA ONLY"},
+            {"title": "TEST C", "desc": "TEST DATA ONLY"}, {"title": "TEST D", "desc": "TEST DATA ONLY"}
+        ]},
 
         # Grids & Endorsement (Reflow Tested: 8-Module Solution Grid)
         {"archetype": "ARCH_09_SOLUTION_GRID", "title": "八大垂直行业定制化解决方案 (8模块自适应)", "category": "行业方案", "modules": [
@@ -218,8 +261,14 @@ payload = {
             {"title": "海外基建工程", "desc": "IEC/UL 双重认证与宽温域运行"}
         ]},
         {"archetype": "ARCH_10_CASE_STUDY", "title": "国家电网示范项目案例", "category": "标杆案例", "client_name": "国家电网某特高压换流站", "hero_metric": "35% 能效提升", "hero_desc": "定制化高可靠变配电成套设备落地", "bullets": ["故障自愈切除时间 < 10ms", "全生命周期运维成本降低 40%", "实现连续安全运行 1200+ 天零故障"]},
-        {"archetype": "ARCH_33_HONOR_CERTIFICATION", "title": "权威认证与企业荣誉背书", "category": "荣誉背书"},
-        {"archetype": "ARCH_34_PARTNER_LOGO_WALL", "title": "战略合作伙伴与产业生态墙", "category": "生态伙伴"},
+        {"archetype": "ARCH_33_HONOR_CERTIFICATION", "title": "测试徽章布局（无真实荣誉）", "category": "格式验证", "honors": [
+            {"badge": "TEST", "title": "验证标题", "org": "验证机构", "metric": "TEST ONLY"},
+            {"badge": "TEST", "title": "验证标题", "org": "验证机构", "metric": "TEST ONLY"}
+        ]},
+        {"archetype": "ARCH_34_PARTNER_LOGO_WALL", "title": "测试合作方卡片布局", "category": "格式验证", "partners": [
+            {"category": "TEST", "title": "测试合作方一", "desc": "TEST DATA ONLY"},
+            {"category": "TEST", "title": "测试合作方二", "desc": "TEST DATA ONLY"}
+        ]},
 
         # Profile & Footprint
         {"archetype": "ARCH_12_TEAM_PROFILE", "title": "专家团队与核心资历", "category": "专家团队", "members": [
@@ -227,14 +276,29 @@ payload = {
             {"name": "李总监", "title": "低压产品线负责人", "role": "产品专家", "credentials": ["20年配电产品研发经验", "主导 NXA 系列战略落地"]},
             {"name": "王总工", "title": "智能制造首席工程师", "role": "制造专家", "credentials": ["灯塔工厂数字化总设计师", "精益六西格玛黑带大师"]}
         ]},
-        {"archetype": "ARCH_13_GLOBAL_FOOTPRINT", "title": "全球业务覆盖与区域网络", "category": "全球布局"},
+        {"archetype": "ARCH_13_GLOBAL_FOOTPRINT", "title": "测试地区分布布局（无真实覆盖信息）", "category": "格式验证",
+            "coverage_title": "TEST ONLY", "network_title": "TEST ONLY",
+            "stats": [["TEST", "TEST DATA ONLY"], ["TEST", "TEST DATA ONLY"]],
+            "offices": ["TEST ONLY — NOT A REAL LOCATION"]},
         {"archetype": "ARCH_11_CLOSING", "tagline": "正泰 - 汇聚光亮 赋能未来", "team": "正泰智能电气 PM 团队 2026"}
     ]
 }
 
-os.makedirs("/Users/gianni/Documents/chint/dist", exist_ok=True)
-out_pptx = "/Users/gianni/Documents/chint/dist/正泰企业级全场景版式全景测试样本.pptx"
+def main(argv=None):
+    parser = argparse.ArgumentParser(description="Generate a watermarked, non-customer fixture for layout checks.")
+    default_dir = os.environ.get("CHINT_PPTX_SAMPLE_OUT_DIR") or str(default_output_dir() / "samples")
+    parser.add_argument("--output-dir", default=default_dir)
+    args = parser.parse_args(argv)
+    try:
+        out_dir = ensure_output_path(args.output_dir)
+    except ValueError as exc:
+        parser.error(str(exc))
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out_pptx = out_dir / "CHINT_TEST_ONLY_NOT_PRODUCT_DATA.pptx"
+    ChintPresentationEngine().build_from_payload(payload, str(out_pptx))
+    print(f"Generated watermarked fixture only: {out_pptx}")
+    return 0
 
-engine = ChintPresentationEngine()
-engine.build_from_payload(payload, out_pptx)
-print(f"Successfully generated full archetype sample deck at: {out_pptx}")
+
+if __name__ == "__main__":
+    raise SystemExit(main())

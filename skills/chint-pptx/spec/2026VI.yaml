@@ -1,0 +1,119 @@
+# =============================================================================
+# chint-pptx · 2026 VI 版式规格 + 测定阈值 + 受控词汇表
+# =============================================================================
+# 本文件是「测定层（S2）」的唯一阈值来源。所有数值阈值、采样分辨率、渲染上限、
+# 版式名受控词汇均集中于此；代码（scripts/measure_form.py）不得出现散落的魔法数，
+# 一律从此文件读取。修改阈值只需改这里，并重新跑 check_form_measurement.py 回归。
+#
+# —— 颜色数值的唯一真源是 spec/brand_tokens.json（9 键，受 check_brand_tokens.py 守卫）——
+# 本文件「不得」出现任何 6 位十六进制色值。凡需要颜色，只写 brand_tokens 的键名引用
+# （见下方 palette 段）。两文件分工：
+#   * brand_tokens.json  —— 颜色的「具体数值」（唯一真源，门禁守卫）
+#   * 2026VI.yaml        —— 版式几何、测定阈值、颜色「用什么键」（本文件）
+# 文档与代码只在需要处引用键名，绝不复写数值。
+# =============================================================================
+
+spec:
+  name: 2026VI
+  schema: chint-modeb-spec/1
+  generated: 2026-09-17
+  owner: chint-pptx 测定层 (S2)
+  note: >
+    版式几何为 2026 VI 基准画布（13.333" x 7.5"）下的标准值；逐稿实际画布由源稿
+    量得，缩放系数 = 源稿画布 / 基准画布，由 planner (S3) 应用。本层只量不画。
+
+# -----------------------------------------------------------------------------
+# 调色板：仅引用 brand_tokens.json 的键名，不写色值
+# -----------------------------------------------------------------------------
+palette:
+  # 引用 brand_tokens.json 的 theme 键名（font/blue/navy/cyan/ice/white/muted/light_bg/card_border）
+  title:            navy        # 内页正文主标题色
+  footer_rule:      blue        # 页脚横线
+  footer_text:      muted       # 页脚文字
+  dark_title:       white       # 深底页主标题色
+  dark_footer:      ice         # 深底页页脚文字色
+  toc_divider:      blue        # 目录分隔线
+  toc_number:       navy        # 目录编号
+  capsule_fill:     light_bg    # 目录胶囊填充
+  capsule_border:   card_border # 目录胶囊描边
+
+# -----------------------------------------------------------------------------
+# 基准版式（2026 VI 基准画布 13.333 x 7.5）
+# -----------------------------------------------------------------------------
+baseline_layout:
+  canvas_in: [13.333, 7.5]
+  title_grid:
+    cat_top: 0.42
+    ttl_top: 0.62
+    category_pt: 10
+    title_pt: 22
+    box_width: 10.5
+    intro_box_width: 7.0
+    block_bottom_margin: 0.02
+  footer:
+    pt: 8.5
+    rule_y: 7.35
+    bottom_limit: 7.3
+
+# -----------------------------------------------------------------------------
+# 测定阈值（集中处）—— 代码只从这里读
+# -----------------------------------------------------------------------------
+form_measurement:
+  thresholds:
+    # 满版判定：图片并集覆盖率（网格采样）达到该比例且四边间隙在 gap_tol 内，视为满版
+    fullbleed_union: 0.95
+    # 满版四边间隙容差（英寸）：|gap| <= gap_tol 视为贴边
+    gap_tol: 0.05
+    # 壳页·标题型：标题版式 + 0 图片 + 最大字号 >= 此值 => 判定为壳页（封/尾）
+    title_only_min_pt: 24.0
+    # 满版截图页脚跳落：单图、并集覆盖率落在 [skip_union_lo, skip_union_hi)、
+    # 底边间隙 >= 0（不溢出）、顶边间隙 >= skip_top_gap => 跳落页脚
+    skip_union_lo: 0.69
+    skip_union_hi: 0.95
+    skip_top_gap: 0.25
+    # 重复组标签标题提升：空白版式 + 图片面积占比落在 [promote_area_lo, promote_area_hi]
+    #   + 最大字号 >= promote_font_pt => 提升
+    promote_area_lo: 0.10
+    promote_area_hi: 0.60
+    promote_font_pt: 22.0
+    # 跨页重复组标签：同一标题在非壳页出现 >= 此数且正文首行可提升
+    promote_repeat_min: 2
+    # 深底页：满版(>= dark_fullbleed)且非壳页 => 低置信，仅此时触发渲染取中位亮度；
+    #   中位亮度 < dark_luminance_max => 深底
+    dark_fullbleed: 0.95
+    dark_luminance_max: 110.0
+    # 深底判定置信带：|中位亮度 - 阈值| <= 此值 => medium（接近临界），否则 high
+    dark_luminance_band: 20
+    # 满版不位移：并集覆盖率 >= no_shift_union、图片数 >= 2、非空白版式、非深底 =>
+    #   该页按满版处理且不位移标题网格
+    no_shift_union: 0.69
+    # 壳页结构谓词（非覆盖率阈值，属形态定义常数）
+    shell_single_picture: 1        # 满版壳页通常为单张整版图片
+    collage_min_pictures: 2        # 多图满版（封/尾拼版）至少 2 张
+    containment_gap: 0.0           # 图片底边间隙 >= 此值视为未溢出画布
+    # 渲染上限（低置信才渲染）：单 deck 最多渲染这么多页，防止每页光栅化
+    max_render_pages: 8
+    # 渲染取亮度的 dpi（仅深底候选页）
+    render_dpi: 70
+    # 并集覆盖率采样网格分辨率（grid x grid）
+    sampling_grid: 60
+
+  # 受控词汇表
+  vocabulary:
+    # 版式名标记（大小写不敏感匹配，包含即命中）
+    layout_markers:
+      title: ["标题", "title"]          # 标题型版式（封/尾/章节标题页）
+      blank: ["空白", "blank"]           # 空白版式（壳页替换前的裸页）
+      shell: ["封面", "cover", "目录", "toc", "agenda"]   # 壳页版式（被引擎替换）
+    # 六类形态声明（与 config.json 键一一对应）
+    form_classes:
+      remove:        "remove_source_pages"      # 壳页（封/尾/分隔，被引擎替换）
+      promote:       "promote_heading_pages"    # 重复组标签标题提升
+      skip:          "footer_skip_pages"        # 满版截图页脚跳落
+      dark:          "dark_pages"               # 深底页
+      standalone:    "standalone_pages"         # 无章页
+      no_shift:      "no_shift_pages"           # 满版不位移
+    # 判定置信度等级
+    confidence_levels: ["high", "medium", "low"]
+    # standalone 由 dark ∪ no_shift 导出（三稿实测：无章页恰为深底页与满版不位移页之并）
+    standalone_rule: "union(dark, no_shift)"

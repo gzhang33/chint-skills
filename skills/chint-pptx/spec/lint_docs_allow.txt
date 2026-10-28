@@ -1,0 +1,11 @@
+# lint_docs.py 豁免清单
+#
+# 每行一个子串；文档中任何包含该子串的**整行**都会被跳过检查。
+# 只在确有必要时添加，并写清理由——豁免本身就是纪律的漏洞，攒多了等于没有检查。
+#
+# 另一条更精确的豁免方式是行内注释：在那一行末尾加  lint-docs: allow
+
+# 示例：引用外部文件路径且路径里带数字的，属于「路径」不是「数值」
+
+# Radar category cardinality is enforced by the payload validator.
+`categories` (3–6 个)
