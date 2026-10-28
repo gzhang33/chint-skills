@@ -1,0 +1,12 @@
+{
+  "name": "chint-copy",
+  "version": "1.0.0",
+  "description": "CHINT 文案与翻译：PM 文案标准、中英技术翻译",
+  "skills": [
+    "./skills/chint-pm-copywriter",
+    "./skills/chint-translation"
+  ],
+  "author": {
+    "name": "gianni"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "name": "chint-skills",
+  "description": "正泰电器产品经理技能集，按用途分组供 Cowork / Claude Code 安装",
+  "owner": {
+    "name": "gianni"
+  },
+  "plugins": [
+    {
+      "name": "chint-deck",
+      "source": "./plugins/chint-deck",
+      "description": "CHINT 演示文稿：产品 PPT 生成与 RAT 立项内容整理"
+    },
+    {
+      "name": "chint-copy",
+      "source": "./plugins/chint-copy",
+      "description": "CHINT 文案与翻译：PM 文案标准、中英技术翻译"
+    },
+    {
+      "name": "chint-data",
+      "source": "./plugins/chint-data",
+      "description": "CHINT 数据：销售分析、口径核对、数据可视化"
+    },
+    {
+      "name": "chint-ops",
+      "source": "./plugins/chint-ops",
+      "description": "CHINT 运维：飞书云盘同步、git-lfs 同步、品牌 VI 规范"
+    }
+  ]
+}

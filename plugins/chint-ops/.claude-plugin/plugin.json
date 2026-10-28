@@ -1,0 +1,13 @@
+{
+  "name": "chint-ops",
+  "version": "1.0.0",
+  "description": "CHINT 运维：飞书云盘同步、git-lfs 同步、品牌 VI 规范",
+  "skills": [
+    "./skills/chint-feishu-drive-sync",
+    "./skills/chint-git-lfs-sync",
+    "./skills/chint-brand-design"
+  ],
+  "author": {
+    "name": "gianni"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "chint-data",
+  "version": "1.0.0",
+  "description": "CHINT 数据：销售分析、口径核对、数据可视化",
+  "skills": [
+    "./skills/chint-data-analysis",
+    "./skills/chint-data-review",
+    "./skills/chint-data-visual"
+  ],
+  "author": {
+    "name": "gianni"
+  }
+}
