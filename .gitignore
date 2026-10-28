@@ -8,3 +8,6 @@ __pycache__/
 *.bak
 
 node_modules/
+*.duckdb
+*.duckdb.wal
+**/data/*.duckdb
