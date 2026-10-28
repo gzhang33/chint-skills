@@ -1,6 +1,5 @@
 {
   "name": "chint-deck",
-  "version": "1.0.0",
   "description": "CHINT 演示文稿：产品 PPT 生成与 RAT 立项内容整理",
   "skills": [
     "./skills/chint-pptx",
