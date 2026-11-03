@@ -1,6 +1,6 @@
 ---
 name: chint-pm-copywriter
-description: Universal B2B industrial Product Manager (PM) copywriting standard, domain taxonomy, and logic engine for Low-Voltage Electrical Power Distribution (ACB, MCCB, MCB, Power Quality, ATS, SST/SSCB). Covers industry taxonomy, market tiers, competitive framing, cost-reduction expression patterns, and quantified executive-report syntax. Use when authoring executive PPT titles/insights, business reviews (QBR), PRDs, decision memos, or product brochure copy across industrial manufacturing, power distribution, new energy, and enterprise hardware domains.
+description: Write and audit B2B industrial executive copy with quantified syntax for CHINT low-voltage power distribution (ACB, MCCB, MCB, power quality, ATS). Use when authoring PPT titles/insights, business reviews (QBR), PRDs, decision memos, or product brochure copy. Not for translation (use chint-translation) or data verification (use chint-data-review).
 ---
 
 # B2B Industrial PM Copywriting & Executive Reporting Engine (`chint-pm-copywriter`)
@@ -10,12 +10,11 @@ A universal copywriting standard, industry taxonomy dictionary, and logic engine
 ---
 
 ## 1. Progressive Disclosure Pointers (参考资料指针)
-遵循 `writing-great-skills` 渐进式暴露（Progressive Disclosure）原则，长篇明细下沉至 `references/` 目录，按场景动态调阅：
+长篇明细下沉至 `references/` 目录，按场景动态调阅：
 - **降本测算表达规范**：撰写客户降本方案、QBR 降本汇报时，读取 [cost_reduction_cases.md](references/cost_reduction_cases.md)。
 - **竞品梯队与六星矩阵**：撰写竞品 Battlecard、调阅六星市场模型时，读取 [brand_tier_matrix.md](references/brand_tier_matrix.md)。
 
 具体客户名称、报价、成本与毛利数据不入库，需用时从业务口径文档另行调取。
-
 
 ---
 
@@ -95,12 +94,7 @@ A universal copywriting standard, industry taxonomy dictionary, and logic engine
 ## 5. Competitive Dynamics & Attribution Syntax (竞品动态与归因逻辑范式)
 
 ### 5.1 国内低压五大品牌梯队与六星模型
-- **第一梯队（100-150亿级）**：施耐德电气（含万高）、正泰电器（含诺雅克）。正泰与施耐德规模领跑。
-- **第二梯队（50-100亿级）**：德力西电气、ABB（中国）、西门子（中国）。
-- **第三梯队（20-50亿级）**：良信电器、天正电气、常熟开关、中熔电气、伊顿电气（含巴斯曼）。
-- **第四梯队（10-20亿级）**：宏发股份、人民电器、首瑞天津、泰永长征。
-- **第五梯队（10亿级以下）**：士林电机、金莱勒、华嘉电器、美高电气等。
-> *注：完整六星市场模型与各品牌星级评分参见 [brand_tier_matrix.md](references/brand_tier_matrix.md)。*
+梯队划分、六星市场模型评分与四大场景对标溢价表全部见 [brand_tier_matrix.md](references/brand_tier_matrix.md)。本节只保留引用，避免数据双份维护。
 
 ### 5.2 友商竞争动向标杆范式
 - **施耐德（大盘第一）**：`依托 AIDC 算力红利，绑定 NVIDIA 联合开发预制化配电，深化海博思创光储充合作，拉动高附加值 Masterpact MTZ 销量。`
@@ -122,15 +116,7 @@ A universal copywriting standard, industry taxonomy dictionary, and logic engine
 ### 6.1 降本测算标准 5 步表达式
 `[目标大客户/领域] ──► [竞品型号与市场价] ──► [正泰成本与毛利现状] ──► [目标降本比例] ──► [工程/技术路径]`
 
-### 6.2 典型项目降本测算句式（模板，占位符照填实际业务数据）
-- **储能 ACB 物料**：
-  `对标{竞品型号}（含税市场价 ¥{价格}），当前不含税成本 ¥{成本}（毛利率 {毛利率}），目标降本 -{比例}，通过{工程技术路径}落地。`
-- **光伏逆变器 ACB 物料**：
-  `对标{竞品型号}（含税市场价 ¥{价格}），当前不含税成本 ¥{成本}（毛利率 {毛利率}），目标降本 -{比例}，通过{平台替代路径}落地。`
-- **风电箱变 ACB 物料**：
-  `对标{竞品型号}（含税市场价 ¥{价格}），当前不含税成本 ¥{成本}（毛利率 {毛利率}），目标降本 -{比例}，通过{灭弧室结构优化路径}落地。`
-> *注：句式规范见 [cost_reduction_cases.md](references/cost_reduction_cases.md)。具体客户与报价数据不入库，从业务口径文档另行调取。*
-
+> 句式模板与客户降本案例见 [cost_reduction_cases.md](references/cost_reduction_cases.md)。具体客户与报价数据不入库，从业务口径文档另行调取。
 
 ---
 

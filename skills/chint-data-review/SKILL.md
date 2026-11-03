@@ -1,7 +1,6 @@
 ---
 name: chint-data-review
-description: Audit and cross-check CHINT low-voltage / ACB market figures across Excel,
-  whitepapers, and competitor datasets with source page traceability.
+description: Use when auditing CHINT low-voltage / ACB market figures across Excel, whitepapers, or competitor datasets and every cited number must trace to a source page.
 
 ---
 
@@ -27,5 +26,5 @@ description: Audit and cross-check CHINT low-voltage / ACB market figures across
 - 第三方数据准确性不担保，标「待确认」。
 
 ## 参考
-- references/checklist.md — 审查清单 + P0/P1/P2 判定标准 + 交叉源矩阵模板。
-- references/citation-format.md — 引用格式规则与示例。
+- [checklist.md](references/checklist.md) — 审查清单 + P0/P1/P2 判定标准 + 交叉源矩阵模板；标注优先级前读。
+- [citation-format.md](references/citation-format.md) — 引用格式规则与示例；成稿标注前读。

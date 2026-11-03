@@ -1,6 +1,6 @@
 ---
 name: chint-translation
-description: Universal, zero-hallucination B2B industrial translation, localization, and technical auditing standard for all CHINT low-voltage power distribution and industrial control apparatus. Covers "三断一接" (ACB, MCCB, MCB, Contactors), Automatic Transfer Switches (ATS), Power Quality (SVG/APF), solid-state breakers, sensors, relays, electrical accessories, datasheets, technical specifications, and product manuals. Enforces IEC 60947, IEC 60898, IEC 61000, and UL 489/1066/1008 electrotechnical standards.
+description: Translate and audit CHINT low-voltage electrical datasheets, product manuals, catalogue copy, and technical specifications between Chinese and English. Use when the deliverable is a translation or terminology review for ACB / MCCB / MCB / contactors, ATS, power quality, sensors, relays, or accessories under IEC 60947 / 60898 / 61000 and UL 489 / 1066 / 1008.
 ---
 
 # Universal CHINT Low-Voltage & Industrial Translation Skill (`chint-translation`)
@@ -75,7 +75,7 @@ Identify the product category and load the corresponding technical reference mod
 | Product Category | Series Codes | Applicable Standards | Mandatory Reference Module |
 | :--- | :--- | :--- | :--- |
 | **ACB (Air Circuit Breakers / 框架断路器)** | NXA, NA8, NA1, Noark A | IEC 60947-2, UL 1066 | [02_acb_trip_units](references/02_acb_trip_units_and_protection.md), [03_acb_accessories](references/03_acb_accessories_and_mechanisms.md) |
-| **MCCB (Molded Case Breakers / 塑壳断路器)** | NXM, NXS, NXC, NM8 | IEC 60947-2, UL 489 | [08_mccb_taxonomy](references/08_mccb_taxonomy_and_releases.md) |
+| **MCCB (Molded Case Breakers / 塑壳断路器)** | NXM, NXS, NM8 | IEC 60947-2, UL 489 | [08_mccb_taxonomy](references/08_mccb_taxonomy_and_releases.md) |
 | **MCB & Modular (微型断路器与终端配电)** | NXB, NXBLE, NL1, DPN | IEC 60898-1, IEC 60947-2 | [09_mcb_rcbo_curves](references/09_mcb_rcbo_curves_and_accessories.md) |
 | **ATS (Automatic Transfer Switches / 双电源)** | NZ7, NZ6, NH40SZ | IEC 60947-6-1, UL 1008 | [10_ats_classes](references/10_ats_classes_and_controllers.md) |
 | **Contactors & Power Quality (接触器与电能质量)** | NXC, NXR, NDG, SV | IEC 60947-4-1, IEC 61000 | [11_power_quality_and_contactors](references/11_power_quality_and_contactors.md) |
@@ -106,50 +106,15 @@ Identify the product category and load the corresponding technical reference mod
 - **Safety Instructions & Drawing Callouts**: Transform into verb-led imperative directives (`Direct motor control:`, `Discharge clearance:`, `Inlet clearance:`) and native CAD annotations (`Datum`, `Mounting surface`, `Inner side of door`, `Disconnected position`).
 
 ### Step 5: Anti-Chinglish Quality Audit & Final Verification
-- Filter the translated text against `07_universal_anti_chinglish.md` and category-specific forbidden terms.
+- Filter the translated text against [references/07_universal_anti_chinglish.md](references/07_universal_anti_chinglish.md) and category-specific forbidden terms.
 - Strip all Chinese full-width punctuation (`；`, `（ ）`, `：`) and replace with half-width English equivalents.
 - Unify corporate branding: **`CHINT`** (all caps), Series: **`CHINT NXA Series ACB / NXA Series`** (for Kunlun ACB overseas deliverables), Slogan: **`CHINT - Smart Energy Solutions Provider`**.
 
 ---
 
-## Universal Anti-Chinglish Guardrails (High-Frequency Master List)
+## Universal Anti-Chinglish Guardrails
 
-| Chinese Source | ❌ Forbidden Literal Translation | ✅ Mandatory Professional English | Category Scope |
-| :--- | :--- | :--- | :--- |
-| **正泰昆仑 / 昆仑系列** | CHINT Kunlun / Kunlun series | **CHINT NXA Series ACB / NXA Series** | ACB Branding |
-| **万能式断路器** | Universal Circuit Breaker | **Air Circuit Breaker (ACB)** / LVPCB | ACB (IEC 60947-2) |
-| **塑壳断路器** | Plastic shell breaker | **Molded Case Circuit Breaker (MCCB)** | MCCB (IEC 60947-2 / UL 489) |
-| **微型断路器** | Mini circuit breaker / Small breaker | **Miniature Circuit Breaker (MCB)** | MCB (IEC 60898-1 / UL 489) |
-| **漏电断路器** | Leakage breaker | **Residual Current Circuit Breaker (RCBO / RCCB)** | Modular Devices |
-| **双电源自动转换开关** | Dual power auto switch | **Automatic Transfer Switch (ATS / TSE)** | ATS (IEC 60947-6-1) |
-| **交流接触器** | AC connector / AC switcher | **AC Contactor** | Controlgear (IEC 60947-4-1) |
-| **抽屉式** | Drawer / Drawer type | **Drawout / Drawout type / Withdrawable** | ACB / MCCB |
-| **电动操作机构 (电操)** | Operating device / Motor hand | **Motor Operator Device (MOD) / Motor Mechanism** | ACB / MCCB |
-| **灭弧室** | Interrupter / Arc room | **Arc-extinguishing chamber / Arc chute** | ACB / MCCB |
-| **闭合电磁铁** | Closed electromagnet | **Closing Release (CC / CEM / XF)** | ACB / Switchgear |
-| **分励脱扣器** | Excitation release / Shunting release | **Shunt Release (SHT / MX / YO)** | ACB / MCCB |
-| **欠电压脱扣器** | Less voltage trip / Lack voltage | **Undervoltage Release (UVR / MN / YU)** | ACB / MCCB |
-| **抽屉座** | Drawer box / Slide box | **Guide frame (Cradle / Drawout Chassis)** | ACB / MCCB |
-| **摇手柄存放孔** | Storage hole | **Racking handle storage slot / Storage slot** | ACB Accessories |
-| **智能控制器** | Intelligent controller (literal) | **Controller / Electronic Trip Unit (ETU)** | ACB Protection |
-| **按钮 (合闸/分闸按钮)** | Device button / Press key | **Pushbutton (Closing/Opening pushbutton)** | ACB / Panel |
-| **分断能力型号** | Breaking capacity levels | **Breaking capacity type (Type N / S / H)** | IEC Parameters |
-| **指示灯 (如 Ig 指示灯)** | Ig indicator light / lamp | **Ig indicator / Status indicator** | Trip Units / Panels |
-| **本体钥匙锁** | Body key lock | **ACB Key Lock (KLC)** | ACB Accessories |
-| **相间隔板** | Phase space plate | **Interphase Barriers (Phase Separators)** | ACB / MCCB / MCB |
-| **门框 / 柜门面罩** | Face mask / Door frame | **Door Escutcheon (Door Flange)** | Switchboard Panel |
-| **区域选择性联锁** | Area choice lock | **Zone Selective Interlocking (ZSI)** | Electronic Trip Units |
-| **基准 (图纸标注)** | Base / Reference mark | **Datum** | CAD / Dimensions |
-| **壳架电流 (澄清)** | Frame size (when referring to Inm) | **Frame current / Frame rating (Inm)** | IEC Parameters |
-| **电工辅料 / 附件** | Auxiliary Materials | **Electrical Accessories / Installation Accessories** | General Low-Voltage |
-| **重锤 / 配重块** | Heavy Hammer / Heavy weight | **Counterweight / Balance Weight** | Sensors / Level Control |
-| **约定自由空气发热电流** | Agreed-upon heating current in pure air | **Conventional free air thermal current Ith** | IEC 60947-1 |
-| **额定冲击耐受电压** | Rated impact withstand voltage | **Rated impulse withstand voltage Uimp** | IEC 60947-1 |
-| **50 万次** | 50 Ten thousand times | **500,000 operations / 500,000 cycles** | Endurance Rating |
-| **安装调试** | Installation and Debugging | **Installation and Commissioning** | Equipment Deployment |
-| **注意事项** | Matters need attention | **Operating Precautions / Safety Notes** | Standard Section |
-| **订货须知** | Ordering instruction | **Ordering Information** | Standard Section |
-| **误动作** | Wrong action / Error work | **False tripping / Nuisance tripping / Malfunction** | Electrical Protection |
+全量防呆词库见 [references/07_universal_anti_chinglish.md](references/07_universal_anti_chinglish.md)（TRM-DON-001~019 高频禁令 + 通用辅料/CAD 图纸假朋友 + 单位与标点规范）。翻译前必读，逐条核对中文源文本；本节不再重复罗列。
 
 ---
 
@@ -176,7 +141,7 @@ Identify the product category and load the corresponding technical reference mod
 ## Completion Criteria
 
 1. **[ ] Category Routing Confirmed**: Correct product classification identified and corresponding category reference module consulted.
-2. **[ ] Zero Literal Machine Translation**: All terms checked against `07_universal_anti_chinglish.md` and category-specific anti-Chinglish rules.
+2. **[ ] Zero Literal Machine Translation**: All terms checked against [references/07_universal_anti_chinglish.md](references/07_universal_anti_chinglish.md) and category-specific anti-Chinglish rules.
 3. **[ ] Exact Standards Compliance**: Electrical parameters, tripping curves, and ratings accurately mapped to respective IEC (60947-2, 60898-1, 60947-4-1, 60947-6-1) or UL (489, 1066, 1008) standards.
 4. **[ ] Symmetrical Contact Logic**: All changeover / SPDT / secondary circuit wiring instructions clearly specify contact states and operational sequences.
 5. **[ ] Linguistic Fluency & Professional Quality**: Tone and sentence structures strictly follow native European/American industrial electrotechnical standards without grammatical or contextual ambiguity.

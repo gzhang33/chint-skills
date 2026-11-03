@@ -15,13 +15,14 @@ For native PowerPoint creation or editing, this skill supplies brand guidance on
 
 ### 1. Single Source of Truth: Tokens & Assets
 - **Primary Brand Color**: `#1E50E6` (CHINT Electric Blue / 正泰极光蓝)
-- **2026 Matrix Palette**: 7-step Primary Blue (`#1437AA` ~ `#D7F0FF`), 4-step Green Energy (`#14C832` ~ `#DCFF8C`), 4-step Smart Cyan (`#14C8B4` ~ `#C8FFDC`), 4-step Neutral Gray (`#5A5A5A` ~ `#F0F0F0`), Alert Red (`#D70A32`).
 - **Gradient Banner**: `linear-gradient(90deg, #50C8FF 0%, #1E50C8 100%)` (Electric Cyan to Deep Blue)
 - **Base Canvas / Background**: `#F6F6F6` (Crisp light gray canvas)
 - **Surface / Card**: `#FFFFFF` with 1px border `#E2E8F0`
 - **Text Hierarchy**: `#191919` (Titles/Headers) | `#333333` (Body text) | `#666666` (Captions/Footnotes)
 - **Corporate Font**: `CHINTinno` (正泰拓新体) — weights `400` (Regular), `700` (Bold), `300` (Light)
 - **CSS Fallback**: `'CHINTinno', 'Microsoft YaHei', 'PingFang SC', '微软雅黑', sans-serif`
+
+完整 2026 多阶矩阵（7 阶蓝 / 4 阶绿能 / 4 阶智青 / 4 阶中性灰）、图表序列色与语义状态色见 [color_palette.md](references/color_palette.md)。
 
 > All bundled font files, vector logos, CSS styles, and Python helpers reside in `assets/` and `scripts/`.
 
@@ -42,7 +43,6 @@ Identify the target deliverable medium and load the corresponding brand tokens:
 4. **Markdown / HTML / PDF Reports**:
    - Structure with crisp light mode cards, standard typography, and clean vector status indicators.
 
-> **Completion Criterion**: Target medium is identified and official brand tokens (`CHINT_COLORS`, `CHINT_FONTS`) or CSS variables are imported and verified.
 
 ---
 
@@ -53,7 +53,6 @@ Apply composable modular layout patterns according to content density:
 - **Zero-Emoji Policy**: Mandate vector iconography (e.g. `lucide` / `lucide-react` / SVG) for all UI actions, badges, and status indicators. Never use non-professional decorative emojis in enterprise deliverables.
 - **Typographic Scale**: Slide titles `22pt - 24pt Bold`, card titles `15pt - 18pt Bold`, body text `12pt - 14pt Regular`. Consult [typography.md](references/typography.md).
 
-> **Completion Criterion**: Layout strictly adheres to 16:9 widescreen dimensions, white card surface hierarchy, typographic scale, and zero-emoji compliance.
 
 ---
 
@@ -65,20 +64,19 @@ Apply official corporate colors strictly according to semantic meaning:
 - **Semantic Indicators**: Growth/Success `#14C832` | Alert/Warning `#F59E0B` | Decline/Error `#D70A32` | Info `#1E50E6`.
 - Consult [color_palette.md](references/color_palette.md) for the complete 2026 multi-series step matrix.
 
-> **Completion Criterion**: Chart and UI colors match official hex values without unapproved arbitrary palettes.
 
 ---
 
 ### Step 4: Automated Brand Compliance Audit & Delivery
 Verify all generated artifacts against the brand checklist or run the automated brand linter:
-- Run automated audit: `python3 scripts/lint_brand.py <target_directory>`
+- Run automated audit on the **deliverable directory**: `python3 scripts/lint_brand.py <output-dir>`（禁止对技能目录自身执行）。该脚本只检查 emoji、非品牌蓝与字体回退顺序；对比度、留白、Logo 位置须人工核对。
 - [ ] Font family explicitly set to `CHINTinno` with `Microsoft YaHei` second fallback.
 - [ ] Primary accent matches `#1E50E6` (or gradient `#50C8FF` to `#1E50C8`).
-- [ ] Contrast ratio meets WCAG 2.1 AA standards (dark text on light backgrounds).
+- [ ] 对比度满足 WCAG 2.1 AA（深色字/浅色底）——**人工核对，脚本不覆盖**。
 - [ ] Clean vector logos referenced from `assets/logos/` when logo placement is required.
 - [ ] Conversational delivery to user is strictly in **Chinese**, high-density, with zero raw code blocks.
 
-> **Completion Criterion**: `python3 scripts/lint_brand.py .` executes with 0 violations and user-facing delivery is strictly in Chinese with zero raw code blocks.
+> **Completion Criterion**: `python3 scripts/lint_brand.py <output-dir>` 对交付物目录执行且 0 违规；人工核对项（对比度、留白、Logo 位置）逐条确认；对用户的交付说明为中文、零裸代码块。
 
 ---
 

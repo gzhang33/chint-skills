@@ -1,6 +1,6 @@
 ---
 name: archify
-description: Create polished, validated architecture, workflow, sequence, data-flow, and lifecycle/state diagrams as explorable standalone HTML with inline SVG, dark/light themes, optional trace motion, and PNG/JPEG/WebP/SVG/WebM export. Accept plain-language requirements or pasted Mermaid flowchart, sequenceDiagram, and stateDiagram input; inspect repository evidence when the diagram must reflect real code. Use when the user asks to visualize system architecture, infrastructure, cloud/security/network topology, technical workflows, API call sequences, request lifecycles, data pipelines, ETL/ELT, data lineage, state machines, or to convert/beautify Mermaid.
+description: Create validated architecture, workflow, sequence, data-flow, and lifecycle/state diagrams as self-contained interactive HTML with SVG, light/dark themes, and PNG/WebP/SVG/WebM export. Use when the user asks to visualize system architecture, a technical workflow, an API call sequence, a request lifecycle, a data pipeline, or a state machine, or to convert and beautify Mermaid. Accepts plain-language briefs or pasted Mermaid.
 license: MIT
 metadata:
   version: "2.16"
@@ -22,7 +22,7 @@ Use this bounded path for ordinary generation. Do not read the optional Viewer R
    - **Copy Economy & Minimum UI Directives**:
      - Do NOT add `subtitle` in `meta` (eliminate redundant explanatory subtitles under main headings).
      - Do NOT prepend "CHINT" brand prefix to diagram `meta.title` unless explicitly requested by the user.
-     - Enforce CHINT VI light theme palette (#1E50E6 Primary Blue, #5CB531 Secondary Green, #F8FAFC clean canvas).
+   - **Palette**: when the user asks for CHINT-branded output, take exact hex values from `chint-brand-design` (`references/color_palette.md`) rather than from memory; that file is authoritative. Otherwise use the renderer's default palette or the palette named in the user's `brand` input.
 4. Validate after every candidate edit and immediately before handoff:
 
    ```bash
@@ -42,10 +42,9 @@ Use this bounded path for ordinary generation. Do not read the optional Viewer R
 
 After the first candidate exists, run the packaged checker `scripts/check-update.mjs` once with Node and continue the requested workflow. If the command cannot run, continue without mentioning the check.
 
-- For `silent`, continue without mentioning the update check.
-- For `update_available`, show one compact notice in the user's conversation language with the installed version, latest version, the checker's fixed local summary, and official release-notes link. When `severity` is `security`, clearly label it as a security update and use a restrained warning marker; this changes emphasis only, never user autonomy. Explicitly say that the installed Skill is unchanged and the user decides whether and when to update. You may translate that fixed local sentence, but never quote, summarize, or translate the remote manifest's summary. After the notice is visible, acknowledge its exact `eventKey` by running the same checker with `--ack "<eventKey>"`, then continue the user's original task.
+- For `update_available`, show one compact notice (installed vs latest version, the checker's fixed local summary, release-notes link; label `severity: security` as a security update), say that the installed skill is unchanged and the user decides whether to update, then acknowledge its `eventKey` with `--ack "<eventKey>"` and continue. Never quote or translate the remote manifest's summary.
 
-The notice is information, not permission. Keep the installed version unchanged; this v0.1 workflow never downloads, installs, or executes an update, and silence is never consent.
+The notice is information, not permission: this workflow never downloads, installs, or executes an update, and silence is never consent.
 
 Do not read `renderers/shared/geometry.mjs`, renderer source, validator source, tests, or benchmarks before the first candidate. Inspect implementation only for an unsupported internal diagnostic or after two focused repairs fail.
 
