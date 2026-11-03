@@ -38,7 +38,16 @@ REPO_ROOT = find_repo_root(CURRENT_DIR)
 SKILL_DIR = CURRENT_DIR.parent if (CURRENT_DIR.parent / "scripts").exists() and (CURRENT_DIR.parent / "resources").exists() else REPO_ROOT / ".agents" / "skills" / "chint-data-analysis"
 
 SKILL_DATA_DIR = SKILL_DIR / "data"
-SKILL_DUCKDB_PATH = SKILL_DATA_DIR / "sales.duckdb"
+
+# 数据仓库不随技能分发，位置由 config_loader 统一解析（$CHINT_SALES_DUCKDB →
+# 工作区 Areas/data-analytics/data/ → 技能内部 data/）。
+try:
+    from config_loader import get_skill_duckdb_path as _resolve_duckdb
+except ImportError:
+    try:
+        from .config_loader import get_skill_duckdb_path as _resolve_duckdb
+    except ImportError:
+        _resolve_duckdb = None
 
 # 56 列全量标准 Excel 标题到数据库物理字段映射字典
 STANDARD_56_COLUMN_MAP: Dict[str, str] = {
@@ -88,15 +97,20 @@ STANDARD_56_COLUMN_MAP: Dict[str, str] = {
 
 
 def get_skill_database_connection(custom_path: Optional[str] = None, category: Optional[str] = None) -> duckdb.DuckDBPyConnection:
-    """获取 DuckDB 数据库只读连接（优先检查 Skill 内部，自适应回退）"""
+    """获取 DuckDB 数据库只读连接（自定路径 → 统一解析位置 → 仓库内常见落点 → 技能内任意 .duckdb）"""
     if custom_path:
         p = Path(custom_path).resolve()
         if p.exists():
             return duckdb.connect(str(p), read_only=True)
 
     cat_code = (category or "acb").lower()
-    search_paths = [
-        SKILL_DUCKDB_PATH,
+    search_paths = []
+    if _resolve_duckdb is not None:
+        try:
+            search_paths.append(_resolve_duckdb())
+        except FileNotFoundError:
+            pass
+    search_paths += [
         SKILL_DATA_DIR / "sales.duckdb",
         REPO_ROOT / "data" / "database" / f"{cat_code}.duckdb",
         REPO_ROOT / "data" / "database" / "chint_analytics.duckdb",
@@ -113,9 +127,13 @@ def get_skill_database_connection(custom_path: Optional[str] = None, category: O
     if candidates:
         return duckdb.connect(str(candidates[0]), read_only=True)
 
-    print(f"❌ [Error] 未找到可用 DuckDB 数据库文件: {SKILL_DUCKDB_PATH}")
-    print("💡 提示: 请先运行以下命令将 Excel 数据集转入 DuckDB:")
-    print("   python3 .agents/skills/chint-data-analysis/scripts/ingest_user_data.py --file /path/to/data.xlsx")
+    print("❌ [Error] 未找到可用 DuckDB 数据库文件。已查找：")
+    for p in search_paths:
+        print(f"   - {p}")
+    print("💡 提示: 销售数据仓库不随技能分发。设置 CHINT_SALES_DUCKDB 指向数据库文件，")
+    print("   或把数据文件放到工作区 Areas/data-analytics/data/sales.duckdb，")
+    print("   或先运行 ingest_user_data.py 从 Excel 生成：")
+    print("   python3 scripts/ingest_user_data.py --file /path/to/data.xlsx")
     sys.exit(1)
 
 

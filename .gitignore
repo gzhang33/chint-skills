@@ -8,3 +8,8 @@ __pycache__/
 *.bak
 
 node_modules/
+
+# 销售数据仓库（40MB+，随业务更新，不随技能仓库分发）
+*.duckdb
+*.duckdb.wal
+*.duckdb.tmp

@@ -2,9 +2,10 @@
 config_loader.py — 100% 独立便携配置加载器与 56 列标准字典 SSOT (Skill Standalone Edition)
 
 职责：
-1. 保证 Skill 100% 自包含与物理隔离，绝对不越界引用外部项目路径。
-2. 内置全量 56 列标准 Excel 标题与数据库物理列规范化映射表。
-3. 统一管理 Skill 内部存储路径 (SKILL_DIR / "data" / "sales.duckdb")。
+1. 内置全量 56 列标准 Excel 标题与数据库物理列规范化映射表。
+2. 统一管理 Skill 的 DuckDB 数据文件路径。
+3. 数据文件不进仓库：默认从 $CHINT_SALES_DUCKDB 或工作区
+   Areas/data-analytics/data/ 读取，均缺失时回退到 Skill 内部 data/ 目录。
 """
 from __future__ import annotations
 import os
@@ -17,10 +18,26 @@ SKILL_DIR = Path(__file__).resolve().parent.parent
 SKILL_SCRIPTS_DIR = SKILL_DIR / "scripts"
 SKILL_DATA_DIR = SKILL_DIR / "data"
 SKILL_RESOURCES_DIR = SKILL_DIR / "resources"
-SKILL_DUCKDB_PATH = SKILL_DATA_DIR / "sales.duckdb"
 
-# 确保 Skill 数据目录存在
+# 确保 Skill 数据目录存在（common.json 覆盖文件、导入产物都可落在这里）
 SKILL_DATA_DIR.mkdir(parents=True, exist_ok=True)
+
+# 销售数据仓库候选位置，按优先级排列。数据库文件体积大且随业务更新，
+# 不随技能仓库分发；技能只负责读，不负责带。
+_WORKSPACE_DUCKDB = Path(
+    os.getenv("CHINT_WORKSPACE", "~/Documents/chint")
+).expanduser() / "Areas" / "data-analytics" / "data" / "sales.duckdb"
+
+DATABASE_CANDIDATES = (
+    Path(os.getenv("CHINT_SALES_DUCKDB", "")).expanduser() if os.getenv("CHINT_SALES_DUCKDB") else None,
+    _WORKSPACE_DUCKDB,
+    SKILL_DATA_DIR / "sales.duckdb",
+)
+DATABASE_CANDIDATES = tuple(p for p in DATABASE_CANDIDATES if p is not None)
+
+# 兼容旧引用：解析后的首选路径。找不到任何候选时为 None，由调用方报错。
+SKILL_DUCKDB_PATH = next((p for p in DATABASE_CANDIDATES if p.exists()), None)
+
 
 # ── 56 列全量标准 Excel 标题到数据库物理字段映射字典 ─────────────────────────
 STANDARD_56_COLUMN_MAP: Dict[str, str] = {
@@ -120,6 +137,17 @@ def get_product_category_rules(category: str | None = None) -> Dict[str, Any]:
 
 
 def get_skill_duckdb_path() -> Path:
-    """获取 Skill 内部独占的 DuckDB 数据库路径"""
-    return SKILL_DUCKDB_PATH
+    """获取销售数据 DuckDB 路径。
+
+    依次尝试 $CHINT_SALES_DUCKDB、工作区 Areas/data-analytics/data/、Skill 内部 data/。
+    全部缺失时报出查找过的位置，让用户知道该把数据文件放哪，而不是抛一个裸 None。
+    """
+    if SKILL_DUCKDB_PATH is not None and SKILL_DUCKDB_PATH.exists():
+        return SKILL_DUCKDB_PATH
+    tried = "\n".join(f"  - {p}" for p in DATABASE_CANDIDATES)
+    raise FileNotFoundError(
+        "未找到销售数据 DuckDB 文件。已尝试：\n"
+        f"{tried}\n"
+        "设置 CHINT_SALES_DUCKDB 指向数据库文件，或把数据文件放到上述任一位置。"
+    )
 

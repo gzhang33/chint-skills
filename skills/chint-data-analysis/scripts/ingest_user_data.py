@@ -27,10 +27,10 @@ if str(CURRENT_DIR) not in sys.path:
     sys.path.insert(0, str(CURRENT_DIR))
 
 try:
-    from config_loader import SKILL_DUCKDB_PATH, SKILL_DIR
+    from config_loader import SKILL_DIR, get_skill_duckdb_path
     from ingest_engine import read_and_clean_dataframe, upsert_to_duckdb, inspect_and_preview_file
 except ImportError:
-    from .config_loader import SKILL_DUCKDB_PATH, SKILL_DIR
+    from .config_loader import SKILL_DIR, get_skill_duckdb_path
     from .ingest_engine import read_and_clean_dataframe, upsert_to_duckdb, inspect_and_preview_file
 
 
@@ -94,7 +94,14 @@ def main():
         print(f"❌ [Error] 指定的数据文件不存在: {input_path}")
         sys.exit(1)
 
-    target_db = Path(args.output_db).resolve() if args.output_db else SKILL_DUCKDB_PATH
+    if args.output_db:
+        target_db = Path(args.output_db).resolve()
+    else:
+        try:
+            target_db = get_skill_duckdb_path()
+        except FileNotFoundError as exc:
+            print(f"❌ [Error] {exc}")
+            sys.exit(1)
 
     # 1. 若为 Dry-Run 模式，输出探查矩阵并退出
     if args.dry_run:

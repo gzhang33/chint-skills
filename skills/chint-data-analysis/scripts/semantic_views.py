@@ -21,9 +21,9 @@ if str(ROOT_DIR / "scripts") not in sys.path:
     sys.path.insert(0, str(ROOT_DIR / "scripts"))
 
 try:
-    from config_loader import SKILL_DUCKDB_PATH
-    DUCKDB_PATH = str(SKILL_DUCKDB_PATH)
-except ImportError:
+    from config_loader import get_skill_duckdb_path
+    DUCKDB_PATH = str(get_skill_duckdb_path())
+except (ImportError, FileNotFoundError):
     try:
         from config import DUCKDB_PATH
     except ImportError:

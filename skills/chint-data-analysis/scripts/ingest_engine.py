@@ -19,10 +19,10 @@ import numpy as np
 import duckdb
 
 try:
-    from config_loader import STANDARD_56_COLUMN_MAP, SKILL_DUCKDB_PATH
+    from config_loader import STANDARD_56_COLUMN_MAP, get_skill_duckdb_path
     from data_quality import validate_dataframe
 except ImportError:
-    from .config_loader import STANDARD_56_COLUMN_MAP, SKILL_DUCKDB_PATH
+    from .config_loader import STANDARD_56_COLUMN_MAP, get_skill_duckdb_path
     from .data_quality import validate_dataframe
 
 # ── 1. 属性判定关键词表（本体 vs 附件） ─────────────────────────────────────
@@ -464,14 +464,17 @@ def get_reconciliation_summary(con: duckdb.DuckDBPyConnection) -> Dict[str, Any]
 
 def upsert_to_duckdb(
     df: pd.DataFrame,
-    duckdb_path: Path | str = SKILL_DUCKDB_PATH,
+    duckdb_path: Path | str | None = None,
     overwrite: bool = False
 ) -> Dict[str, Any]:
     """
     将清洗后的 DataFrame 写入 DuckDB。
     支持年月分区幂等覆盖 (Partition Upsert) 与全量替换 (Overwrite)。
+    未指定路径时按 config_loader.get_skill_duckdb_path() 解析数据文件位置。
     返回写入元数据总结字典。
     """
+    if duckdb_path is None:
+        duckdb_path = get_skill_duckdb_path()
     db_path = Path(duckdb_path).resolve()
     db_path.parent.mkdir(parents=True, exist_ok=True)
     if db_path.exists() and db_path.stat().st_size == 0:

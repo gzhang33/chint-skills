@@ -38,9 +38,9 @@ Before executing any query, confirm the core analysis parameters:
 ### Step 2: Data Status & Ingestion
 1. **Environment Verification**:
    - Ensure dependencies are installed: `pip install -r requirements.txt` (DuckDB, Pandas, PyArrow, python-pptx, openpyxl, matplotlib).
-   - Ensure local DuckDB database (`data/database/<dept>.duckdb`) is active.
+   - Ensure a sales DuckDB file is reachable. The database is ~40 MB and updates with the business, so it is **not** shipped in this repository. `scripts/config_loader.py` looks in this order: `$CHINT_SALES_DUCKDB`, `<workspace>/Areas/data-analytics/data/sales.duckdb` (workspace defaults to `~/Documents/chint`, override with `$CHINT_WORKSPACE`), then the skill's own `data/sales.duckdb` for local imports. When none exists, every entry point prints the paths it tried.
 2. **Data Ingestion & Verification**:
-   - Run ingestion via `etl/data_processor.py`.
+   - Run ingestion via `etl/data_processor.py`, or `scripts/ingest_user_data.py --file <xlsx>` to build the DuckDB from an Excel dataset.
    - Verify unmapped materials via `etl/mapping_manager.py`.
 
 > **Completion Criterion**: Data is refreshed, validated, and reconciled in DuckDB semantic views.
