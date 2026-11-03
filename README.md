@@ -15,7 +15,6 @@
 | **`chint-acb-translation`** | `skills/chint-acb-translation/` | **正泰万能式断路器（ACB）海外样本与技术翻译**<br>专为正泰海外市场 PM 打造的万能式断路器（NXA/NA8/NA1/Noark UL）高精度翻译知识库。收录 8 大分域知识库（产品名称、电气参数、脱扣器与智能控制器、内外部附件机构、安装接线与结构、环境与标准、样本高频句式、翻译禁忌词库）及 88 组全量结构化元数据 JSON。 | IEC 60947-2 (2024)<br>GB/T 14048.2 (2020)<br>UL 1066 / IEEE C37.13 |
 | **`chint-data-analysis`** | `skills/chint-data-analysis/` | **正泰主配电销售数据与业务智能分析**<br>专为 PM 业务分析打造的主配电产品销售数据透视、漏斗分析、产品线增长及自动化汇报生成技能。 | 正泰主配电产品线营销数据 |
 | **`chint-pm-copywriter`** | `skills/chint-pm-copywriter/` | **B2B 工业品产品经理通用文案与汇报语法引擎**<br>专为工业制造与配电产品经理打造的向上汇报、QBR复盘、PRD价值主张与产品样本提炼技能。内置极简量化三要素、三段式负向建设性语法、黑白名单词典与5项出稿门禁，坚决杜绝浮夸黑话与战役化暗喻。 | 正泰高管汇报标准<br>B2B 工业品 PM 务实文案规范 |
-| **`archify`** | `skills/archify/` | **正泰数字化系统架构与工作流高保真交互图谱**<br>专为系统架构、工业工作流、调用时序、数据管道与生命周期状态图打造的高保真编译渲染技能。默认适配正泰 VI 配色体系（正泰蓝 `#1E50E6`、诺雅克绿 `#5CB531` 及工业数字化标准语义色谱），支持中英文混排与自包含可交互 HTML/SVG 导出。 | 正泰 2026 VI 视觉规范指导手册<br>Archify 开源编译器体系 |
 | **`chint-RAT`** | `skills/chint-RAT/` | **立项资料一页纸 PPT 生成**<br>复刻 NXA 系列立项样板版式（16:9 单页 12 分区看板 + 承接单位/团队/P1-P4 计划/财务三表），内置 python-pptx 生成引擎与校验器（分区齐全、平台命名、痛点量化、口径勾稽、字体 VI 门禁），配套立项内容方法论：数字化表述、痛点与产品定义一一对应、销售预测交叉验证、风险预案四要素、领导常问六问自检；技术 verdict 支持"部分可行"红标并自动追加风险预案/交叉验证附录页。 | NXA 系列电炉行业专供产品开发立项样板<br>配电产品线《立项资料编写经验分享》周会方法论（2026-08） |
 
 ---
@@ -31,9 +30,6 @@ cp -r skills/chint-brand-design /path/to/your-project/.agents/skills/
 
 # 复制断路器翻译技能到当前项目
 cp -r skills/chint-acb-translation /path/to/your-project/.agents/skills/
-
-# 复制正泰系统架构与工作流交互图谱技能到当前项目
-cp -r skills/archify /path/to/your-project/.agents/skills/
 ```
 
 ### 2. 用户级全局安装
@@ -43,19 +39,18 @@ cp -r skills/archify /path/to/your-project/.agents/skills/
 # 部署至 Antigravity 全局技能库
 cp -r skills/chint-brand-design ~/.gemini/config/skills/
 cp -r skills/chint-acb-translation ~/.gemini/config/skills/
-cp -r skills/archify ~/.gemini/config/skills/
 ```
 
 ---
 
-## 📌 知识库架构说明 (`archify`)
+## 📌 知识库架构说明 (`chint-pptx`)
 
-- `bin/archify.mjs`：原生 Node.js CLI 编译器与校验入口，支持 `render`, `compare`, `deliver`, `validate`, `doctor` 命令。
-- `assets/template.html`：正泰企业级轻量 HTML 渲染母版，内置 `#1E50E6` 正泰蓝、`#5CB531` 诺雅克绿调色盘与 `CHINTinno` 字体栈。
-- `schemas/`：包含 5 大图表类型（`architecture`, `workflow`, `sequence`, `dataflow`, `lifecycle`）的 JSON Schema 定义。
-- `renderers/`：自包含的图表生成与布局引擎（含自动路由、正泰语义色谱注入与无障碍文本计算）。
-- `delta/architecture-delta.mjs`：架构版本快照（Before / Delta / After）差异比对与交互审查器。
-- `references/`：包含品牌标识、场景配方与设计模式参考文档。
+- `scripts/chint_pptx_engine.py`：演示文稿生成引擎，按 JSON payload 产出可编辑的表格页与原生图表页。
+- `scripts/shell_rebuild_engine.py`：保留源内容页的外壳重排引擎，配套源稿保真校验。
+- `core/`：测定、规划、渲染三个独立模块，引擎不再单文件承载全部逻辑。
+- `spec/brand_tokens.json`：2026 VI 数值的唯一真源；`spec/2026VI.yaml` 存版式几何与测定阈值。
+- `references/content_contract.md`：内容页版式契约（`ARCH_TABLE` 与三张原生图表）。
+- `references/`：创建/编辑流程、质量与环境检查、源页保留 SOP、资源库指南等。
 
 ---
 
