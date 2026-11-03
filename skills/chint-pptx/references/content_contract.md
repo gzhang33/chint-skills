@@ -15,7 +15,7 @@
 | `ARCH_17_CHART_PIE_DONUT` | 构成占比 | `title`、`center_metric`、`center_label`、`slices` |
 | `ARCH_16_RADAR` | 多维能力对标 | `title`、`categories`、`series` |
 
-选用其它 archetype 会直接报错，并给出对应的表格迁移写法（见引擎里的 `ARCHETYPE_MIGRATION`）。
+选用其它 archetype 会直接报错。
 
 ## 选型规则（由人判断，校验脚本不判）
 

@@ -15,7 +15,7 @@ Use the most specific existing CHINT generator: sales or product analytics repor
 
 ## Content pages are table pages
 
-Since 2026-11 the deck has exactly one content layout: `ARCH_TABLE`. Cover, contents, chapter dividers, and closing come from the template artwork; the three native charts (`ARCH_16_CHART_BAR_TREND`, `ARCH_17_CHART_PIE_DONUT`, `ARCH_16_RADAR`) remain available for trend, composition, and multi-dimension comparison. Every other archetype is rejected at payload validation with a table-shaped migration hint.
+Since 2026-11 the deck has exactly one content layout: `ARCH_TABLE`. Cover, contents, chapter dividers, and closing come from the template artwork; the three native charts (`ARCH_16_CHART_BAR_TREND`, `ARCH_17_CHART_PIE_DONUT`, `ARCH_16_RADAR`) remain available for trend, composition, and multi-dimension comparison. Any other archetype is rejected at payload validation.
 
 Read [references/content_contract.md](references/content_contract.md) before composing pages: it lists the allowed archetypes, the `ARCH_TABLE` payload (flat and merged headers), the fixed table styling, and the 20-row single-page limit. Choose table versus chart from what the reader needs — look up numbers in a table, read a trend in a chart; the compliance gate checks structure only and will not catch a poor choice.
 
@@ -61,7 +61,6 @@ For supported local edits, use `scripts/inspect_pptx.py <source.pptx> --edit-tar
 - [references/create_edit_workflow.md](references/create_edit_workflow.md): creation, restructuring, scoped edits, and fact protection.
 - [references/quality_and_environment.md](references/quality_and_environment.md): runtime, editable-content, structural, visual, and PowerPoint/WPS checks.
 - [references/content_contract.md](references/content_contract.md): allowed archetypes, `ARCH_TABLE` payload, fixed table styling, validation rules.
-- [references/layout_archetypes.md](references/layout_archetypes.md): historical catalog of the retired 34 layouts; read only when migrating an old deck.
 - [references/vi_and_typography.md](references/vi_and_typography.md): rationale and token names. Numeric brand values live in `spec/brand_tokens.json`.
 - [references/preserve_source_pages_sop.md](references/preserve_source_pages_sop.md): strict source-page preservation contract; use only for explicit preserve-content requests.
 - [references/asset_library_guide.md](references/asset_library_guide.md): read only when selecting map, icon, or media assets.
