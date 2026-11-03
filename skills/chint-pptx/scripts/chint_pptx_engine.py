@@ -1622,6 +1622,16 @@ def edit_existing_presentation(config, output_override=None):
     except (zipfile.BadZipFile, etree.XMLSyntaxError) as exc:
         raise ValueError(f"source PPTX contains an unreadable package part: {exc}") from exc
 
+    from check_deck_compliance import check_deck
+    report = check_deck(output_path)
+    if not report["passed"]:
+        for issue in report["issues"]:
+            print(f"[FAIL] {issue}", file=sys.stderr)
+        raise ValueError(
+            f"Edited deck saved to {output_path} 但未通过结构合规校验，共 {len(report['issues'])} 项。"
+            "修正后重跑；校验规则见 scripts/check_deck_compliance.py"
+        )
+
     return str(output_path)
 
 

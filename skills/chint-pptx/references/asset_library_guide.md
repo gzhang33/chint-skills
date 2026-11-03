@@ -50,23 +50,11 @@ Vector maps for presenting market reach, service network, and global footprint:
 
 ### Usage in Slides:
 - **National Sales / Service Network**: Combine `china_map_provinces.svg` with user-provided regional, warehouse, or response-time information. Verify every count and service commitment from source material.
-- **Overseas Expansion**: Use `ARCH_13_GLOBAL_FOOTPRINT` to highlight overseas manufacturing bases, regional headquarters (APAC, EMEA, Americas), and localized supply chains.
+- **Overseas Expansion**: Use `ARCH_TABLE` with a region column for overseas manufacturing bases, regional headquarters, and localized supply chains.
 
 ---
 
-## 3. Specialized Layout Archetypes (`ARCH_12` & `ARCH_13`)
-
-### `ARCH_12_TEAM_PROFILE` — Leadership & Technical Experts
-- **When to use**: Presenting R&D core teams, senior technical architects, PM leadership, or project delivery squads.
-- **Structure**: 3 or 4 equal-width cards with avatar container, name, official title, academic/industry credentials, and key achievements.
-
-### `ARCH_13_GLOBAL_FOOTPRINT` — Global / National Footprint
-- **When to use**: Presenting business network coverage, global sales branches, or regional manufacturing bases.
-- **Structure**: Split layout with left network statistics + right branch distribution matrix / regional office cards.
-
----
-
-## 4. Official 2026 VI Media Assets (`assets/media/`) — and their baked-in artwork
+## 3. Official 2026 VI Media Assets (`assets/media/`) — and their baked-in artwork
 
 | Asset | Used by | Note |
 | :--- | :--- | :--- |

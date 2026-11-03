@@ -16,7 +16,7 @@ Create a cover, one contents page, chapter dividers where useful, editable body 
 
 The current JSON engine accepts an object with a `slides` array. Each slide supplies an explicit `archetype` and required source-backed fields for that layout. Read [content_contract.md](content_contract.md) for the supported archetypes and payload fields. The engine rejects unknown archetypes and missing required data rather than filling in sample facts.
 
-The archetype catalog summarizes payload fields; `scripts/chint_pptx_engine.py` `_validate_slide_payload` is the authoritative required-field check. Cover `date` and `author`, and closing `tagline`, `team`, `call_to_action`, and `contact`, are optional and render when supplied. A radar chart needs 3–6 named categories and one finite numeric value per category and series. It is a native editable PowerPoint chart. The bar-trend chart is also native; other rich `ARCH_16` charts are raster images, emit a warning, and must be disclosed as not data-editable.
+The archetype catalog summarizes payload fields; `scripts/chint_pptx_engine.py` `_validate_slide_payload` is the authoritative required-field check. Cover `date` and `author`, and closing `tagline`, `team`, `call_to_action`, and `contact`, are optional and render when supplied. A radar chart needs 3–6 named categories and one finite numeric value per category and series. All three retained charts (bar-trend, donut, radar) are native editable PowerPoint charts; there is no raster chart path.
 
 ## Restructure an existing deck
 
