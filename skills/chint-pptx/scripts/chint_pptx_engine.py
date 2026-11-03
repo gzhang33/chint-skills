@@ -24,7 +24,7 @@ from typing import Dict, Any, List, Optional, Union
 
 from lxml import etree
 from pptx import Presentation
-from pptx.util import Inches, Pt
+from pptx.util import Inches, Pt, Emu
 from pptx.dml.color import RGBColor
 from pptx.enum.text import PP_ALIGN, MSO_ANCHOR
 from pptx.enum.shapes import MSO_SHAPE
@@ -96,11 +96,148 @@ _REQUIRED_FIELDS = {
     "ARCH_29": ("tasks",),
 }
 
+# --- Content-page contract (2026-11 revision) -------------------------------
+# Only these archetypes produce slides. The other renderers stay in the file as
+# history but are rejected at payload validation; see ARCHETYPE_MIGRATION.
+ALLOWED_ARCHETYPES = (
+    "ARCH_01_COVER",
+    "ARCH_02_TOC",
+    "ARCH_03_CHAPTER",
+    "ARCH_11_CLOSING",
+    "ARCH_TABLE",
+    "ARCH_16_CHART_BAR_TREND",
+    "ARCH_17_CHART_PIE_DONUT",
+    "ARCH_16_RADAR",
+)
+
+ARCHETYPE_MIGRATION = {
+    "ARCH_04": "ARCH_TABLE（两列：指标名 / 数值）",
+    "ARCH_05": "ARCH_TABLE（多列表格，每列一个主题）",
+    "ARCH_06": "ARCH_TABLE（阶段 / 时间 / 说明 三列）",
+    "ARCH_07": "ARCH_TABLE（问题 / 应对 两列）",
+    "ARCH_08": "ARCH_TABLE（层级 / 内容 两列）",
+    "ARCH_09": "ARCH_TABLE（场景 / 方案 两列）",
+    "ARCH_10": "ARCH_TABLE（指标 / 数值 / 说明 三列）",
+    "ARCH_12": "ARCH_TABLE（姓名 / 角色 / 职责 三列）",
+    "ARCH_13": "ARCH_TABLE（区域 / 覆盖 两列）",
+    "ARCH_14": "ARCH_TABLE（节点 / 说明 两列）",
+    "ARCH_15": "ARCH_TABLE（渠道 / 联系方式 两列）",
+    "ARCH_16_COMBO": "ARCH_TABLE 或 ARCH_16_CHART_BAR_TREND",
+    "ARCH_16_DIVERGING": "ARCH_TABLE 或 ARCH_16_CHART_BAR_TREND",
+    "ARCH_16_FUNNEL": "ARCH_TABLE（阶段 / 数量 / 转化率 三列）",
+    "ARCH_16_GAUGE": "ARCH_TABLE（指标 / 当前值 / 目标值 三列）",
+    "ARCH_16_HEATMAP": "ARCH_TABLE（行标签 + 数值列）",
+    "ARCH_16_SANKEY": "ARCH_TABLE（来源 / 去向 / 数量 三列）",
+    "ARCH_16_STACKED_AREA": "ARCH_TABLE 或 ARCH_16_CHART_BAR_TREND",
+    "ARCH_16_WATERFALL": "ARCH_TABLE（项目 / 变动额 两列）",
+    "ARCH_18": "ARCH_TABLE（指标 / 数值 / 说明 三列）",
+    "ARCH_19": "ARCH_TABLE（指标 / 数值 两列）",
+    "ARCH_20": "ARCH_TABLE（象限 / 内容 两列）",
+    "ARCH_21": "ARCH_TABLE（现状 / 改进 两列）",
+    "ARCH_22": "ARCH_TABLE（短板 / 改善动作 两列）",
+    "ARCH_23": "ARCH_TABLE（风险 / 等级 / 预案 三列）",
+    "ARCH_24": "ARCH_TABLE（支柱 / 说明 两列）",
+    "ARCH_25": "ARCH_TABLE（步骤 / 动作 / 交付物 三列）",
+    "ARCH_26": "ARCH_TABLE（阶段 / 数量 / 转化率 三列）",
+    "ARCH_27": "ARCH_TABLE（版本 / 说明 两列）",
+    "ARCH_28": "ARCH_TABLE（阶段 / 决策点 两列）",
+    "ARCH_29": "ARCH_TABLE（任务 / 责任人 / 时间 多列表格）",
+    "ARCH_30": "ARCH_TABLE（年份 / 里程碑 两列）",
+    "ARCH_31": "ARCH_TABLE（支柱 / 说明 两列）",
+    "ARCH_32": "ARCH_TABLE（参与方 / 职责 两列）",
+    "ARCH_33": "ARCH_TABLE（认证 / 机构 / 指标 三列）",
+    "ARCH_34": "ARCH_TABLE（伙伴 / 能力 两列）",
+}
+
+TABLE_MAX_ROWS = 20
+
+
+def _normalize_arch(arch: str) -> str:
+    arch = (arch or "").strip().upper()
+    if arch.startswith("ARCH_TABLE"):
+        return "ARCH_TABLE"
+    if arch.startswith("ARCH_17"):
+        return "ARCH_17_CHART_PIE_DONUT"
+    if arch.startswith("ARCH_16_RADAR"):
+        return "ARCH_16_RADAR"
+    if arch.startswith("ARCH_16_CHART_BAR") or arch in ("ARCH_16_BAR_CHART", "ARCH_16_CHART_TREND"):
+        return "ARCH_16_CHART_BAR_TREND"
+    return arch
+
+
+def _reject_retired(arch: str) -> None:
+    for prefix, replacement in ARCHETYPE_MIGRATION.items():
+        if arch.startswith(prefix):
+            raise ValueError(
+                f"{arch} 已停用。改用 {replacement}。内容页现仅支持："
+                + "、".join(ALLOWED_ARCHETYPES)
+            )
+    raise ValueError(
+        f"{arch} 不是受支持的版式。内容页现仅支持："
+        + "、".join(ALLOWED_ARCHETYPES)
+    )
+
+
+def _validate_table_payload(arch: str, data: Dict[str, Any]) -> None:
+    headers = data.get("headers")
+    rows = data.get("rows")
+    if not isinstance(headers, list) or not headers:
+        raise ValueError(f"{arch} 需要非空 headers 数组")
+    if not all(isinstance(h, str) and h.strip() for h in headers):
+        raise ValueError(f"{arch}.headers 每项必须是非空字符串")
+    if not isinstance(rows, list) or not rows:
+        raise ValueError(f"{arch} 需要非空 rows 数组")
+    if len(rows) > TABLE_MAX_ROWS:
+        raise ValueError(
+            f"{arch}.rows 有 {len(rows)} 行，超过单页上限 {TABLE_MAX_ROWS} 行；请拆成多页，不要压缩字号硬塞"
+        )
+    for index, row in enumerate(rows):
+        if not isinstance(row, list):
+            raise ValueError(f"{arch}.rows[{index}] 必须是数组")
+        if len(row) != len(headers):
+            raise ValueError(
+                f"{arch}.rows[{index}] 有 {len(row)} 个单元格，与 {len(headers)} 个表头不一致"
+            )
+
+    merge_groups = data.get("merge_groups") or []
+    if merge_groups:
+        if "levels" not in data:
+            raise ValueError(f"{arch} 提供 merge_groups 时必须同时提供 levels（多层表头）")
+        levels = data["levels"]
+        if not isinstance(levels, list) or len(levels) != 2:
+            raise ValueError(f"{arch}.levels 必须是两层表头的高度列表，例如 [2, 1]")
+        if len(headers) > 1 and isinstance(headers[0], list):
+            raise ValueError(f"{arch}.headers 必须是扁平字符串数组；多层表头写在 levels/header_tree 中")
+        for index, group in enumerate(merge_groups):
+            if not isinstance(group, dict) or "row" not in group or "columns" not in group:
+                raise ValueError(f"{arch}.merge_groups[{index}] 需要 row 与 columns")
+            cols = group["columns"]
+            if not isinstance(cols, list) or len(cols) < 2:
+                raise ValueError(f"{arch}.merge_groups[{index}].columns 至少两列才能合并")
+            if any(not isinstance(c, int) or c < 0 or c >= len(headers) for c in cols):
+                raise ValueError(f"{arch}.merge_groups[{index}].columns 越界")
+            if any(cols[i] + 1 != cols[i + 1] for i in range(len(cols) - 1)):
+                raise ValueError(f"{arch}.merge_groups[{index}].columns 必须是连续列区间")
+
+    aligns = data.get("align")
+    if aligns is not None:
+        if not isinstance(aligns, list) or len(aligns) not in (len(headers),):
+            raise ValueError(f"{arch}.align 长度必须等于列数")
+        if any(a not in ("center", "left", "right") for a in aligns):
+            raise ValueError(f"{arch}.align 只能取 center / left / right")
 
 
 def _validate_slide_payload(arch, data):
     if not isinstance(data, dict):
         raise ValueError(f"Slide payload for {arch} must be an object")
+
+    arch = _normalize_arch(arch)
+    if arch not in ALLOWED_ARCHETYPES:
+        _reject_retired(arch)
+
+    if arch == "ARCH_TABLE":
+        _validate_table_payload(arch, data)
+
     if not arch.startswith(("ARCH_02", "ARCH_11")) and not (data.get("title") or data.get("headline")):
         raise ValueError(f"{arch} requires a source-backed title")
 
@@ -1946,6 +2083,106 @@ class ChintPresentationEngine:
                 set_para(p_d, nd.get("desc", ""), font_size=11, bold=False, color_rgb=C_DARK)
                 p_d.space_before = Pt(4)
 
+    def _render_table(self, slide, s_data: Dict[str, Any], arch: str):
+        """ARCH_TABLE: the single generic content layout (multi-level header, zebra rows)."""
+        self._add_body_master(slide, s_data.get("title", ""), s_data.get("category"))
+
+        headers = s_data["headers"]
+        rows = s_data["rows"]
+        levels = s_data.get("levels") or [1]
+        merge_groups = s_data.get("merge_groups") or []
+        aligns = s_data.get("align") or ["center"] * len(headers)
+        note = s_data.get("note")
+
+        n_cols = len(headers)
+        n_header_rows = len(levels)
+        n_body = len(rows)
+        left_m = Inches(0.8)
+        top_m = Inches(1.55)
+        width = Inches(11.73)
+        bottom_limit = Inches(6.75 if note else 7.05)
+        note_reserve = Inches(0.3) if note else Inches(0)
+        avail_h = bottom_limit - top_m - note_reserve
+
+        font_body = 11.0
+        font_header = 12.0
+        min_body = 8.5
+        while True:
+            row_h = Inches(0.34) + Inches(0.05) * min(font_body - min_body, 6)
+            header_h = row_h * 1.15
+            total = header_h * n_header_rows + row_h * n_body
+            if total <= avail_h or font_body <= min_body:
+                break
+            font_body -= 0.5
+            font_header = min(13.0, font_body + 1.0)
+
+        row_h = min(row_h, int(avail_h / max(1, n_header_rows + n_body)))
+        header_h = int(row_h * 1.15)
+        total_h = min(int(avail_h), header_h * n_header_rows + row_h * n_body)
+
+        table_shape = slide.shapes.add_table(
+            n_header_rows + n_body, n_cols, left_m, top_m, width, Emu(total_h))
+        table = table_shape.table
+
+        # Merge the header groups before any cell text is written.
+        for group in merge_groups:
+            group_row = group["row"]
+            cols = group["columns"]
+            table.cell(group_row, cols[0]).merge(table.cell(group_row, cols[-1]))
+
+        for r in range(n_header_rows):
+            table.rows[r].height = Emu(header_h)
+        for r in range(n_body):
+            table.rows[n_header_rows + r].height = Emu(row_h)
+
+        header_labels = s_data.get("header_tree")
+        if header_labels:
+            for r, level in enumerate(header_labels):
+                for c in range(n_cols):
+                    cell = table.cell(r, c)
+                    cell.fill.solid()
+                    cell.fill.fore_color.rgb = C_BLUE
+                    label = level[c] if c < len(level) else None
+                    self._set_tf_margins(cell.text_frame, top=6, bottom=6, left=8, right=8)
+                    set_para(cell.text_frame.paragraphs[0], "" if label is None else str(label),
+                             font_size=font_header, bold=True, color_rgb=C_WHITE, align=PP_ALIGN.CENTER)
+        else:
+            for c, label in enumerate(headers):
+                cell = table.cell(0, c)
+                cell.fill.solid()
+                cell.fill.fore_color.rgb = C_BLUE
+                self._set_tf_margins(cell.text_frame, top=6, bottom=6, left=8, right=8)
+                set_para(cell.text_frame.paragraphs[0], label, font_size=font_header,
+                         bold=True, color_rgb=C_WHITE, align=PP_ALIGN.CENTER)
+            for r in range(1, n_header_rows):
+                for c in range(n_cols):
+                    cell = table.cell(r, c)
+                    cell.fill.solid()
+                    cell.fill.fore_color.rgb = C_BLUE
+                    self._set_tf_margins(cell.text_frame, top=6, bottom=6, left=8, right=8)
+                    set_para(cell.text_frame.paragraphs[0], "", font_size=font_header,
+                             bold=True, color_rgb=C_WHITE, align=PP_ALIGN.CENTER)
+
+        align_map = {"center": PP_ALIGN.CENTER, "left": PP_ALIGN.LEFT, "right": PP_ALIGN.RIGHT}
+        for r_idx, row in enumerate(rows):
+            for c_idx, value in enumerate(row):
+                cell = table.cell(n_header_rows + r_idx, c_idx)
+                cell.fill.solid()
+                cell.fill.fore_color.rgb = C_LIGHT_BG if r_idx % 2 == 1 else C_WHITE
+                self._set_tf_margins(cell.text_frame, top=6, bottom=6, left=8, right=8)
+                text = "" if value is None else str(value)
+                set_para(cell.text_frame.paragraphs[0], text, font_size=font_body, bold=False,
+                         color_rgb=C_DARK, align=align_map[aligns[c_idx]])
+
+        for c in range(n_cols):
+            table.columns[c].width = Emu(int(width / n_cols))
+
+        if note:
+            tb_note = slide.shapes.add_textbox(left_m, bottom_limit - Inches(0.05), width, Inches(0.3))
+            self._set_tf_margins(tb_note.text_frame, top=0, bottom=0, left=4, right=4)
+            set_para(tb_note.text_frame.paragraphs[0], note, font_size=9, bold=False,
+                     color_rgb=C_MUTED, align=PP_ALIGN.LEFT)
+
     def _render_gantt_table(self, slide, s_data: Dict[str, Any], arch: str):
         """Engine 12: Gantt Schedule Table (ARCH_29)"""
         self._add_body_master(slide, s_data.get("title", "项目排期与推进进度甘特表"), s_data.get("category", "甘特排期"))
@@ -2549,10 +2786,14 @@ class ChintPresentationEngine:
 
         for s_data in slides_data:
             arch = (s_data.get("archetype") or s_data.get("type") or s_data.get("layout") or s_data.get("arch") or "").upper()
-            engine_fn = ENGINE_ROUTER.get(arch)
+            _validate_slide_payload(arch, s_data)
+            arch = _normalize_arch(arch)
+            if arch == "ARCH_TABLE":
+                engine_fn = self._render_table
+            else:
+                engine_fn = ENGINE_ROUTER.get(arch)
             if engine_fn is None:
                 raise ValueError(f"Unknown CHINT slide archetype: {arch or '<missing>'}")
-            _validate_slide_payload(arch, s_data)
             if arch.startswith("ARCH_02"):
                 self._add_template_toc_page(s_data["items"])
                 continue
@@ -2584,6 +2825,16 @@ class ChintPresentationEngine:
             raise FileNotFoundError("Required CHINT badge assets/media/chint_badge.png is missing")
         apply_brand(self.prs, badge)
         self.prs.save(output_path)
+
+        from check_deck_compliance import check_deck
+        report = check_deck(output_path)
+        if not report["passed"]:
+            for issue in report["issues"]:
+                print(f"[FAIL] {issue}", file=sys.stderr)
+            raise ValueError(
+                f"Deck saved to {output_path} 但未通过结构合规校验，共 {len(report['issues'])} 项。"
+                "修正后重跑；校验规则见 scripts/check_deck_compliance.py"
+            )
         return output_path
 
 

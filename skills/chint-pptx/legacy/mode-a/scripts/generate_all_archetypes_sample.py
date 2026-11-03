@@ -4,7 +4,7 @@ import importlib.util
 import pathlib
 import sys
 
-_ACTIVE = pathlib.Path(__file__).resolve().parents[3] / "scripts" / "generate_all_archetypes_sample.py"
+_ACTIVE = pathlib.Path(__file__).resolve().parents[3] / "samples" / "legacy" / "generate_all_archetypes_sample.py"
 if str(_ACTIVE.parent) in sys.path:
     sys.path.remove(str(_ACTIVE.parent))
 sys.path.insert(0, str(_ACTIVE.parent))
