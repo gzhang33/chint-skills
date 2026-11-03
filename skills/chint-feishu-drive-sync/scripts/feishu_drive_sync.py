@@ -30,16 +30,19 @@
 
   PULL 先于 PUSH 是关键：若先 PUSH 会把远端编辑覆盖掉，冲突便无法保全。
 
-删除传播：默认不传播（安全优先）。如需本地删除同步到远端，加 --sync-deletes。
+删除传播(Git对称风格): 默认双向传播(本地删->远端删,远端删->本地删)。--no-sync-deletes关闭。
 
 依赖：lark-cli（已配置 auth，需 drive:drive / space:document:retrieve / drive:file:download 等 scope）
 状态文件与日志会被自动排除，不会进入同步范围。
 """
 
 import argparse
+import fnmatch
+import hashlib
 import json
 import os
 import shutil
+import signal
 import subprocess
 import sys
 import tempfile
@@ -49,11 +52,22 @@ from pathlib import Path
 
 # ── 常量 ──────────────────────────────────────────────
 LARK_CLI_BIN = None          # 首次调用时探查
-# 排除：仓库内部 / 工具 / 缓存 / 临时 / 运行时产物
+# PUSH 看门狗：单轮超时 + 自动重试（防大文件上传半死连接无限悬挂）
+PUSH_TIMEOUT_SECONDS = 1500  # 单轮 +push 最长 25 分钟，超时即杀掉进程组
+PUSH_MAX_RETRIES = 4         # 失败/超时最多重试 4 轮（依赖 smart 跳过已传文件逐轮推进）
+# 排除：仓库内部 / 工具 / 缓存 / 临时 / 运行时产物 / 独立代码工程
 EXCLUDE_DEFAULT = [
-    ".git", ".venv", ".zcode", ".DS_Store", "__pycache__", "*.pyc",
-    ".playwright-mcp", "~$*", "*.bak*",
+    ".git", ".venv", "venv", ".zcode", ".DS_Store", "__pycache__", "*.pyc",
+    ".playwright-mcp", "~$*", "*.bak*", "*.backup*",
     ".feishu_drive_sync_state.json", "feishu_drive_sync.log",
+    "temp", "_backup_trash", ".feishu_conflict_tmp",
+    "rescue_backup",
+    "node_modules",
+    ".next", "dist", "build",
+    ".trae", ".trae-cn",
+    ".claude", ".cursor", ".gemini", ".windsurf", ".workbuddy",
+    "Areas/data-analytics", "Areas/竞品分析",
+    "graphify-out",
 ]
 STATE_FILE = ".feishu_drive_sync_state.json"
 
@@ -75,18 +89,39 @@ def find_lark_cli():
 
 
 def run_lark(args: list[str], *, cwd: str | None = None, timeout=3600) -> tuple[int, str, str]:
-    """运行 `lark-cli drive <...>` 并返回 (exit_code, stdout, stderr)"""
+    """运行 `lark-cli drive <...>` 并返回 (exit_code, stdout, stderr)。
+
+    timeout 触发时通过进程组 SIGKILL 杀掉 lark-cli 及其派生的 node 子进程，
+    避免“半死连接”残留孤儿进程导致后续同步无限悬挂。
+    """
     global LARK_CLI_BIN
     if LARK_CLI_BIN is None:
         LARK_CLI_BIN = find_lark_cli()
     cmd = [LARK_CLI_BIN, "drive"] + args
     try:
-        r = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout, cwd=cwd)
+        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                text=True, cwd=cwd, start_new_session=True)
+    except Exception as e:  # 启动失败
+        return -2, "", f"spawn_error: {e}"
+    try:
+        out, err = proc.communicate(timeout=timeout)
     except subprocess.TimeoutExpired:
-        return -1, "", "timout"
-    clean_stdout = _strip_ansi(r.stdout)
-    clean_stderr = _strip_ansi(r.stderr)
-    return r.returncode, clean_stdout, clean_stderr
+        # 杀掉整个进程组（含 lark-cli 派生的 node 子进程），防止孤儿进程
+        try:
+            os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
+        except Exception:
+            try:
+                proc.kill()
+            except Exception:
+                pass
+        try:
+            out, err = proc.communicate(timeout=5)
+        except Exception:
+            out, err = "", ""
+        return -1, "", "timeout"
+    clean_stdout = _strip_ansi(out or "")
+    clean_stderr = _strip_ansi(err or "")
+    return proc.returncode, clean_stdout, clean_stderr
 
 
 def _strip_ansi(text: str) -> str:
@@ -109,13 +144,18 @@ def extract_json(text: str) -> dict | None:
 
 
 def _match_exclude(rel_path: str, excludes: list[str]) -> bool:
-    """检查 rel_path 是否匹配任一排除模式（fnmatch）"""
-    import fnmatch
-    rel_path = rel_path.replace(os.sep, "/")
-    for pat in excludes:
+    """检查 rel_path 是否匹配任一排除模式（支持文件名通配、单级目录名通配与多级目录前缀递归）"""
+    rel_path = rel_path.replace(os.sep, "/").strip("/")
+    parts = rel_path.split("/")
+    for raw_pat in excludes:
+        pat = raw_pat.rstrip("/")
+        # 1. 完整路径通配匹配
         if fnmatch.fnmatch(rel_path, pat):
             return True
-        parts = rel_path.split("/")
+        # 2. 目录前缀精确命中（如 Areas/竞品分析 命中 Areas/竞品分析/foo.pdf）
+        if rel_path == pat or rel_path.startswith(pat + "/"):
+            return True
+        # 3. 单级目录名/文件名通配匹配（如 temp 命中 a/b/temp/c.txt）
         for part in parts:
             if fnmatch.fnmatch(part, pat):
                 return True
@@ -245,6 +285,18 @@ def download_file(token: str, rel_path: str, local_dir: str, overwrite: bool) ->
     return False, (obj.get("error", {}).get("message", err) if obj else err)
 
 
+def _file_hash(path: str) -> str | None:
+    """返回文件 sha256 hex（失败返回 None）。用于冲突判定的内容一致性比对。"""
+    h = hashlib.sha256()
+    try:
+        with open(path, "rb") as f:
+            for chunk in iter(lambda: f.read(1 << 20), b""):
+                h.update(chunk)
+        return h.hexdigest()
+    except OSError:
+        return None
+
+
 def pull_phase(local_dir: str, local_set: dict, remote_set: dict,
                prev_state: dict, verbose: bool) -> dict:
     """PULL 阶段：远端 → 本地。返回结果聚合 dict。"""
@@ -264,16 +316,37 @@ def pull_phase(local_dir: str, local_set: dict, remote_set: dict,
             local_changed = p.get("local_mtime") != lmt or p.get("local_size") != lsz
             remote_changed = p.get("remote_mtime") != r["modified_time"]
             if remote_changed and local_changed:
-                # 冲突：另存远端副本，保留本地版本
+                # 疑似冲突：先下载远端内容到临时区，与本地做内容哈希比对，
+                # 避免"两端 mtime 都变但内容已一致"（如中断重启导致基线漂移）的误判冲突。
                 stem, ext = os.path.splitext(path)
-                conflict_rel = f"{stem}.conflict-remote-{ts}{ext}".replace(os.sep, "/")
-                ok, err = download_file(r["token"], conflict_rel, local_dir, overwrite=False)
-                if ok:
-                    conflicts.append(conflict_rel)
-                    items.append({"action": "conflict", "rel_path": conflict_rel, "src": path})
+                tmp_rel = f".feishu_conflict_tmp/{abs(hash(path)):016x}{ext}"
+                ok, derr = download_file(r["token"], tmp_rel, local_dir, overwrite=True)
+                if not ok:
+                    failed.append((path, derr))
+                    items.append({"action": "pull_failed", "rel_path": path, "error": derr})
+                    continue
+                tmp_path = os.path.join(local_dir, tmp_rel)
+                local_path = os.path.join(local_dir, path)
+                if _file_hash(tmp_path) == _file_hash(local_path):
+                    # 内容一致 → 误判，跳过，不生成 conflict 副本（清理临时文件）
+                    try:
+                        os.remove(tmp_path)
+                    except OSError:
+                        pass
+                    skipped.append(path)
+                    items.append({"action": "pull_skipped",
+                                  "rel_path": path, "note": "content-identical (false-conflict avoided)"})
                 else:
-                    failed.append((path, err))
-                    items.append({"action": "pull_failed", "rel_path": path, "error": err})
+                    # 真冲突：保全远端副本（临时文件 rename 到 conflict_rel，避免二次下载）
+                    conflict_rel = f"{stem}.conflict-remote-{ts}{ext}".replace(os.sep, "/")
+                    conflict_path = os.path.join(local_dir, conflict_rel)
+                    try:
+                        os.replace(tmp_path, conflict_path)
+                        conflicts.append(conflict_rel)
+                        items.append({"action": "conflict", "rel_path": conflict_rel, "src": path})
+                    except OSError as e:
+                        failed.append((path, str(e)))
+                        items.append({"action": "pull_failed", "rel_path": path, "error": str(e)})
             elif remote_changed:
                 ok, err = download_file(r["token"], path, local_dir, overwrite=True)
                 if ok:
@@ -286,19 +359,72 @@ def pull_phase(local_dir: str, local_set: dict, remote_set: dict,
                 skipped.append(path)
                 items.append({"action": "pull_skipped", "rel_path": path})
         else:
-            # 仅远端有 → 下载（新建）
-            ok, err = download_file(r["token"], path, local_dir, overwrite=False)
-            if ok:
-                downloaded.append(path)
-                items.append({"action": "downloaded", "rel_path": path})
+            # 本地不存在 → 三态判定
+            p = prev_state.get(path)
+            if p is not None:
+                skipped.append(path)
+                items.append({"action": "marked_deleted", "rel_path": path, "remote_token": r["token"]})
             else:
-                failed.append((path, err))
-                items.append({"action": "pull_failed", "rel_path": path, "error": err})
+                ok, err = download_file(r["token"], path, local_dir, overwrite=False)
+                if ok:
+                    downloaded.append(path)
+                    items.append({"action": "downloaded", "rel_path": path})
+                else:
+                    failed.append((path, err))
+                    items.append({"action": "pull_failed", "rel_path": path, "error": err})
     return {
         "downloaded": downloaded, "conflicts": conflicts,
         "skipped": skipped, "failed": failed, "items": items,
     }
 
+# ── 远端删除（DELETE 传播）───────────────────────────
+
+def delete_remote_phase(delete_items: list[dict], dry_run: bool = False) -> tuple[list[str], list[tuple]]:
+    """通过 lark-cli +delete 按 token 精准删除远端文件
+    delete_items: [{"rel_path": ..., "remote_token": ...}]
+    返回 (deleted_paths, failed_pairs)
+    """
+    deleted, failed = [], []
+    for item in delete_items:
+        path = item.get("rel_path", "?")
+        tok = item.get("remote_token")
+        if not tok:
+            continue
+        args = ["+delete", "--file-token", tok, "--type", "file", "--yes", "--format", "json"]
+        if dry_run:
+            deleted.append(path)
+            continue
+        rc, out, err = run_lark(args)
+        obj = extract_json(out)
+        if obj and obj.get("ok"):
+            deleted.append(path)
+        else:
+            msg = (obj.get("error", {}).get("message", err) if obj else err)
+            failed.append((path, msg))
+    return deleted, failed
+
+
+
+# ── 本地删除(DELETE LOCAL)──
+
+def delete_local_phase(delete_items, local_dir, dry_run=False):
+    """Safe local file deletion (remote delete event)"""
+    deleted, skipped = [], []
+    for item in delete_items:
+        path = item["rel_path"]
+        full = os.path.join(local_dir, path)
+        if not os.path.exists(full):
+            deleted.append(path)
+            continue
+        if dry_run:
+            skipped.append((path, "dry-run"))
+            continue
+        try:
+            os.remove(full)
+            deleted.append(path)
+        except OSError as e:
+            skipped.append((path, str(e)))
+    return deleted, skipped
 
 # ── 暂存目录（PUSH 排除）─────────────────────────────
 
@@ -317,13 +443,19 @@ def build_staging(src: str, excludes: list[str]) -> str | None:
             if _match_exclude(rel_path, excludes):
                 continue
             src_file = os.path.join(root, fname)
+            if os.path.islink(src_file) and not os.path.exists(src_file):
+                continue
             dst_dir = os.path.dirname(os.path.join(stage, rel_path))
             os.makedirs(dst_dir, exist_ok=True)
             dst_file = os.path.join(stage, rel_path)
             try:
                 os.link(src_file, dst_file)
             except OSError:
-                shutil.copy2(src_file, dst_file)
+                try:
+                    shutil.copy2(src_file, dst_file)
+                except OSError as e:
+                    shutil.rmtree(stage, ignore_errors=True)
+                    raise RuntimeError(f"暂存文件失败（无法链接且无法复制）: {src_file} -> {dst_file} ({e})")
     return stage
 
 
@@ -352,8 +484,12 @@ def create_target_folder(name: str, parent_token: str | None, as_identity: str |
 
 def run_push(local_rel: str, folder_token: str, if_exists: str,
              as_identity: str | None, dup_remote: str | None,
-             dry_run: bool, cwd: str) -> dict | None:
-    """执行 `lark-cli drive +push`，返回解析后的 data dict 或 None"""
+             dry_run: bool, cwd: str, timeout: int = PUSH_TIMEOUT_SECONDS) -> dict | None:
+    """执行 `lark-cli drive +push`，返回解析后的 data dict。
+
+    返回 None 表示可重试的失败（超时 / 输出无法解析 / 推送错误），由调用方决定是否重试；
+    授权类错误 (missing_scope) 仍直接 sys.exit，不进入重试。
+    """
     args = ["+push"]
     if dry_run:
         args.append("--dry-run")
@@ -366,12 +502,18 @@ def run_push(local_rel: str, folder_token: str, if_exists: str,
     if dup_remote:
         args.extend(["--on-duplicate-remote", dup_remote])
 
-    rc, out, err = run_lark(args, cwd=cwd)
-    obj = extract_json(out)
+    rc, out, err = run_lark(args, cwd=cwd, timeout=timeout)
+    if rc == -1:
+        print(f"[PUSH] 超时（>{timeout}s），连接可能半死，交由重试逻辑处理")
+        return None
+    if rc == -2:
+        print(f"[PUSH] 启动失败：{err}")
+        return None
 
+    obj = extract_json(out)
     if not obj:
         print(f"[错误] 无法解析 push 输出\nstdout:\n{out}\nstderr:\n{err}")
-        sys.exit(3)
+        return None  # 可重试
 
     if not obj.get("ok") and "error" in obj:
         err_info = obj["error"]
@@ -386,17 +528,46 @@ def run_push(local_rel: str, folder_token: str, if_exists: str,
             print(f"[预览错误] {err_info.get('message', '')}")
             return None
         print(f"[推送错误] {err_info.get('message', '')}")
-        sys.exit(3 if rc != 0 else 0)
+        return None  # 可重试（走重试逻辑）
 
     data = obj.get("data") or {}
     if not data and not dry_run:
         print(f"[警告] push 返回无 data：{json.dumps(obj, ensure_ascii=False)}")
-
-    if rc != 0 and not dry_run:
-        summary = data.get("summary", {})
-        if summary.get("failed", 0) > 0:
-            print(f"[部分失败] 退出码={rc}，需查看日志中的失败项")
     return data
+
+
+def run_push_with_retry(local_rel: str, folder_token: str, if_exists: str,
+                        as_identity: str | None, dup_remote: str | None,
+                        dry_run: bool, cwd: str,
+                        timeout: int = PUSH_TIMEOUT_SECONDS,
+                        retries: int = PUSH_MAX_RETRIES) -> dict | None:
+    """带看门狗超时 + 自动重试的 PUSH。
+
+    - 单轮 +push 受 timeout 限制，超时即杀掉进程组（防半死连接无限悬挂）；
+    - 多轮重试依赖 --if-exists smart 跳过已成功上传的文件，逐轮推进；
+    - 代理对大文件数据流间歇性挂死时，换连接重试通常可过（GFW 干扰下重试 1-2 次即可）。
+    """
+    last_data = None
+    last_failed = None
+    for attempt in range(1, retries + 1):
+        print(f"[PUSH] 第 {attempt}/{retries} 轮（单轮超时 {timeout}s）...")
+        data = run_push(local_rel, folder_token, if_exists, as_identity,
+                        dup_remote, dry_run, cwd, timeout=timeout)
+        if data is None:
+            print(f"[PUSH] 第 {attempt} 轮超时/失败，{'准备重试' if attempt < retries else '已达重试上限'}")
+            continue
+        summary = data.get("summary", {}) or {}
+        failed = summary.get("failed", 0)
+        if failed == 0:
+            print(f"[PUSH] 第 {attempt} 轮成功（无失败项）")
+            return data
+        last_data, last_failed = data, failed
+        print(f"[PUSH] 第 {attempt} 轮有 {failed} 个失败项，依赖 smart 跳过已传文件后重试")
+    if last_data is not None:
+        print(f"[PUSH] 重试耗尽，仍有 {last_failed} 个失败项（不再无限挂死）")
+        return last_data
+    print("[PUSH] 重试耗尽且全部轮次超时/失败")
+    return None
 
 
 # ── 日志与展示 ────────────────────────────────────────
@@ -411,6 +582,10 @@ ACTION_LABELS = {
     "conflict":        ("冲突保全",   "CONFLICT"),
     "pull_skipped":    ("跳过",       "PULL_SKIPPED"),
     "pull_failed":     ("下载失败",   "PULL_FAILED"),
+    "marked_deleted":  ("待删标记",   "MARKED_DELETED"),
+    "local_deleted":   ("本地已删",   "LOCAL_DELETED"),
+    "remote_deleted":  ("远端已删",   "REMOTE_DELETED"),
+    "delete_failed":   ("删除失败",   "DELETE_FAILED"),
 }
 
 
@@ -453,6 +628,7 @@ def print_per_file_items(items: list[dict], log_path: str | None, verbose: bool)
     group_labels = [
         ("FAILED", "❌ 上传失败"),
         ("PULL_FAILED", "❌ 下载失败"),
+        ("DELETE_FAILED", "❌ 删除失败"),
         ("CONFLICT", "⚠️  冲突保全（远端副本另存本地）"),
         ("FOLDER", "📁 远端新建目录"),
         ("UPLOADED", "  ✅ 上传成功（新增）"),
@@ -460,6 +636,8 @@ def print_per_file_items(items: list[dict], log_path: str | None, verbose: bool)
         ("DOWNLOADED", "  ⬇️  下载成功（远端→本地）"),
         ("SKIPPED", " ⏭️  跳过（未变更）"),
         ("PULL_SKIPPED", " ⏭️  跳过（未变更）"),
+        ("LOCAL_DELETED", " 🗑️  本地已删（远端删除事件）"),
+        ("REMOTE_DELETED", " 🗑️  远端已删（本地删除事件）"),
     ]
     for code, title in group_labels:
         its = groups.get(code, [])
@@ -560,8 +738,8 @@ def main():
                         choices=["user", "bot"],
                         help="身份类型（默认 auto）")
 
-    parser.add_argument("--sync-deletes", action="store_true",
-                        help="传播删除（默认关闭，安全优先：不删除任一端文件）")
+    parser.add_argument("--no-sync-deletes", action="store_true",
+                        help="关闭删除传播(默认双向传播,Git风格对称同步)")
     parser.add_argument("--exclude", default=EXCLUDE_DEFAULT, nargs="*",
                         help="排除模式（fnmatch）")
 
@@ -575,6 +753,7 @@ def main():
                         help="stdout 仅显示摘要+失败项")
 
     args = parser.parse_args()
+    args.sync_deletes = not args.no_sync_deletes  # default ON (Git style)
 
     abs_local = os.path.abspath(args.local_dir)
     if not os.path.isdir(abs_local):
@@ -619,6 +798,48 @@ def main():
     print(f"  时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"{'=' * 50}\n")
 
+    # ── 远端删除检测(DETECT REMOTE DELETE)──
+    all_items = []
+    remote_deletes = []
+    for path, p in prev_state.items():
+        if p.get("remote_token") and path not in remote_set and path in local_set:
+            # 本地修改保护：仅当本地文件未被修改时才允许删除
+            if path in local_set:
+                lmt, _lsz = local_set[path]
+                local_changed = (p.get("local_mtime") is not None 
+                                 and p.get("local_mtime") != lmt)
+                if local_changed:
+                    # 远端删了，但本地也修改了 → 冲突，不删本地
+                    print(f"  [CONFLICT] {path}: remote deleted but local also modified, keeping local")
+                    all_items.append({"action": "conflict", "rel_path": path, 
+                                      "src": f"remote-deleted-vs-local-modified"})
+                    continue
+            remote_deletes.append({"rel_path": path, "remote_token": p["remote_token"]})
+    if remote_deletes:
+        print(f"[DETECT] {len(remote_deletes)} remote-deleted local files pending")
+        # 远端二次确认：重新列出远端文件，避免 API 截断误判
+        if not args.dry_run and args.sync_deletes:
+            remote_set_v2 = list_remote_recursive(folder_token, args.exclude)
+            truly_deleted = []
+            for it in remote_deletes:
+                if it["rel_path"] not in remote_set_v2:
+                    truly_deleted.append(it)
+                else:
+                    print(f"  [SKIP] {it['rel_path']}: reappeared on 2nd scan, NOT deleted")
+            remote_deletes = truly_deleted
+        for it in remote_deletes:
+            all_items.append({"action": "local_deleted", "rel_path": it["rel_path"]})
+        if args.sync_deletes and not args.dry_run:
+            del_ok, del_skip = delete_local_phase(remote_deletes, abs_local)
+            if del_skip:
+                for p, e in del_skip:
+                    print(f"  skip: {p} ({e})")
+            print(f"  local delete: {len(del_ok)} ok, {len(del_skip)} skip")
+        elif args.dry_run:
+            print(f"  (dry-run)")
+        elif not args.sync_deletes:
+            print(f"  --no-sync-deletes: keep local files")
+
     # ── PULL 阶段（远端 → 本地）──
     pull_plan = {"downloaded": [], "conflicts": [], "skipped": [], "failed": [], "items": []}
     if args.mode in ("bidirectional", "pull"):
@@ -645,7 +866,10 @@ def main():
                     else:
                         pull_plan["skipped"].append(path)
                 else:
-                    pull_plan["downloaded"].append(path)
+                    if prev_state.get(path) is not None:
+                        pull_plan["skipped"].append(f"{path} (本地已删, will sync-delete remote)")
+                    else:
+                        pull_plan["downloaded"].append(path)
         # 刷新本地集合（PULL 可能新增 / 覆盖文件）
         if not args.dry_run:
             local_set = build_local_set(abs_local, args.exclude)
@@ -653,35 +877,53 @@ def main():
 
     # ── PUSH 阶段（本地 → 远端）──
     push_plan = None
-    all_items = list(pull_plan.get("items", []))
+    all_items += list(pull_plan.get("items", []))
     if args.mode in ("bidirectional", "push"):
         print(f"[PUSH] 本地 → 远端（{len(local_set)} 个本地文件）...")
-        # 构建暂存目录（排除规则）
-        staging = build_staging(abs_local, args.exclude) if args.exclude else None
-        work_dir = staging if staging else abs_local
-        work_parent = os.path.dirname(work_dir)
-        work_name = os.path.basename(work_dir)
-        os.chdir(work_parent)
-        local_rel = work_name
-
         if args.dry_run:
-            rc, out, err = run_lark([
-                "+status", "--quick", "--local-dir", local_rel,
-                "--folder-token", folder_token, "--format", "json",
-            ], cwd=work_parent)
-            # +status 不可靠（不应用排除），仅作参考不展示细节
-            print(f"[PUSH] 预览跳过（+status 不应用排除规则，以实际运行结果为准）")
+            # dry-run 纯内存元数据比对，零磁盘开销、零临时目录泄漏
+            print(f"[PUSH] 预览跳过（无需物理暂存，以本地/远端元数据比对为准）")
             push_plan = {"summary": {}, "items": []}
         else:
-            push_plan = run_push(local_rel, folder_token, args.if_exists,
-                                 args.as_identity, args.on_duplicate_remote,
-                                 dry_run=False, cwd=work_parent)
-            if staging:
-                shutil.rmtree(staging, ignore_errors=True)
-                print(f"[清理] 暂存目录已删除: {staging}")
+            # 构建暂存目录（排除规则）
+            staging = build_staging(abs_local, args.exclude) if args.exclude else None
+            try:
+                work_dir = staging if staging else abs_local
+                work_parent = os.path.dirname(work_dir)
+                work_name = os.path.basename(work_dir)
+                os.chdir(work_parent)
+                local_rel = work_name
+
+                push_plan = run_push_with_retry(local_rel, folder_token, args.if_exists,
+                                     args.as_identity, args.on_duplicate_remote,
+                                     dry_run=False, cwd=work_parent,
+                                     timeout=PUSH_TIMEOUT_SECONDS, retries=PUSH_MAX_RETRIES)
+            finally:
+                if staging:
+                    shutil.rmtree(staging, ignore_errors=True)
+                    print(f"[清理] 暂存目录已删除: {staging}")
 
         if push_plan:
             all_items.extend(push_plan.get("items", []))
+
+    # ── 删除传播（DETECT DELETE）──
+    delete_items = [it for it in all_items if it.get("action") == "marked_deleted"]
+    if delete_items:
+        print(f"[DELETE] {len(delete_items)} 个本地删除的远端文件待处理")
+        if args.sync_deletes and not args.dry_run:
+            deleted, failed = delete_remote_phase(delete_items)
+            for d in deleted:
+                all_items.append({"action": "remote_deleted", "rel_path": d})
+            for f_path, f_err in failed:
+                all_items.append({"action": "delete_failed", "rel_path": f_path, "error": f_err})
+            print(f"  删除成功={len(deleted)}  失败={len(failed)}")
+        elif args.dry_run:
+            for it in delete_items:
+                all_items.append({"action": "remote_deleted", "rel_path": it["rel_path"]})
+        elif args.no_sync_deletes:
+            print(f"  --no-sync-deletes: keep remote files")
+        else:
+            print(f"  will delete remote ({len(delete_items)} files)")
 
     # ── 结果处理 ──
     if not args.dry_run:

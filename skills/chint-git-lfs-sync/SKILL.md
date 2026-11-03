@@ -1,6 +1,6 @@
 ---
 name: chint-git-lfs-sync
-description: Use this skill when pushing or syncing the CHINT `chint-backup` Git repo (or any repo with Git LFS) to GitHub from a headless / sandbox macOS environment — especially when `git lfs push` appears to hang with zero output. It encodes the two-channel push model (LFS objects over HTTPS via the `gh` credential helper; pack over SSH skipping the LFS pre-push hook), the `lfs.locksverify=false` lock, and the credential-helper fix for the `osxkeychain` stall. Trigger on: "push to github", "sync chint", "git lfs push hangs", "upload to remote", "同步到远程".
+description: 在沙箱或无 GUI keychain 的 macOS 上把含 Git LFS 的 chint-backup 仓库推送到 GitHub，尤其是 `git lfs push` 静默卡死（0 字节、无进度）时。用户说「push to github」「sync chint」「git lfs push hangs」「同步到远程」时使用；不处理飞书云盘同步（用 chint-feishu-drive-sync）。
 agent_created: true
 ---
 
@@ -11,7 +11,7 @@ agent_created: true
 - 用户要求「推送到 GitHub / 同步到远程 / upload to remote」且仓库含 Git LFS 大文件（主配电 `*.xlsx`）。
 - 新设备 `clone` / `pull` 时报 `Permission denied`（~/.ssh 沙箱保护）。
 
-> 仓库事实：`remote.origin.url = git@github.com:gzhang33/chint-backup.git`（SSH）；LFS 仅追踪 `excel 表格报告/框架模型/data/主配电*.xlsx`（120MB + 298MB）；整库含 `.git` 约 6.2GB。
+> 仓库事实：`remote.origin.url = git@github.com:gzhang33/chint-backup.git`（SSH）。LFS 通配追踪 `*.xlsx` / `*.xlsm` / `*.pptx` / `*.pdf` / `*.zip`（见 `.gitattributes`），当前 227 个 LFS 对象；整库（含 `.git`）在数十 GB 量级，随产品资料增长。
 
 ## 双通道推送模型（已验证）
 ```
@@ -38,7 +38,7 @@ LFS objects (大文件真实内容)                  → HTTPS 端口 443（经 
    ```
 2. **先提交本地改动**（本 skill 不自动 commit，避免夹带未审阅内容）：
    ```bash
-   git add -A && git -c user.name=阿布 -c user.email=abu@chint.local commit -m "chore: <说明>"
+   git add <具体文件> && git commit -m "chore: <说明>"   # 逐个点名暂存，勿 git add -A 夹带未审阅内容
    ```
 3. **两步推送**（用 `scripts/sync_push.sh` 自动化，含 5 次重试）：
    ```bash
@@ -51,7 +51,7 @@ LFS objects (大文件真实内容)                  → HTTPS 端口 443（经 
    ```bash
    git status -s                                   # 应为空
    git rev-list --count --left-right origin/main...HEAD   # 应为 0  0
-   git lfs ls-files -s                             # 3 个 xlsx 已追踪
+   git lfs ls-files -s                             # 列出全部 LFS 对象；应有输出且与 .gitattributes 规则一致
    ```
 
 ## 拉取流程（pull / clone，新设备）
@@ -66,7 +66,7 @@ cd chint-backup && git lfs pull
 ```
 
 ## 前提与边界
-- `gh auth status` 须 `Logged in` 且 token 含 `repo` 作用域（本机 `gho_…` 已满足）。
+- `gh auth status` 须 `Logged in` 且 token 含 `repo` 作用域。
 - 凭据助手为 **repo-local**，不影响其他仓库；chint-backup 的 pack 仍走 SSH（remote 是 SSH URL），凭据助手仅在 HTTPS LFS 端点生效。
 - **合规**：仓库含「净收入」销售数据（核心商密级），上云前须经数据合规/信息安全审批；本 skill 仅解决技术传输，不改合规要求。
 - 本 skill 不处理飞书云盘同步（机制 B 由 `lark-cli` 另议，且当前缺 Drive 作用域）。
@@ -80,5 +80,5 @@ cd chint-backup && git lfs pull
 ## 快速示例
 ```bash
 # 推送到 GitHub（在 chint 仓库根目录执行，或显式传路径）
-bash ~/.workbuddy/skills/chint-git-lfs-sync/scripts/sync_push.sh /Users/gianni/Documents/chint
+bash "$SKILL_DIR/scripts/sync_push.sh" "${CHINT_REPO:-$HOME/Documents/chint}"
 ```

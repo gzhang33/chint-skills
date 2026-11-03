@@ -1,6 +1,6 @@
 ---
 name: chint-feishu-drive-sync
-description: Use this skill to sync the CHINT `chint` working folder with Feishu Drive (飞书云盘) over the `lark-cli` — supporting BIDIRECTIONAL incremental sync (local↔remote), per-file status logging, conflict preservation, and auto folder mirroring. Encodes the baseline-state conflict-detection model, the pull-first/push-second ordering, the relative-path constraint of `lark-cli drive +push/+download`, and the auth scopes required (drive:drive / space:document:retrieve / drive:file:download). Trigger on: "同步到飞书", "飞书云盘同步", "chint 双向同步", "sync chint drive", "feishu drive sync", "同步 chint".
+description: 把 chint 工作树与飞书云盘双向或单向增量同步（lark-cli 驱动），含冲突保全与删除传播策略。用户说「同步到飞书」「飞书云盘同步」「chint 双向同步」「sync chint drive」时使用；不适用于 Git / LFS 推送（用 chint-git-lfs-sync）。
 agent_created: true
 ---
 
@@ -9,9 +9,8 @@ agent_created: true
 ## 何时使用本 skill
 - 用户要求「把 chint 同步到飞书云盘 / 从飞书云盘拉回 / 双向同步 / sync drive」。
 - 需要在 macOS 本地工作树与飞书云盘之间保持文件一致，且**两个方向都要流通**（本地改了上传、云端改了拉回）。
-- 定时自动化（每日 08:30 / 12:00 / 17:30）触发增量双向同步。
 
-> 仓库事实（**按设备配置，不内置于脚本**）：本地路径由 `CHINT_REPO` 指定，缺省 `$HOME/Documents/chint`；飞书云盘目标文件夹 `chint`（token 由 `CHINT_DRIVE_FOLDER` 指定，缺省 `L6DNfECGTlrY13dQiL3cxQiOnBb`），URL `https://chintsso.feishu.cn/drive/folder/L6DNfECGTlrY13dQiL3cxQiOnBb`。工作树约 6GB / 189 个同步文件（已排除 `.git`/`.venv` 等）。换设备只需设置这两个环境变量。
+> 仓库事实（**按设备配置，不内置于脚本**）：本地路径由 `CHINT_REPO` 指定，缺省 `$HOME/Documents/chint`；飞书云盘目标文件夹由 `CHINT_DRIVE_FOLDER` 指定，缺省 `L6DNfECGTlrY13dQiL3cxQiOnBb`。换设备只需设置这两个环境变量。
 
 ## 同步模型（基线守护型双向同步）
 维护基线状态文件 `.feishu_drive_sync_state.json`（位于本地 chint 根，自动排除，不进同步范围），记录每个文件上次同步时的「本地 mtime+size」与「远端 modified_time+token」。每次运行：
@@ -34,7 +33,7 @@ PUSH 阶段（本地 → 远端，复用 +push --if-exists smart）
 
 **首次运行无基线**：两端都存在的文件一律视为「已一致」跳过（不会误报冲突）；仅远端有→下载，仅本地有→上传。
 
-**删除传播（Git 对称风格，默认双向传播）**：
+**删除传播**：
 
 ```
 本地删除  →  marked_deleted  →  delete_remote_phase()  →  lark-cli +delete --yes 删除远端
@@ -70,23 +69,26 @@ lark-cli drive +delete --file-token <token> --type file --yes
 
 ## 使用流程
 ```bash
+SKILL_DIR="${CLAUDE_PLUGIN_ROOT:-$HOME/.claude}/skills/chint-feishu-drive-sync"
 cd "${CHINT_REPO:-$HOME/Documents/chint}"
 
 # 1. 双向同步（默认，推荐每日自动化调用）
-python scripts/feishu_drive_sync.py --local-dir . --folder-token "${CHINT_DRIVE_FOLDER:-L6DNfECGTlrY13dQiL3cxQiOnBb}" --mode bidirectional --verbose
+python "$SKILL_DIR/scripts/feishu_drive_sync.py" --local-dir . --folder-token "${CHINT_DRIVE_FOLDER:-L6DNfECGTlrY13dQiL3cxQiOnBb}" --mode bidirectional --verbose
 
 # 2. 仅预览（不执行）
-python scripts/feishu_drive_sync.py --local-dir . --folder-token L6DNfECGTlrY13dQiL3cxQiOnBb --dry-run
+python "$SKILL_DIR/scripts/feishu_drive_sync.py" --local-dir . --folder-token L6DNfECGTlrY13dQiL3cxQiOnBb --dry-run
 
 # 3. 仅单向
-python scripts/feishu_drive_sync.py --local-dir . --folder-token L6DNfECGTlrY13dQiL3cxQiOnBb --mode push
-python scripts/feishu_drive_sync.py --local-dir . --folder-token L6DNfECGTlrY13dQiL3cxQiOnBb --mode pull
+python "$SKILL_DIR/scripts/feishu_drive_sync.py" --local-dir . --folder-token L6DNfECGTlrY13dQiL3cxQiOnBb --mode push
+python "$SKILL_DIR/scripts/feishu_drive_sync.py" --local-dir . --folder-token L6DNfECGTlrY13dQiL3cxQiOnBb --mode pull
 
 # 4. 首次创建目标文件夹后同步
-python scripts/feishu_drive_sync.py --local-dir . --create-folder chint
+python "$SKILL_DIR/scripts/feishu_drive_sync.py" --local-dir . --create-folder chint
 ```
 
 脚本参数：`--mode {bidirectional,push,pull}`（默认 bidirectional）、`--if-exists {smart,overwrite,skip}`、`--exclude`（fnmatch，默认见下）、`--log`、`--verbose/--quiet`、`--dry-run`、`--no-sync-deletes`。
+
+**脚本真源**：本 skill 内的 `scripts/feishu_drive_sync.py` 与仓库副本 `System/仓库脚本/scripts/feishu_drive_sync.py` 必须一致。改动任一侧后同步另一侧，勿让两份分叉（分叉会导致参数与文档不符）。
 
 ## 排除规则（脚本内固化，默认）
 ```
@@ -106,7 +108,7 @@ feishu_drive_sync.log           (本脚本日志)
 |------|------|------|
 | `+push`/`files list` 报 `missing_scope` | 缺 `drive:drive` / `space:document:retrieve` / `drive:file:download` | `lark-cli auth login --scope "drive:drive space:document:retrieve drive:file:download"` 重新授权 |
 | `+push`/`+download` 报 `unsafe ... must be a relative path` | lark-cli 要求 `--local-dir`/`--output` 是 cwd 内相对路径 | 脚本已自动 `chdir` 到父目录后用相对名，勿传绝对路径 |
-| 首次全量同步中途 `timout`（脚本退出码 -1） | 大文件（284MB Excel）超 600s 默认超时 | 脚本已调至 `timeout=3600`；重跑时 `--if-exists smart` 跳过已传文件续传 |
+| 首次全量同步中途超时（脚本退出码 -1） | 大文件超默认超时 | 脚本已调至 `timeout=3600`；重跑时 `--if-exists smart` 跳过已传文件续传 |
 | `+download` 空输出无文件 | 同上相对路径约束 / token 错误 | 确认 token 为 file 类型、cwd 正确 |
 | 远端出现孤儿（测试/锁文件） | 排除规则早期缺失或手动误传 | 用 `files list` 定位 token 后 `+delete --yes` 清理 |
 

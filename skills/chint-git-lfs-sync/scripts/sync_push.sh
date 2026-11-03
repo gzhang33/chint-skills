@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # chint-git-lfs-sync: 两步推送（LFS 走 HTTPS + gh 凭据，pack 走 SSH 跳过 LFS hook）
-# 用法: bash sync_push.sh [REPO_DIR]   (默认 /Users/gianni/Documents/chint)
+# 用法: bash sync_push.sh [REPO_DIR]   (默认 $CHINT_REPO，否则当前目录)
 set -u
-REPO_DIR="${1:-/Users/gianni/Documents/chint}"
+REPO_DIR="${1:-${CHINT_REPO:-$PWD}}"
 cd "$REPO_DIR" || { echo "ERROR: 无法进入 $REPO_DIR"; exit 1; }
 
 echo "=== 仓库: $REPO_DIR ==="
