@@ -7,7 +7,7 @@ description: Provide CHINT 2026 VI tokens and visual guidance for brand delivera
 
 Authoritative brand identity governance, design system tokens, and modular layout guidelines for all CHINT digital deliverables, presentations (PPTX), web interfaces, data visualizations, and reporting materials, strictly aligned with the **2026 CHINT Corporate Visual Identity Standards**.
 
-For native PowerPoint creation or editing, this skill supplies brand guidance only. Use `chint-pptx`, `chint-data-analysis`, `chint-pm-RAT`, or another more specific existing CHINT generator; do not create a parallel PPTX generation script here.
+For native PowerPoint creation or editing, this skill supplies brand guidance only. Use `chint-pptx`, `chint-data-visual`, `chint-pm-rat`, or another more specific existing CHINT generator; do not create a parallel PPTX generation script here.
 
 ---
 

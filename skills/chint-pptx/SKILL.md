@@ -11,7 +11,7 @@ Build editable Chinese-first presentations for product managers in CHINT's elect
 
 For native CHINT PowerPoint work, this skill takes precedence over generic PPT or presentation workflows. Reuse the most specific existing CHINT generator below; do not create a parallel generation script.
 
-Use the most specific existing CHINT generator: sales or product analytics reports go to `chint-data-analysis`; RAT one-page forms go to `chint-pm-RAT`; Top3 chart-logo updates go to `ppt-chart-top3-logo-inserter`. Use this skill for CHINT product presentations. Use `chint-brand-design` for brand guidance, not as a second PPTX generator.
+Use the most specific existing CHINT generator: sales or product analytics reports go to `chint-data-visual`; RAT initiation content goes to `chint-pm-rat`; architecture, workflow, and sequence diagrams go to `archify`. Use this skill for CHINT product presentations. Use `chint-brand-design` for brand guidance, not as a second PPTX generator.
 
 | User request | Workflow |
 |---|---|

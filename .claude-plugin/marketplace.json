@@ -8,7 +8,7 @@
     {
       "name": "chint-deck",
       "source": "./plugins/chint-deck",
-      "description": "CHINT 演示文稿：产品 PPT 生成与 RAT 立项内容整理"
+      "description": "CHINT 演示文稿：产品 PPT、架构/流程图谱与 RAT 立项内容整理"
     },
     {
       "name": "chint-copy",
