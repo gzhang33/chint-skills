@@ -1,118 +1,74 @@
 ---
 name: chint-pptx
-description: Author enterprise CHINT PowerPoint (PPTX) decks with 2026 VI guidelines, CHINTinno (正泰拓新体) typography, clean OpenXML architecture, and adaptive 34-layout archetype selection. Use when creating CHINT presentations, pitch decks, business reviews, technical solution slides, or translating user requirements into tailored slides with the grill-me alignment SOP.
+description: "Create, restructure, or improve CHINT electrical-distribution product presentations from the 2026 template with source-backed content. Use for product/technical decks — 做产品介绍 PPT、按 2026 模板做演示文稿、改这版幻灯片、重排页面、套用品牌壳. Not for sales-data analysis decks (chint-data-visual), RAT initiation content (chint-pm-rat), or diagrams (archify)."
+compatibility: "Python 3.11+ with the packages in requirements.txt. The CHINTinno fonts in assets/fonts must be installed on the machine that opens the deck; the engine refuses to start otherwise."
 ---
 
-# CHINT Enterprise PPTX Generation Skill (`chint-pptx`)
+# CHINT Product Presentation Skill
 
-Generate professional, corporate-compliant CHINT PowerPoint presentations tailored for Low-Voltage Electrical Apparatus (低压电器) Product Managers, enforcing the **2026 VI Design Standard**, **正泰拓新体 (CHINTinno)** typography, 16:9 widescreen grids (13.333" x 7.5"), clean OpenXML assembly, and an **adaptive layout selection engine** supporting all **34 slide layout archetypes**.
+Build editable Chinese-first presentations for product managers in CHINT's electrical-distribution team. Use the included 2026 template, CHINT brand assets, and CHINTinno fonts. Keep product facts anchored to the user's source material.
 
----
+## Route each request
 
-## Operational SOP Workflow
+For native CHINT PowerPoint work, this skill takes precedence over generic PPT or presentation workflows. Reuse the most specific existing CHINT generator below; do not create a parallel generation script.
 
-```
-[Phase 1: Alignment] ──► [Phase 2: Adaptive Multi-Scenario Selection] ──► [Phase 3: Synthesizing]
-                                                                                   │
-[Phase 5: Dual-Gate Automated QA] ◄── [Phase 4: Clean OpenXML Engine] ◄────────────┘
-```
+Use the most specific existing CHINT generator: sales or product analytics reports go to `chint-data-visual`; RAT initiation content goes to `chint-pm-rat`; architecture and sequence diagrams go to `archify`. Use this skill for CHINT product presentations. Use `chint-brand-design` for brand guidance, not as a second PPTX generator. If a routed skill is not installed on this machine, say so and continue here rather than approximating its output.
 
-### Phase 1: Grill-Me Requirement Alignment (`ask_question`)
-Align with the Product Manager using the interactive `ask_question` modal (refer to [`references/grill_me_alignment_sop.md`](references/grill_me_alignment_sop.md)):
-1. **Audience & Goal**: Establish whether the deck is for executive review, client sales pitch, strategy alignment, or technical solution release.
-2. **Dynamic Pacing**: Match slide count to input content density (5–8p Concise, 10–14p Standard, 15–20p Deep-dive).
-3. **Visual Theme**: Apply official CHINT 2026 VI Electric Blue (`#1E50E6`) palette.
-- **Completion Criterion**: Target audience, slide count tier, and narrative arc confirmed by user.
+## Content pages are table pages
 
-### Phase 2: Dynamic Multi-Scenario Adaptive Layout Selection
-The Agent MUST dynamically evaluate the semantic intent and information structure of each slide topic to select the most appropriate layout archetype among all 34 supported archetypes (refer to [`references/layout_archetypes.md`](references/layout_archetypes.md)):
+Since the 2026 template revision the deck has exactly one content layout: `ARCH_TABLE`. Cover, contents, chapter dividers, and closing come from the template artwork — the cover, divider and closing pages are built on their own template layouts (`标题幻灯片`, `节标题`, `末尾幻灯片`), so every band, mark and copyright line stays a native editable object rather than a pasted bitmap. The native charts (`ARCH_16_CHART_BAR_TREND`, `ARCH_17_CHART_PIE_DONUT`, `ARCH_16_RADAR`) remain available for trend, composition, and multi-dimension comparison. Any other archetype is rejected at payload validation (exact name match).
 
-* **Master & Frames**: `ARCH_01_COVER`, `ARCH_02_TOC`, `ARCH_03_CHAPTER`, `ARCH_11_CLOSING`, `ARCH_15_CONTACT_US`
-* **KPI & Charts**: `ARCH_04_KPI_DASHBOARD`, `ARCH_16_CHART_BAR_TREND`, `ARCH_17_CHART_PIE_DONUT`, `ARCH_18_KPI_METRIC_GRID`, `ARCH_19_HERO_METRIC_SPLIT`
-* **Strategy & Diagnostics**: `ARCH_05_MULTI_COLUMN_CARDS`, `ARCH_07_PROBLEM_SOLUTION_SWOT`, `ARCH_20_SWOT_TOWS_MATRIX`, `ARCH_21_BEFORE_AFTER_DIFF`, `ARCH_22_PROBLEM_IMPROVE_SPLIT`, `ARCH_23_RISK_MATRIX_RESPONSE`, `ARCH_24_MISSION_VISION_VALUES`
-* **Process, Funnels & Ladders**: `ARCH_25_PROCESS_STEP_HORIZONTAL`, `ARCH_26_FUNNEL_CONVERSION`, `ARCH_27_STEP_LADDER_MATURITY`, `ARCH_28_WATERFALL_DIAMOND`
-* **Schedules & Milestones**: `ARCH_06_TIMELINE_ROADMAP`, `ARCH_29_GANTT_SCHEDULE_TABLE`, `ARCH_30_MILESTONE_LIST_BADGE`
-* **Platform & Ecosystem**: `ARCH_08_PLATFORM_ARCHITECTURE`, `ARCH_31_THREE_PILLARS_PLATFORM`, `ARCH_32_ECOSYSTEM_CIRCULAR`, `ARCH_14_CONCENTRIC_HUB`
-* **Solutions, Cases & Endorsement**: `ARCH_09_SOLUTION_GRID`, `ARCH_10_CASE_STUDY`, `ARCH_33_HONOR_CERTIFICATION`, `ARCH_34_PARTNER_LOGO_WALL`, `ARCH_12_TEAM_PROFILE`, `ARCH_13_GLOBAL_FOOTPRINT`
+Read [references/content_contract.md](references/content_contract.md) before composing pages: it lists the allowed archetypes, the `ARCH_TABLE` payload (flat and merged headers), the fixed table styling, and the single-page row limit. Choose table versus chart from what the reader needs — look up numbers in a table, read a trend in a chart; the compliance gate checks structure only and will not catch a poor choice.
 
-- **Completion Criterion**: Every slide explicitly mapped to the optimal archetype ID (`ARCH_01` to `ARCH_34`) based on content semantics.
+| User request | Workflow |
+|---|---|
+| Create a deck from a brief, product materials, or an outline | Read [references/create_edit_workflow.md](references/create_edit_workflow.md). Build a concise narrative and compose the pages per [content_contract.md](references/content_contract.md). |
+| Restructure an existing deck or rebuild its narrative and page order | Read [references/create_edit_workflow.md](references/create_edit_workflow.md). Inspect the source, map its facts and objects, then reorganize pages to fit the requested outcome. |
+| Improve an existing deck while retaining its structure | Read [references/create_edit_workflow.md](references/create_edit_workflow.md). Inspect targets and use the existing `--edit-config` mode for supported text, table-cell, style, and geometry edits. |
+| Change the visual shell while preserving every source content page | Read [references/preserve_source_pages_sop.md](references/preserve_source_pages_sop.md) and [references/preserve_source_pages_runbook.md](references/preserve_source_pages_runbook.md). Run the source-fidelity gate. |
 
-### Phase 3: Content Synthesizing & Proactive Field Population Protocol
-- **Slide Schema Specification**: Each slide in the `slides` list MUST specify `"archetype": "ARCH_XX_..."` (e.g. `"ARCH_01_COVER"`, `"ARCH_05_MULTI_COLUMN_CARDS"`; `"type"` is also supported).
-- **Proactive Field Population Rule (Zero Default Leakage)**: The Agent MUST proactively synthesize and populate 100% of all required fields in the payload JSON for the chosen archetype. The Agent MUST NOT rely on engine default fallbacks or pass empty lists (`[]`).
-  - `ARCH_01_COVER`: Provide `title`, `subtitle`, `date`, `author`.
-  - `ARCH_02_TOC`: Provide `items`: `[{"title": "...", "bullets": [...]}]`.
-  - `ARCH_03_CHAPTER`: Provide `title` / `headline`, `subtitle` / `category`.
-  - `ARCH_04_KPI_DASHBOARD`: Provide `title`, `category`, `kpi_cards`: `[{"number": "...", "label": "...", "details": [...]}]`.
-  - `ARCH_05_MULTI_COLUMN_CARDS`: Provide `title`, `category`, `columns`: `[{"header": "...", "bullets": [...]}]`.
-  - `ARCH_06_TIMELINE_ROADMAP`: Provide `title`, `category`, `stages`: `[{"phase": "...", "title": "...", "desc": "..."}]`.
-  - `ARCH_07_PROBLEM_SOLUTION_SWOT`: Provide `title`, `category`, `pain_header`, `pain_points`: `[...]`, `solution_header`, `solutions`: `[...]`.
-  - `ARCH_08_PLATFORM_ARCHITECTURE`: Provide `title`, `category`, `layers`: `[{"layer_name": "...", "headline": "...", "modules": [...]}]`.
-  - `ARCH_09_SOLUTION_GRID`: Provide `title`, `category`, `modules`: `[{"title": "...", "desc": "..."}]` (6 items).
-  - `ARCH_10_CASE_STUDY`: Provide `title`, `category`, `client_name`, `hero_metric`, `hero_desc`, `bullets`: `[...]`.
-  - `ARCH_11_CLOSING`: Provide `tagline`, `team`, `call_to_action`.
-  - `ARCH_12_TEAM_PROFILE`: Provide `title`, `category`, `members`: `[{"name": "...", "title": "...", "role": "...", "credentials": [...]}]`.
-  - `ARCH_13_GLOBAL_FOOTPRINT`: Provide `title`, `category`, `coverage_title`, `stats`: `[...]`, `network_title`, `offices`: `[...]`.
-  - `ARCH_14_CONCENTRIC_HUB`: Provide `title`, `category`, `center_label`, `nodes`: `[{"title": "...", "desc": "..."}]` (up to 5 items).
-  - `ARCH_16_RICH_CHART` (Vector Charts):
-    - `ARCH_16_RADAR`: Provide `categories`, `series`: `[{"name", "values", "color"}]`, `insights`.
-    - `ARCH_16_COMBO`: Provide `categories`, `bar_series`, `line_series`, `insights`.
-    - `ARCH_16_DIVERGING`: Provide `categories`, `values`, `unit`, `insights`.
-    - `ARCH_16_HEATMAP`: Provide `row_labels`, `col_labels`, `data_matrix`, `insights`.
-    - `ARCH_16_EVOLUTION`: Provide `stages`, `values`, `sub_labels`, `insights`.
-    - `ARCH_16_WATERFALL`: Provide `categories`, `values`, `unit`, `insights`.
-    - `ARCH_16_SANKEY`: Provide `flows`: `[{"source", "target", "value", "color"}]`, `unit`, `insights`.
-    - `ARCH_16_FUNNEL`: Provide `stages`, `values`, `conversion_rates`, `unit`, `insights`.
-    - `ARCH_16_GAUGE`: Provide `current_val`, `target_val`, `min_val`, `max_val`, `subtitle`, `unit`, `insights`.
-    - `ARCH_16_STACKED_AREA`: Provide `categories`, `series`: `[{"name", "values", "color"}]`, `unit`, `insights`.
-- **High Information Density & Executive Phrasing**: Structure raw content into bold leading keywords followed by metric-backed bullet points. Strictly enforce plain, data-driven executive language per [`chint-pm-copywriter`](../chint-pm-copywriter/SKILL.md); prohibit consulting melodrama, combat metaphors, and academic jargon.
-- **2026 VI Grid Standards**: Enforce 0.8" side margins, color tokens (`#1E50E6`, `#50C8FF`, `#D70A32`, `#1E2024`, `#5A5A5A`, `#F6F8FA`), and clean hierarchy (refer to [`references/vi_and_typography.md`](references/vi_and_typography.md)).
-- **Completion Criterion**: Clean presentation JSON payload constructed with 100% explicitly populated fields and zero fallback dependencies.
-
-### Phase 4: Autonomous Clean OpenXML Assembly Engine
-Execute the Python generation engine autonomously in the background to produce standard, uncorrupted OpenXML `.pptx` presentations:
+Use the existing creation engine for new and restructured decks. Do not create a task-specific PPTX generator script:
 
 ```bash
-python3 scripts/chint_pptx_engine.py <path_to_payload.json> <output_path.pptx>
+python3 scripts/chint_pptx_engine.py --config <payload.json> --output <absolute-output-path>
 ```
 
-#### OpenXML Engineering Safeguards:
-1. **Pristine PresentationML Assembly**: Direct shape construction avoiding XML re-serialization through `xml.etree.ElementTree` (which causes `ns0:` namespace prefix corruption).
-2. **Zero Font DRM Restrictions**: Guarantee no `p:embeddedFontLst`, `embedTrueTypeFonts`, or restricted font locks (`FuturaBT Book`) are serialized.
-3. **Clean Edit View Properties**: Enforce default normal edit view (`viewProps.xml` without `lastView="sldMasterView"`).
-4. **16:9 Widescreen Canvas**: Enforce `13.333" x 7.5"` slide dimensions.
-- **Completion Criterion**: Engine exits with exit code 0 and creates the target `.pptx` file.
+The legacy positional form remains supported. The engine runs `scripts/check_deck_compliance.py` before returning; a deck that fails the structural gate raises instead of passing silently. For environment setup, rendering, and PowerPoint/WPS checks, read [references/quality_and_environment.md](references/quality_and_environment.md).
 
-### Phase 5: Dual-Gate Automated QA & Clickable Delivery
-1. **Gate 1: Automated Inspection & Validation Suite**:
-   ```bash
-   python3 scripts/inspect_pptx.py <output_path.pptx>
-   ```
-   * Verifies 16:9 aspect ratio and dimensions.
-   * Confirms `正泰拓新体` typography and brand color tokens.
-   * Checks package hygiene (0 font DRM locks, normal edit view).
-   * Runs OpenXML schema and relationship integrity validation via `scripts/office/validate.py`.
+For supported local edits, use `scripts/inspect_pptx.py <source.pptx> --edit-targets` and the engine's `--edit-config` mode. Keep the source deck unchanged. Do not add a parallel generator when an existing route lacks a requested operation; report the gap.
 
-2. **Gate 2: Microsoft PowerPoint Live UI Automation Test**:
-   * Live macOS AppleScript test with Microsoft PowerPoint to verify `CLEAN_OPEN` with 0 repair dialogs or warnings.
+## Content rules
 
-3. **Clickable Delivery**:
-   * Present a concise executive summary in Chinese to the PM with direct clickable links: `[文稿名称.pptx](file:///absolute/path/to/output_path.pptx)`.
-- **Completion Criterion**: `inspect_pptx.py` confirms 100% schema compliance and `正泰拓新体` coverage, PowerPoint live automation returns `CLEAN_OPEN`, and clickable link returned in chat.
+- Adapt framing, evidence, detail, and recommendations to the audience and stated purpose. Do not force every deck into a preset business narrative.
+- Treat product names, electrical ratings, standards, certification, performance, prices, dates, and quantitative claims as source-backed facts. Never fill gaps with plausible specifications or sample metrics.
+- Keep source facts attached to their product, condition, unit, time range, and comparison basis. Distinguish source statements, transparent calculations, and unanswered questions.
+- When a source is incomplete, omit unsupported claims or ask only for missing information that blocks the requested conclusion.
+- Preserve unrequested content and source assets during local optimization. A full restructure may change story, sectioning, page order, and slide boundaries while carrying source facts forward.
 
----
+## Brand and editing rules
 
-## Disclosed References & Assets Index
+- New and fully restructured decks use `assets/templates/26年模板拓新体.pptx` as their canvas. A local optimization keeps the source canvas.
+- Use template positions for the cover and closing marks. Keep one CHINT mark in the upper-right on contents and body slides; omit it on chapter dividers.
+- Keep the contents page to one page. Reuse the template's native contents layout and adapt row spacing and title sizes to the entry count; shorten section titles when they cannot fit legibly. The engine rejects entry counts past `TOC_MAX_ENTRIES` instead of starting a second contents page.
+- Use 正泰拓新体 for editable presentation text, including tables, grouped shapes, charts, and chart labels. The receiving computer must have the CHINT fonts installed.
+- Before creating, restructuring, or editing a deck, run `scripts/check_environment.py` and follow its font-setup instructions in [references/quality_and_environment.md](references/quality_and_environment.md). Do not install silently, request administrator access, or embed fonts automatically.
+- Prefer native PowerPoint text, shapes, tables, and supported data charts. Keep product photography and complex graphics as images only when a native editable representation would materially reduce clarity; disclose that limitation.
+- Never flatten an editable chart merely to simplify generation. Preserve chart series, category labels, units, and source data.
+- Keep the uploaded file unchanged. Save generated payloads, decks, previews, reports, and scratch files outside this skill folder. Use a task-provided output location when available; otherwise follow the default output directory described in [references/quality_and_environment.md](references/quality_and_environment.md) Runtime. Pass an absolute output path when creating or restructuring decks; local edit mode uses the default when `--output` is omitted. Return a clickable link to the saved deck.
 
-- **Bundled Fonts**: `assets/fonts/CHINTinno-Bold.ttf`, `CHINTinno-Regular.ttf`, `CHINTinno-Light.ttf`
-- **Official 2026 VI Media Assets**: `assets/media/` (`cover_26_bg.jpg`, `toc_26_bg.jpg`, `chapter_26_bg.jpg`, `closing_26_bg.jpg`, `chint_badge.png`)
-- **Base Templates**: `assets/templates/26年模板拓新体.pptx`
-- **Visual VI Reference**: [`references/vi_and_typography.md`](references/vi_and_typography.md)
-- **Executive Copywriting Standard**: [`chint-pm-copywriter`](../chint-pm-copywriter/SKILL.md)
-- **Layout Archetypes Reference**: [`references/layout_archetypes.md`](references/layout_archetypes.md)
-- **Legacy PPTX Modernization Guide**: [`references/legacy_pptx_migration_guide.md`](references/legacy_pptx_migration_guide.md)
-- **Asset Library Guide**: [`references/asset_library_guide.md`](references/asset_library_guide.md)
-- **Grill-Me Alignment SOP**: [`references/grill_me_alignment_sop.md`](references/grill_me_alignment_sop.md)
-- **Generation Engine**: [`scripts/chint_pptx_engine.py`](scripts/chint_pptx_engine.py)
-- **Quality Inspector**: [`scripts/inspect_pptx.py`](scripts/inspect_pptx.py)
-- **OpenXML Validation Suite**: [`scripts/office/validate.py`](scripts/office/validate.py)
+## What the engine cannot do
+
+The engine renders text, native tables, and native charts. It has no payload path for inserting pictures, SVG icons, or maps, and `--edit-config` rejects image objects. The icon and map files under `assets/` are supplied for manual insertion after generation, not for this engine. If a request needs an illustration on a content page, generate the page and tell the user which asset to place, or report the gap — do not claim the deck already contains it.
+
+## Resources
+
+- [references/create_edit_workflow.md](references/create_edit_workflow.md): creation, restructuring, scoped edits, and fact protection.
+- [references/quality_and_environment.md](references/quality_and_environment.md): font installation, runtime, editable-content, structural, visual, and PowerPoint/WPS checks.
+- [references/content_contract.md](references/content_contract.md): allowed archetypes, `ARCH_TABLE` payload, fixed table styling, validation rules.
+- [references/vi_and_typography.md](references/vi_and_typography.md): rationale and token names. Numeric brand values live in `spec/brand_tokens.json`.
+- [references/preserve_source_pages_sop.md](references/preserve_source_pages_sop.md): strict source-page preservation contract; use only for explicit preserve-content requests.
+- [references/asset_library_guide.md](references/asset_library_guide.md): read only when selecting map, icon, or media assets for manual placement.
+- [references/maintenance_and_environment.md](references/maintenance_and_environment.md): read only when maintaining or synchronizing this skill.
+- [references/delivery_editability_checklist.md](references/delivery_editability_checklist.md): read only when a user reports an opening, editing, or saving problem on macOS or Windows.
+
+Two directories support the scripts and are not read directly: `core/` holds the shared measurement, planning, and rendering modules imported by the engines; `spec/` holds `brand_tokens.json` (the only VI colour source), `2026VI.yaml` (layout thresholds), and `lint_docs_allow.txt`.

@@ -1,0 +1,29 @@
+{
+  "skill_name": "chint-pptx",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "帮我把 NXA 昆仑系列框架断路器的产品资料做成一份 2026 版式的演示文稿，12 页左右，给销售团队讲。资料我放在 ~/Documents/产品资料/NXA-昆仑/ 里了。",
+      "expected_output": "A .pptx built on assets/templates/26年模板拓新体.pptx by scripts/chint_pptx_engine.py, containing cover, one contents page, chapter dividers, ARCH_TABLE body pages, and closing. Every rating/model/date traces to a file in the supplied folder; no invented specifications. Output saved outside the skill folder and the returned path is clickable.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "这版 deck.pptx 结构别动，帮我把第 4 页表格里「额定电流」那列的数值改一下，我发你新的参数表了。",
+      "expected_output": "Uses scripts/inspect_pptx.py --edit-targets then the engine's --edit-config manifest, never hand-edits OOXML and never builds a second generator. Source hash and expected_text are used as guards. The source deck is left unchanged and a new _edited.pptx is produced.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "把这份英文 ACB 竞品分析文稿套上正泰的模板外壳，里面的内容页一页都不要动。",
+      "expected_output": "Routes to the preserve-content shell rebuild (shell_rebuild_engine.py), not the creation engine. Runs verify_preserve_source.py and reports [PASS] only after the source-fidelity gate passes. Badge and font rules follow quality_and_environment.md.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "在这版产品页里插入一张中国地图，标出我们几个大区的服务网点。",
+      "expected_output": "Recognizes the engine has no picture/map payload path. Either generates the page and names the asset for manual insertion, or reports the gap — does not claim the deck already contains a map. Cites the scope statement in asset_library_guide.md.",
+      "files": []
+    }
+  ]
+}

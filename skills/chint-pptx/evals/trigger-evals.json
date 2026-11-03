@@ -1,0 +1,20 @@
+[
+  {"query": "帮我把 NXA 昆仑系列框架断路器的产品资料做成一份 2026 版式的演示文稿，给销售团队讲，12 页左右", "should_trigger": true},
+  {"query": "把这版英文的 ACB 竞品分析套上正泰模板外壳，内容页一页都别动", "should_trigger": true},
+  {"query": "deck.pptx 结构不要改，只把第 4 页表格里额定电流那一列换一下", "should_trigger": true},
+  {"query": "按 2026 模板做一版 NXA2 的客户交流会材料，封面封底用正泰的", "should_trigger": true},
+  {"query": "这个 ppt 最后一页致谢页重复了两行版权，帮我看看怎么弄掉", "should_trigger": true},
+  {"query": "我要一份产品介绍 PPT，中文的，正泰拓新体字体，能做多少页做多少页", "should_trigger": true},
+  {"query": "把这几张 Excel 里的销售数字整理成一版给经销商看的汇报稿", "should_trigger": true},
+  {"query": "existing deck 的章节页想重排一下顺序，其他不动", "should_trigger": true},
+  {"query": "用 chint-pm-rat 帮我写一份 RAT 立项材料", "should_trigger": false},
+  {"query": "做一个 SVG 架构图，展示我们配电产品的系统拓扑", "should_trigger": false},
+  {"query": "把这份 xlsx 的透视表刷新一下，改完格式别乱", "should_trigger": false},
+  {"query": "帮我把这份英文样本翻译成中文，术语要按 IEC 标准来", "should_trigger": false},
+  {"query": "我们竞品 NA8 的参数和 NXA 差多少，做个对比分析", "should_trigger": false},
+  {"query": "这段代码里的 pptx 生成逻辑为什么每次跑出来字体都丢了", "should_trigger": false},
+  {"query": "写一个 Python 脚本，批量把文件夹里的 pptx 转成 PDF", "should_trigger": false},
+  {"query": "南网集采的评分标准里技术分占多少，帮我查一下", "should_trigger": false},
+  {"query": "用 python-pptx 从零写个最小示例，插入一个表格", "should_trigger": false},
+  {"query": "把会议纪要整理成 markdown，我要发到群里", "should_trigger": false}
+]

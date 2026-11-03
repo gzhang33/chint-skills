@@ -1,0 +1,83 @@
+{
+  "schema": "chint-brand-tokens/1",
+  "generated": "2026-09-17",
+  "purpose": "chint-pptx 唯一的 VI 数值来源。引擎启动时读本文件；读不到即报错退出，不静默回退。文档（SKILL.md / references）不得重复任何数值，只允许引用本文件的键名。",
+  "source": {
+    "skill": "chint-brand-design",
+    "path": "chint-brand-design/scripts/chint_theme.py",
+    "sha256": "9cd55f97531ee3d7a526d51392e95ab7ec05ad39d9b1a45efde23e4b8077aec9",
+    "captured_from_commit": "1a3f743c66e143bf0d3568ca675f50860f062d81",
+    "note": "快照式复制，不是硬依赖。path 为相对 skills 根的相对路径（skills 根 = 装有各 skill 目录的父目录），兼容绝对路径写法。check_brand_tokens.py 按 --source 参数 → 环境变量 CHINT_BRAND_DESIGN_SOURCE → 本字段 → skills 根自动发现 的顺序定位；找不到时仅警告降级，不影响引擎离线校验。"
+  },
+  "mapping": {
+    "font": {
+      "brand": "CHINT_FONTS.cjk_family / pptx_font_family",
+      "brand_value": "正泰拓新体",
+      "aligned": true,
+      "note": "品牌文件同时给出 CHINTinno（英文名）与 正泰拓新体（中文名），是同一字体的两个名称；pptx 用中文字体名。"
+    },
+    "blue": {
+      "brand": "CHINT_COLORS.primary",
+      "brand_value": "1E50E6",
+      "aligned": true,
+      "used_for": "目录分隔线 / 页脚横线 (footer.rule_color)"
+    },
+    "navy": {
+      "brand": "CHINT_2026_MATRIX.primary_blues[0] 主色蓝-阶1",
+      "brand_value": "1437AA",
+      "aligned": true,
+      "used_for": "内页正文主标题色 / 目录编号",
+      "note": "取矩阵阶1而非 CHINT_COLORS.primary_dark(#1E50C8)：阶1 是 7 阶蓝中最深的一档，适合正文标题；且与 chint-pptx 原有 vi_and_typography.md 的取值一致。2026-09-17 票01：theme 已由 0E387A 对齐到品牌 1437AA。"
+    },
+    "cyan": {
+      "brand": "CHINT_COLORS.primary_light = CHINT_2026_MATRIX.primary_blues[4] 极光青蓝-阶5",
+      "brand_value": "50C8FF",
+      "aligned": true
+    },
+    "ice": {
+      "brand": "CHINT_2026_MATRIX.primary_blues[6] 冰蓝-阶7",
+      "brand_value": "D7F0FF",
+      "aligned": true,
+      "used_for": "深底页页脚文字色 (footer.dark_color)"
+    },
+    "white": {
+      "brand": "CHINT_COLORS.surface",
+      "brand_value": "FFFFFF",
+      "aligned": true,
+      "used_for": "深底页主标题色 (title_grid.dark_title_color)"
+    },
+    "muted": {
+      "brand": "CHINT_COLORS.text_muted",
+      "brand_value": "666666",
+      "aligned": true,
+      "used_for": "页脚文字色 (footer.color) / 章节页副标",
+      "note": "品牌注释写明 Captions / footnotes，与本用途一致。2026-09-17 票01：theme 已由 64748B 对齐到品牌 666666。"
+    },
+    "light_bg": {
+      "brand": "CHINT_COLORS.bg_subtle",
+      "brand_value": "F3F6FE",
+      "aligned": true,
+      "used_for": "目录胶囊填充",
+      "note": "品牌注释写明 Light blue tint for highlights / table zebra。2026-09-17 票01：theme 已由 F6F9FD 对齐到品牌 F3F6FE。"
+    },
+    "card_border": {
+      "brand": "CHINT_COLORS.border",
+      "brand_value": "E2E8F0",
+      "aligned": true,
+      "used_for": "目录胶囊描边 / 目录分隔块填充",
+      "note": "品牌注释写明 Standard card / divider border。2026-09-17 票01：theme 已由 D2E2F4 对齐到品牌 E2E8F0。"
+    }
+  },
+  "theme": {
+    "font": "正泰拓新体",
+    "blue": "1E50E6",
+    "navy": "1437AA",
+    "cyan": "50C8FF",
+    "ice": "D7F0FF",
+    "white": "FFFFFF",
+    "muted": "666666",
+    "light_bg": "F3F6FE",
+    "card_border": "E2E8F0"
+  },
+  "alignment_note": "theme 是引擎当前生效值。截至 2026-09-17 票01，9 个键已全数 aligned=true（navy/muted/light_bg/card_border 由旧偏离值对齐到品牌目标值）。引擎不再自带颜色副本，启动时读取本文件 theme；文档只允许引用键名。"
+}

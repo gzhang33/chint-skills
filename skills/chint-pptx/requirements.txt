@@ -1,0 +1,8 @@
+python-pptx>=1.0
+PyYAML>=6.0
+lxml>=5.0
+defusedxml>=0.7
+Pillow>=10.0
+numpy>=1.26
+fonttools>=4.45
+PyMuPDF>=1.24

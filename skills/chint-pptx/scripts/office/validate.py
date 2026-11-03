@@ -1,6 +1,11 @@
 """
 Command line tool to validate PowerPoint presentation (.pptx / .potx) XML files against XSD schemas.
 
+Vendored: derived from the PPTX OpenXML validator shipped with Anthropic's `pptx` skill,
+trimmed to presentation files only. The schemas under `schemas/` are the ECMA-376 /
+ISO-IEC 29500 XSD set and are unmodified. Keep local changes minimal so a future upstream
+refresh stays a clean diff; anything deck-specific belongs outside this directory.
+
 Usage:
     python validate.py <path> [--original <original_file>] [--auto-repair] [-v]
 
