@@ -13,7 +13,7 @@
 | **`chint-deck`** | `chint-pptx`、`chint-pm-rat`、`archify` | 产品 PPT 生成与改造、立项内容整理、架构/工作流/时序图 |
 | **`chint-copy`** | `chint-pm-copywriter`、`chint-translation` | PM 文案与高管汇报语法、低压电器中英技术翻译 |
 | **`chint-data`** | `chint-data-review` | 市场数据口径法证审查与逐项溯源 |
-| **`chint-ops`** | `chint-brand-design`、`chint-feishu-drive-sync`、`chint-git-lfs-sync` | 品牌 VI 规范、飞书云盘双向同步、Git LFS 推送 |
+| **`chint-ops`** | `chint-brand-design` | 品牌 VI 规范与设计 Token |
 
 ---
 
@@ -52,8 +52,6 @@ cp -r skills/chint-pptx ~/.claude/skills/
 | **`chint-data-review`** | `skills/chint-data-review/` | 跨 Excel / 白皮书 / 竞品数据的法证级口径核对，逐项可追溯到页码。 |
 | **`chint-data-visual`** | `skills/chint-data-visual/` | **未启用，未从插件暴露**：依赖脚本与模板已从本机移除，技能只保留恢复前提说明。 |
 | **`chint-brand-design`** | `skills/chint-brand-design/` | 2026 VI Token、CHINTinno 字体、配色与版式规范；品牌校验脚本。仅提供品牌指引，不生成 PPT。 |
-| **`chint-feishu-drive-sync`** | `skills/chint-feishu-drive-sync/` | `lark-cli` 驱动的本地 ↔ 飞书云盘双向增量同步。 |
-| **`chint-git-lfs-sync`** | `skills/chint-git-lfs-sync/` | 沙箱 macOS 下 Git + LFS 双通道推送，解决 `git lfs push` 静默卡死。 |
 
 ---
 
