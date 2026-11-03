@@ -10,12 +10,13 @@
 
 | 技能名称 | 目录路径 | 业务适用场景与核心能力 | 权威标准 / 业务系统依据 |
 |:---|:---|:---|:---|
-| **`chint-brand-design`** | `skills/chint-brand-design/` | **正泰品牌资产与视觉规范系统**<br>专为正泰数字化产出（PPTX 汇报、Web 前端界面、数据图表、HTML/PDF 报告）提供全套自包含的品牌资产治理技能。内置正泰拓新体（CHINTinno）全套字体、极光蓝（`#1E50E6`）配色系统、16:9 版式网格、ECharts/Matplotlib 预设及 Token 导出工具。 | CHINT 官方品牌视觉识别系统（VI） |
-| **`chint-pptx`** | `skills/chint-pptx/` | **正泰企业级 PPTX 智能演示文稿生成技能**<br>专为低压电气产品经理（PM）打造的符合 2026 VI 规范的 PPTX 生成技能。内置正泰拓新体（CHINTinno）全套 TrueType 字体包、34 种全场景版式原型库（ARCH_01 ~ ARCH_34）、12 组核心排版引擎、10 种矢量图表构建器、python-pptx 自动化生成引擎及 `/grill-me` 互动需求对齐 SOP。 | CHINT 2026 VI 视觉规范指导手册<br>2026年正泰PPT通用基础模版 |
-| **`chint-acb-translation`** | `skills/chint-acb-translation/` | **正泰万能式断路器（ACB）海外样本与技术翻译**<br>专为正泰海外市场 PM 打造的万能式断路器（NXA/NA8/NA1/Noark UL）高精度翻译知识库。收录 8 大分域知识库（产品名称、电气参数、脱扣器与智能控制器、内外部附件机构、安装接线与结构、环境与标准、样本高频句式、翻译禁忌词库）及 88 组全量结构化元数据 JSON。 | IEC 60947-2 (2024)<br>GB/T 14048.2 (2020)<br>UL 1066 / IEEE C37.13 |
-| **`chint-data-analysis`** | `skills/chint-data-analysis/` | **正泰主配电销售数据与业务智能分析**<br>专为 PM 业务分析打造的主配电产品销售数据透视、漏斗分析、产品线增长及自动化汇报生成技能。 | 正泰主配电产品线营销数据 |
-| **`chint-pm-copywriter`** | `skills/chint-pm-copywriter/` | **B2B 工业品产品经理通用文案与汇报语法引擎**<br>专为工业制造与配电产品经理打造的向上汇报、QBR复盘、PRD价值主张与产品样本提炼技能。内置极简量化三要素、三段式负向建设性语法、黑白名单词典与5项出稿门禁，坚决杜绝浮夸黑话与战役化暗喻。 | 正泰高管汇报标准<br>B2B 工业品 PM 务实文案规范 |
-| **`chint-RAT`** | `skills/chint-RAT/` | **立项资料一页纸 PPT 生成**<br>复刻 NXA 系列立项样板版式（16:9 单页 12 分区看板 + 承接单位/团队/P1-P4 计划/财务三表），内置 python-pptx 生成引擎与校验器（分区齐全、平台命名、痛点量化、口径勾稽、字体 VI 门禁），配套立项内容方法论：数字化表述、痛点与产品定义一一对应、销售预测交叉验证、风险预案四要素、领导常问六问自检；技术 verdict 支持"部分可行"红标并自动追加风险预案/交叉验证附录页。 | NXA 系列电炉行业专供产品开发立项样板<br>配电产品线《立项资料编写经验分享》周会方法论（2026-08） |
+| **`chint-pptx`** | `skills/chint-pptx/` | **正泰企业级 PPTX 智能演示文稿生成**<br>按 2026 VI 规范生成可编辑的产品演示文稿。内容页收敛为表格契约（`ARCH_TABLE`）加三张原生图表（趋势 / 占比 / 雷达），封面与章节页继承模板版式保持原生可编辑。内置结构合规门禁、开源 OpenXML 校验、源页保真校验与渲染预览链路。 | CHINT 2026 VI 视觉规范指导手册<br>2026 年正泰 PPT 通用基础模板 |
+| **`chint-translation`** | `skills/chint-translation/` | **B2B 工业品翻译与本地化标准**<br>覆盖「三断一接」（ACB / MCCB / MCB / 接触器）、双电源（ATS）、电能质量（SVG / APF）、固态断路器、传感器与继电器。收录 8 大分域知识库（产品名称、电气参数、脱扣器与智能控制器、内外附件机构、安装接线与结构、环境与标准、样本高频句式、翻译禁忌词库）及结构化术语主数据。 | IEC 60947 / 60898 / 61000<br>GB/T 14048.2<br>UL 489 / 1066 / 1008 |
+| **`chint-pm-copywriter`** | `skills/chint-pm-copywriter/` | **B2B 工业品 PM 文案与汇报语法引擎**<br>向上汇报、QBR 复盘、PRD 价值主张与产品样本提炼。内置极简量化三要素、三段式负向建设性语法、黑白名单词典与出稿门禁，杜绝浮夸黑话与战役化暗喻。 | 正泰高管汇报标准<br>B2B 工业品 PM 务实文案规范 |
+| **`chint-brand-design`** | `skills/chint-brand-design/` | **正泰品牌资产与视觉规范系统**<br>为 PPTX、Web 前端、数据图表、HTML/PDF 报告提供自包含的品牌资产治理。内置正泰拓新体全套字体、2026 VI 配色矩阵与 Token 导出工具。具体 PPTX 生成请走 `chint-pptx`。 | CHINT 官方 2026 VI |
+| **`chint-data-analysis`** | `skills/chint-data-analysis/` | **主配电销售数据分析**<br>销售透视、漏斗分析、产品线增长与自动化汇报生成，内置 DuckDB 本地数据仓库。 | 主配电产品线营销数据 |
+| **`chint-data-review`** | `skills/chint-data-review/` | **市场数据稽核**<br>跨 Excel、白皮书与竞品数据集核对低压配电 / ACB 市场数字，每个引用数字须可回溯到源页。 | 带源页可追溯性的稽核清单 |
+| **`chint-pm-rat`** | `skills/chint-pm-rat/` | **RAT 立项内容整理**<br>按立项表格栏目组织内容，只填产品经理范围（需求背景、产品定义、性能质量、应用场景与痛点、竞品、目标行业、销售通路）；技术 / 生产 / 财务可行性留白交其他部门。输出结构化 Markdown/表格，不绑定 PPT 模板。 | 配电产品线《立项资料编写经验分享》周会方法论（2026-08） |
 
 ---
 
@@ -28,8 +29,11 @@
 # 复制品牌设计技能到当前项目
 cp -r skills/chint-brand-design /path/to/your-project/.agents/skills/
 
-# 复制断路器翻译技能到当前项目
-cp -r skills/chint-acb-translation /path/to/your-project/.agents/skills/
+# 复制翻译技能到当前项目
+cp -r skills/chint-translation /path/to/your-project/.agents/skills/
+
+# 复制 PPTX 生成技能到当前项目
+cp -r skills/chint-pptx /path/to/your-project/.agents/skills/
 ```
 
 ### 2. 用户级全局安装
@@ -38,8 +42,10 @@ cp -r skills/chint-acb-translation /path/to/your-project/.agents/skills/
 ```bash
 # 部署至 Antigravity 全局技能库
 cp -r skills/chint-brand-design ~/.gemini/config/skills/
-cp -r skills/chint-acb-translation ~/.gemini/config/skills/
+cp -r skills/chint-translation ~/.gemini/config/skills/
 ```
+
+> 也可以用 `skills-manager-cli skills deploy` 统一部署，它会维护来源元数据、预设归属与跨 agent 的部署状态，比手工复制更可靠。
 
 ---
 
@@ -68,17 +74,20 @@ cp -r skills/chint-acb-translation ~/.gemini/config/skills/
 
 ---
 
-## 📌 知识库架构说明 (`chint-acb-translation`)
+## 📌 知识库架构说明 (`chint-translation`)
 
-- `references/01_产品名称与系列.md`：收录万能式断路器定义、ACB/LVPCB/ICCB分类、NXA/NA8/Noark系列代号等。
-- `references/02_电气性能与参数.md`：收录 $U_e, U_i, U_{imp}, I_n, I_{cu}, I_{cs}=100\%I_{cu}, I_{cw}, I_{cm}$, Cat B, 零飞弧等。
-- `references/03_脱扣器与智能控制器.md`：收录 M/A/P/H 型、2.0N~4.0N、L/S/I/G/N 保护、ZSI、MCR、Override、热记忆等。
-- `references/04_内部与外部附件机构.md`：收录 SHT、UVR、CC/CEM、M/MOE、AX、AL、RTC、钥匙锁、VBP挂锁罩、钢缆联锁等。
-- `references/05_安装接线与结构尺寸.md`：收录 水平/垂直/前接线/90°旋转端子、加长排、抽屉座(Cradle)、三位置指示、Door Flange等。
-- `references/06_环境条件与标准认证.md`：收录 IEC 60947-2、GB/T 14048.2、UL 1066、-45℃~+70℃超宽温、高海拔降容、EMC、CB/CE/Marine 认证等。
-- `references/07_样本高频句式与栏目.md`：收录 样本册标准栏目标题与产品亮点英文宣传统一表达。
-- `references/08_翻译禁忌与防呆词库.md`：硬性拦截如 Universal Breaker ❌, Closed electromagnet ❌, Excitation release ❌, Drawer box ❌ 等错译。
-- `references/acb_terminology_master.json`：包含 88 组带 10 维元数据的完整结构化数据包，支持程序化向量或 RAG 检索。
+- `references/01_universal_iec_parameters.md`：通用 IEC 电气参数定义（$U_e, U_i, U_{imp}, I_n, I_{cu}, I_{cs}, I_{cw}, I_{cm}$, Cat B 等）。
+- `references/02_acb_trip_units_and_protection.md`：脱扣器型号与保护曲线（M/A/P/H 型、L/S/I/G/N 保护、ZSI、MCR、热记忆等）。
+- `references/03_acb_accessories_and_mechanisms.md`：内外部附件与机构（SHT、UVR、CC/CEM、M/MOE、AX、AL、RTC、钥匙锁等）。
+- `references/04_universal_wiring_and_contact_logic.md`：接线与触点逻辑的通用表述。
+- `references/05_universal_safety_imperatives.md`：安全提示与警示语的标准译法。
+- `references/06_universal_technical_headings_and_claims.md`：样本册标准栏目标题与产品亮点宣传统一表达。
+- `references/07_universal_anti_chinglish.md`：中式英语防呆规则与常见错译拦截。
+- `references/08_mccb_taxonomy_and_releases.md`：塑壳断路器分类与脱扣单元系列。
+- `references/09_mcb_rcbo_curves_and_accessories.md`：微型断路器 / 漏电保护器的脱扣曲线与附件。
+- `references/10_ats_classes_and_controllers.md`：双电源转换开关的类别与控制器。
+- `references/11_power_quality_and_contactors.md`：电能质量装置（SVG / APF）与接触器术语。
+- `references/acb_terminology_master.json`：结构化术语主数据，支持程序化检索。
 
 ---
 

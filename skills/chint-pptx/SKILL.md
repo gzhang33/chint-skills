@@ -1,6 +1,6 @@
 ---
 name: chint-pptx
-description: "Create, restructure, or improve CHINT electrical-distribution product presentations from the 2026 template with source-backed content. Use for product/technical decks — 做产品介绍 PPT、按 2026 模板做演示文稿、改这版幻灯片、重排页面、套用品牌壳. Not for sales-data analysis decks (chint-data-visual) or RAT initiation content (chint-pm-rat)."
+description: "Create, restructure, or improve CHINT electrical-distribution product presentations from the 2026 template with source-backed content. Use for product/technical decks — 做产品介绍 PPT、按 2026 模板做演示文稿、改这版幻灯片、重排页面、套用品牌壳. Not for RAT initiation content (chint-pm-rat)."
 compatibility: "Python 3.11+ with the packages in requirements.txt. The CHINTinno fonts in assets/fonts must be installed on the machine that opens the deck; the engine refuses to start otherwise."
 ---
 
@@ -12,7 +12,7 @@ Build editable Chinese-first presentations for product managers in CHINT's elect
 
 For native CHINT PowerPoint work, this skill takes precedence over generic PPT or presentation workflows. Reuse the most specific existing CHINT generator below; do not create a parallel generation script.
 
-Use the most specific existing CHINT generator: sales or product analytics reports go to `chint-data-visual`; RAT initiation content goes to `chint-pm-rat`. Use this skill for CHINT product presentations. Use `chint-brand-design` for brand guidance, not as a second PPTX generator. If a routed skill is not installed on this machine, say so and continue here rather than approximating its output.
+Use the most specific existing CHINT generator: RAT initiation content goes to `chint-pm-rat`. Use this skill for CHINT product presentations. Use `chint-brand-design` for brand guidance, not as a second PPTX generator. If a routed skill is not installed on this machine, say so and continue here rather than approximating its output.
 
 ## Content pages are table pages
 
