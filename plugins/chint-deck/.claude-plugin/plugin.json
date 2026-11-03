@@ -1,0 +1,13 @@
+{
+  "name": "chint-deck",
+  "description": "CHINT 演示文稿：产品 PPT、架构/流程图谱与 RAT 立项内容整理",
+  "skills": [
+    "./skills/chint-pptx",
+    "./skills/chint-pm-rat",
+    "./skills/archify"
+  ],
+  "author": {
+    "name": "gianni"
+  },
+  "license": "MIT"
+}

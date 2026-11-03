@@ -1,0 +1,11 @@
+{
+  "name": "chint-ops",
+  "description": "CHINT 品牌：2026 VI 规范与设计 Token",
+  "skills": [
+    "./skills/chint-brand-design"
+  ],
+  "author": {
+    "name": "gianni"
+  },
+  "license": "MIT"
+}

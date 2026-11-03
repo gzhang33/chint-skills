@@ -1,0 +1,11 @@
+{
+  "name": "chint-data",
+  "description": "CHINT 数据：市场数据口径核对与溯源审查",
+  "skills": [
+    "./skills/chint-data-review"
+  ],
+  "author": {
+    "name": "gianni"
+  },
+  "license": "MIT"
+}
