@@ -12,7 +12,6 @@ before a slide is created.
 """
 
 import os
-import io
 import json
 import math
 import re
@@ -22,7 +21,7 @@ import zipfile
 import hashlib
 from copy import deepcopy
 from pathlib import Path
-from typing import Dict, Any, List, Optional, Union
+from typing import Dict, Any, Optional
 
 from lxml import etree
 from pptx import Presentation
@@ -101,16 +100,7 @@ TABLE_MAX_ROWS = 20
 
 
 def _normalize_arch(arch: str) -> str:
-    arch = (arch or "").strip().upper()
-    if arch.startswith("ARCH_TABLE"):
-        return "ARCH_TABLE"
-    if arch.startswith("ARCH_17"):
-        return "ARCH_17_CHART_PIE_DONUT"
-    if arch.startswith("ARCH_16_RADAR"):
-        return "ARCH_16_RADAR"
-    if arch.startswith("ARCH_16_CHART_BAR") or arch in ("ARCH_16_BAR_CHART", "ARCH_16_CHART_TREND"):
-        return "ARCH_16_CHART_BAR_TREND"
-    return arch
+    return (arch or "").strip().upper()
 
 
 def _reject_retired(arch: str) -> None:
@@ -145,6 +135,8 @@ def _validate_table_payload(arch: str, data: Dict[str, Any]) -> None:
     if merge_groups:
         if "levels" not in data:
             raise ValueError(f"{arch} 提供 merge_groups 时必须同时提供 levels（多层表头）")
+        if "header_tree" not in data:
+            raise ValueError(f"{arch} 提供 merge_groups 时必须同时提供 header_tree，否则合并后的表头为空")
         levels = data["levels"]
         if not isinstance(levels, list) or len(levels) != 2:
             raise ValueError(f"{arch}.levels 必须是两层表头的高度列表，例如 [2, 1]")
@@ -588,7 +580,7 @@ class ChintPresentationEngine:
 
         headers = s_data["headers"]
         rows = s_data["rows"]
-        levels = s_data.get("levels") or [1]
+        levels = s_data.get("levels") or [1]   # one entry per header row
         merge_groups = s_data.get("merge_groups") or []
         aligns = s_data.get("align") or ["center"] * len(headers)
         note = s_data.get("note")
@@ -700,11 +692,7 @@ class ChintPresentationEngine:
         self._set_tf_margins(tf_l, top=8, bottom=8, left=8, right=8)
         set_para(tf_l.paragraphs[0], s_data.get("summary_title", "数据洞察与业务启示"), font_size=14, bold=True, color_rgb=C_BLUE)
         
-        summary_bullets = s_data.get("summary_bullets", [
-            "主营业务营收稳步上扬，同比增长显著超出行业大盘",
-            "战略新品替代率持续攀升，高附加值产品占比突破 45%",
-            "海外业务保持高速扩张态势，全球交付履约韧性进一步夯实"
-        ])
+        summary_bullets = s_data["summary_bullets"]
         for j, b in enumerate(summary_bullets):
             p = tf_l.add_paragraph()
             set_para(p, f"• {b}", font_size=11.5, bold=False, color_rgb=C_DARK)
@@ -769,12 +757,7 @@ class ChintPresentationEngine:
         self._add_body_master(slide, s_data.get("title", "业务结构与占比分布"), s_data.get("category", "结构拆解"))
         top_m, box_h = Inches(1.6), Inches(5.0)
         
-        slices = s_data.get("slices", [
-            {"label": "新能源与绿色电工", "value": 42, "desc": "光伏、储能与智能配电方案高速增长"},
-            {"label": "智能电气核心主业", "value": 35, "desc": "低压元器件与成套设备稳健支撑"},
-            {"label": "工业自动化与物联网", "value": 15, "desc": "智慧能效管理与工业物联软件平台"},
-            {"label": "海外新兴市场布局", "value": 8, "desc": "一带一路沿线及欧美战略新兴市场"}
-        ])
+        slices = s_data["slices"]
         num_s = max(1, min(len(slices), 6))
         
         left_w = Inches(5.0)

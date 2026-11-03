@@ -1,6 +1,6 @@
 ---
 name: chint-pptx
-description: "Create, restructure, or improve CHINT electrical-distribution product presentations with the existing CHINT 2026 template and source-backed content. Use this domain skill instead of generic deck generators for CHINT product presentations."
+description: "Create, restructure, or improve CHINT electrical-distribution product presentations from the 2026 template with source-backed content. Use for product/technical decks. Not for sales-data analysis decks (chint-data-visual), RAT initiation content (chint-pm-rat), or diagrams (archify)."
 ---
 
 # CHINT Product Presentation Skill
@@ -15,7 +15,7 @@ Use the most specific existing CHINT generator: sales or product analytics repor
 
 ## Content pages are table pages
 
-Since 2026-11 the deck has exactly one content layout: `ARCH_TABLE`. Cover, contents, chapter dividers, and closing come from the template artwork; the three native charts (`ARCH_16_CHART_BAR_TREND`, `ARCH_17_CHART_PIE_DONUT`, `ARCH_16_RADAR`) remain available for trend, composition, and multi-dimension comparison. Any other archetype is rejected at payload validation.
+Since 2026-11 the deck has exactly one content layout: `ARCH_TABLE`. Cover, contents, chapter dividers, and closing come from the template artwork; the three native charts (`ARCH_16_CHART_BAR_TREND`, `ARCH_17_CHART_PIE_DONUT`, `ARCH_16_RADAR`) remain available for trend, composition, and multi-dimension comparison. Any other archetype is rejected at payload validation (exact name match).
 
 Read [references/content_contract.md](references/content_contract.md) before composing pages: it lists the allowed archetypes, the `ARCH_TABLE` payload (flat and merged headers), the fixed table styling, and the 20-row single-page limit. Choose table versus chart from what the reader needs — look up numbers in a table, read a trend in a chart; the compliance gate checks structure only and will not catch a poor choice.
 

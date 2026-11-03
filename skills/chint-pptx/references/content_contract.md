@@ -13,9 +13,9 @@
 | `ARCH_11_CLOSING` | 尾页 | 可选 `tagline`、`team`、`call_to_action`、`contact` |
 | `ARCH_16_CHART_BAR_TREND` | 随时间趋势 | `title`、`categories`、`series`、`summary_bullets` |
 | `ARCH_17_CHART_PIE_DONUT` | 构成占比 | `title`、`center_metric`、`center_label`、`slices` |
-| `ARCH_16_RADAR` | 多维能力对标 | `title`、`categories`、`series` |
+| `ARCH_16_RADAR` | 多维能力对标 | `title`、`categories`、`series`；另需 `insights` 或 `bullets`（右侧洞察卡） |
 
-选用其它 archetype 会直接报错。
+选用其它 archetype 会直接报错；archetype 名必须精确匹配上表。
 
 ## 选型规则（由人判断，校验脚本不判）
 
@@ -49,7 +49,7 @@
 
 ### 多层表头
 
-需要跨列合并时提供 `levels` + `header_tree` + `merge_groups`：
+需要跨列合并时三者必须同时提供：`levels` + `header_tree` + `merge_groups`（缺 `header_tree` 会渲染出空表头，引擎直接拒绝）。
 
 ```json
 {
@@ -62,7 +62,7 @@
 }
 ```
 
-- `levels` 是每一层表头的高度权重，当前只支持两层。
+- `levels` 是表头行数，每项对应一行；当前只支持两层，即 `[2, 1]`。
 - `header_tree[r][c]` 为该格文字，`null` 表示留空（仍填品牌蓝，与合并块连成一片）。
 - `merge_groups[].row` 为表头层号，`columns` 必须是**连续列区间**。
 - `headers` 仍是扁平数组，用于确定列数；多层时它不直接渲染。
@@ -80,7 +80,7 @@
 ## 校验
 
 ```bash
-python3 scripts/check_deck_compliance.py <deck.pptx>
+${CHINT_PY:-python3} scripts/check_deck_compliance.py <deck.pptx>
 ```
 
 引擎保存前会自动跑同一份检查，未通过则报错并列出问题项。检查覆盖：

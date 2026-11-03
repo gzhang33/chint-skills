@@ -18,7 +18,6 @@ MODULES = {
     "lxml": "lxml",
     "defusedxml": "defusedxml",
     "Pillow": "PIL",
-    "matplotlib": "matplotlib",
     "numpy": "numpy",
     "fonttools": "fontTools",
     "PyMuPDF": "fitz",

@@ -125,13 +125,6 @@ def _inherited_logo_shapes(slide, logo_digest: str, bounds):
     return logos
 
 
-def _master_has_logo(slide, logo_digest: str, x_limit: int, y_limit: int) -> bool:
-    """Return whether one visible layout or master layer already supplies the badge."""
-    width, height = Inches(LOGO_BOX[2]), Inches(LOGO_BOX[3])
-    bounds = (x_limit, y_limit, x_limit + width, y_limit + height)
-    return bool(_inherited_logo_shapes(slide, logo_digest, bounds))
-
-
 def visible_logo_occurrences(slide, logo_digest: str, box=LOGO_BOX):
     """Count effective upper-right marks, accounting for slide, layout, and master layers."""
     left, top, width, height = box

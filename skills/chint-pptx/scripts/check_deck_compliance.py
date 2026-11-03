@@ -123,6 +123,13 @@ def _check_table(shape, slide_no, brand_blue, light_bg, issues):
                 f"slide{slide_no:02d}: 隔行浅底未使用品牌浅色 {light_bg}（实测 {first_body}/{second_body}）")
 
 
+def _is_badge(picture, badge_bytes: bytes) -> bool:
+    try:
+        return picture.image.blob == badge_bytes
+    except (AttributeError, KeyError, ValueError):
+        return False
+
+
 def _check_geometry(shape, slide_no, issues):
     left, top, right, bottom = SAFE_AREA
     if shape.left < left or shape.top < top:
@@ -142,10 +149,18 @@ def check_deck(path: str | Path, brand_tokens: dict | None = None) -> dict:
     prs = Presentation(str(path))
     issues: list[str] = []
     badge_path = Path(__file__).resolve().parent.parent / "assets" / "media" / "chint_badge.png"
-    digest = hashlib.sha256(badge_path.read_bytes()).hexdigest()
+    badge_bytes = badge_path.read_bytes()
+    digest = hashlib.sha256(badge_bytes).hexdigest()
 
     has_cover = has_contents = has_closing = False
     tables = 0
+    first_slide, last_slide = prs.slides[0], prs.slides[-1]
+    if any(s.shape_type == 13 and s.width >= prs.slide_width * 0.95
+           for s in first_slide.shapes):
+        has_cover = True
+    if any(s.shape_type == 13 and s.width >= prs.slide_width * 0.95
+           for s in last_slide.shapes):
+        has_closing = True
 
     for slide_no, slide in enumerate(prs.slides, 1):
         layout_name = slide.slide_layout.name
@@ -159,25 +174,22 @@ def check_deck(path: str | Path, brand_tokens: dict | None = None) -> dict:
                 _check_table(shape, slide_no, brand_blue, light_bg, issues)
 
         pictures = [s for s in slide.shapes if s.shape_type == 13]
-        top_right = [p for p in pictures
-                     if p.left >= TOP_RIGHT_X_MIN and p.top <= TOP_RIGHT_Y_MAX]
-        if slide_no == 1:
-            has_cover = True
-            continue
-        if slide_no == len(prs.slides):
-            has_closing = True
+        badge_pics = [p for p in pictures if _is_badge(p, badge_bytes)]
+
+        if slide_no == 1 or slide_no == len(prs.slides):
             continue
         if layout_name == CHAPTER_LAYOUT or suppressed:
+            if badge_pics or visible:
+                issues.append(f"slide{slide_no:02d}: 章节页不应出现 CHINT 徽标")
             continue
-        if visible == 0 and not top_right:
+        if visible > 1 or len(badge_pics) > 1:
+            issues.append(
+                f"slide{slide_no:02d}: 出现了 {max(visible, len(badge_pics))} 个 CHINT 徽标，应恰好一个")
+        elif visible == 0 and not badge_pics:
             issues.append(f"slide{slide_no:02d}: 缺少右上角 CHINT 徽标")
-        full_bleed = any(p.width >= prs.slide_width * 0.95 for p in pictures)
-        if full_bleed and slide_no == len(prs.slides) and "THANKS" in " ".join(
-                s.text_frame.text for s in slide.shapes if s.has_text_frame):
-            has_closing = True
-            continue
-        if len(prs.slides) > 1 and slide_no == len(prs.slides):
-            has_closing = True
+        for p in badge_pics:
+            if p.left < TOP_RIGHT_X_MIN or p.top > TOP_RIGHT_Y_MAX:
+                issues.append(f"slide{slide_no:02d}: CHINT 徽标不在右上角")
 
     contents = [s for s in prs.slides if s.slide_layout.name == "目录"]
     has_contents = bool(contents)

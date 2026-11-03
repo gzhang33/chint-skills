@@ -3,7 +3,7 @@
 # =============================================================================
 # 本文件是「测定层（S2）」的唯一阈值来源。所有数值阈值、采样分辨率、渲染上限、
 # 版式名受控词汇均集中于此；代码（scripts/measure_form.py）不得出现散落的魔法数，
-# 一律从此文件读取。修改阈值只需改这里，并重新跑 check_form_measurement.py 回归。
+# 一律从此文件读取。修改阈值只需改这里，并重新跑 scripts/generate_contract_sample.py + scripts/check_deck_compliance.py 回归。
 #
 # —— 颜色数值的唯一真源是 spec/brand_tokens.json（9 键，受 check_brand_tokens.py 守卫）——
 # 本文件「不得」出现任何 6 位十六进制色值。凡需要颜色，只写 brand_tokens 的键名引用
