@@ -25,7 +25,7 @@ description: Translate and audit CHINT ACB/MCCB specs, catalogues, and long text
    - Run `python3 scripts/glossary_lookup.py <src_or_-> --dir <zh2en|en2zh> --dept <acb|mccb>` to lock every matched canonical term and `万次` cycle conversion directly from the reference tables.
    - Draft target text using locked terms and verified `{{param_name: unit}}` slots, then run `python3 scripts/lint_text.py - --dept <acb|mccb> --mode <en|zh>` until `finding_count == 0`.
 2. **`Branch B` (Long-Text & Catalogue Audit & Two-Step PDF Review)**:
-   - Run `python3 scripts/lint_text.py <src_or_extract_json> --dept <acb|mccb> --mode <en|zh> --report-md` for deduplicated mechanical errata (`--emit-annotate -` pipes clean `chint-office-annotate/v1` JSON with `HIGH` as per-occurrence `all` highlights, `MEDIUM` merged per page as `merged`, and copy-paste `替换为：...` bodies).
+   - Run `python3 scripts/lint_text.py <src_or_extract_json> --dept <acb|mccb> --mode <en|zh> --report-md` for deduplicated mechanical errata (`--emit-annotate -` defaults to `--annotate-severity high`, piping only `HIGH` substantive errors as per-occurrence `all` highlights with copy-paste `替换为：...` bodies so existing catalogues stay noise-free; pass `--annotate-severity all` only when full style/spacing annotation is requested).
    - For inputs exceeding 50 non-empty units, run `--chunk-size 50 --chunks-info` and inspect chunks `--chunk-index 1..N` sequentially with `glossary_lookup.py` to catch every semantic/technical defect without context overflow.
 3. *Done when*: `Branch A` target hits `0` lint defects; `Branch B` covers all chunks `1..N` and preserves any `low_text_pages` (`<50`-char visual PDF pages).
 

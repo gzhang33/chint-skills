@@ -313,7 +313,7 @@ def clean_pdf_replacement(match: str, category: str, fix: str) -> str:
     return _strip_clause_notes(fix)
 
 
-def build_annotate_payload(findings: list[dict], author: str = "CHINT Translation") -> dict:
+def build_annotate_payload(findings: list[dict], author: str = "CHINT Translation", min_severity: str = "high") -> dict:
     high_seen: set[tuple[int, str, str]] = set()
     med_groups: dict[tuple[int, str, str], list[dict]] = {}
     items: list[dict] = []
@@ -325,7 +325,7 @@ def build_annotate_payload(findings: list[dict], author: str = "CHINT Translatio
         pno = int(m.group(1))
         if f["severity"] == "HIGH":
             search_str = f["match"].split(" + ")[0] if f["category"] == "TECH_CONTRADICTION" else f["match"]
-            key = (pno, search_str, f["fix"])
+            key = (pno, search_str.lower(), f["fix"])
             if key in high_seen:
                 continue
             high_seen.add(key)
@@ -337,7 +337,7 @@ def build_annotate_payload(findings: list[dict], author: str = "CHINT Translatio
                 "comment": f"替换为：{rep}",
                 "author": author,
             })
-        else:
+        elif min_severity == "all":
             gkey = (pno, f["category"], f["fix"])
             med_groups.setdefault(gkey, []).append(f)
 
@@ -364,8 +364,8 @@ def build_annotate_payload(findings: list[dict], author: str = "CHINT Translatio
     return {"schema": "chint-office-annotate/v1", "annotations": items}
 
 
-def emit_annotate_payload(findings: list[dict], out_target: str | Path, author: str = "CHINT Translation") -> int:
-    payload = build_annotate_payload(findings, author=author)
+def emit_annotate_payload(findings: list[dict], out_target: str | Path, author: str = "CHINT Translation", min_severity: str = "high") -> int:
+    payload = build_annotate_payload(findings, author=author, min_severity=min_severity)
     text = json.dumps(payload, ensure_ascii=False, indent=2)
     if str(out_target) == "-":
         sys.stdout.write(text + "\n")
@@ -428,17 +428,23 @@ def run_self_test() -> int:
         md = format_report_md(loaded, findings)
         assert "Coverage Ledger" in md and "MEDIUM-Severity Findings" in md
         written = emit_annotate_payload(findings, ann_json)
-        assert written == 2
+        assert written == 1, written
         ann_obj = json.loads(ann_json.read_text(encoding="utf-8"))
-        assert ann_obj["schema"] == "chint-office-annotate/v1" and len(ann_obj["annotations"]) == 2
-        high_ann = [a for a in ann_obj["annotations"] if a["match_mode"] == "all"]
-        med_ann = [a for a in ann_obj["annotations"] if a["match_mode"] == "merged"]
-        assert len(high_ann) == 1 and high_ann[0]["comment"] == "替换为：Shunt release (SHT)", high_ann
-        assert len(med_ann) == 1 and med_ann[0]["search"] == "250A" and med_ann[0]["comment"].startswith("替换为："), med_ann
+        assert ann_obj["schema"] == "chint-office-annotate/v1" and len(ann_obj["annotations"]) == 1
+        assert ann_obj["annotations"][0]["match_mode"] == "all" and ann_obj["annotations"][0]["comment"] == "替换为：Shunt release (SHT)", ann_obj
+        all_obj = build_annotate_payload(findings, min_severity="all")
+        high_ann = [a for a in all_obj["annotations"] if a["match_mode"] == "all"]
+        med_ann = [a for a in all_obj["annotations"] if a["match_mode"] == "merged"]
+        assert len(high_ann) == 1 and len(med_ann) == 1 and med_ann[0]["search"] == "250A", all_obj
+        case_dedup = build_annotate_payload([
+            {"location": "P1:L1", "severity": "HIGH", "category": "BLACKLIST_CHINGLISH_UL", "match": "Closed electromagnet", "fix": "Closing release (CEM)", "excerpt": ""},
+            {"location": "P1:L2", "severity": "HIGH", "category": "BLACKLIST_CHINGLISH_UL", "match": "closed electromagnet", "fix": "Closing release (CEM)", "excerpt": ""},
+        ])["annotations"]
+        assert len(case_dedup) == 1, case_dedup
         merged_check = build_annotate_payload([
             {"location": "P1:L1", "severity": "MEDIUM", "category": "UNIT_SPACING_PUNCT", "match": "250A", "fix": UNIT_SPACING_FIX, "excerpt": ""},
             {"location": "P1:L2", "severity": "MEDIUM", "category": "UNIT_SPACING_PUNCT", "match": "400V", "fix": UNIT_SPACING_FIX, "excerpt": ""},
-        ])["annotations"]
+        ], min_severity="all")["annotations"]
         assert len(merged_check) == 1 and merged_check[0]["searches"] == ["250A", "400V"] and "250 A、400 V" in merged_check[0]["comment"], merged_check
         chunks = build_chunks(loaded["units"], 1)
         assert len(chunks) == 2
@@ -455,6 +461,7 @@ def main() -> int:
     parser.add_argument("--json", action="store_true", help="Output structured JSON")
     parser.add_argument("--report-md", action="store_true", help="Output deduplicated context-safe Markdown report")
     parser.add_argument("--emit-annotate", help="Write chint-office-annotate/v1 JSON to '-' (stdout pipe, zero disk file) or file path")
+    parser.add_argument("--annotate-severity", choices=["high", "all"], default="high", help="Minimum severity included in --emit-annotate (default: high; use 'all' to include merged MEDIUM style/spacing rules)")
     parser.add_argument("--author", default="CHINT Translation", help="Annotation author when emitting chint-office-annotate/v1")
     parser.add_argument("--chunk-size", type=int, default=0, help="Split units into chunks of N non-empty lines")
     parser.add_argument("--chunk-index", type=int, default=0, help="Inspect 1-based chunk K only")
@@ -512,7 +519,7 @@ def main() -> int:
 
     findings = scan_units(active_units, args.dept, args.mode)
     if args.emit_annotate:
-        emit_annotate_payload(findings, args.emit_annotate, author=args.author)
+        emit_annotate_payload(findings, args.emit_annotate, author=args.author, min_severity=args.annotate_severity)
         if args.emit_annotate == "-":
             return 0
 
