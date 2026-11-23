@@ -1,47 +1,38 @@
 ---
 name: chint-translation
-description: IEC 60947-2:2024 (EN) and GB/T 14048.2-2020 (ZH) single-track translation and terminology audit for CHINT ACB & MCCB. Use when translating specs, catalogues, or manuals to English, back-translating to statutory Chinese, or auditing text/extracted documents for standard terms, CHINT accessory codes, and regional compliance.
+description: Translate and audit CHINT ACB/MCCB specs, catalogues, and long texts against IEC 60947-2:2024 (EN) and GB/T 14048.2-2020 (ZH). Use for ZH-EN translation, EN-ZH statutory back-translation, or exhaustive error checking.
 ---
 
-# CHINT Circuit-Breaker Translation & Audit Standard (`chint-translation` v4.0.0)
+# CHINT Circuit-Breaker Translation & Audit Standard (`chint-translation` v0.0.1)
 
-## Dual-Standard Statutory Anchors & Orthography
+- **Dual-Standard Statutory Anchors**: `ZH→EN` outputs one canonical **`IEC 60947-2:2024`** (Ed. 6.0) English term and Ed. 6.0 clause; `EN→ZH` outputs one statutory **`GB/T 14048.2—2020`** Chinese term and GB/T 2020 clause with explicit notes for IEC 2024-only additions ($I_{cu1}$, `CBI Class W`).
+- **CHINT Accessory Ordering Codes**: Format product-accessory entries as **`Canonical IEC Term (CHINT Code)`** (e.g. `Closing release (CEM)`, `Shunt release (SHT)`, `Ready-to-close contact (SPC)`).
+- **Standard Orthography**: Enforced single-source via [iec_60947_2_standard.md](references/iec_60947_2_standard.md) and [lint_text.py](scripts/lint_text.py) (`IEC 60947-2:2024` British spelling, ISO/IEC `-ize`, hyphenated `circuit-breaker`, unhyphenated `undervoltage` / `Coordination`).
 
-- **Zero-Alias Statutory Terms**: `ZH→EN` outputs one canonical **`IEC 60947-2:2024`** (Ed. 6.0) English term and Ed. 6.0 clause; `EN→ZH` outputs one statutory **`GB/T 14048.2—2020`** Chinese term and GB/T 2020 clause with zero colloquial parenthetical aliases (explicitly flag IEC 2024-only additions such as $I_{cu1}$ or `CBI Class W`).
-- **CHINT Accessory Ordering Codes**: Format product-accessory selection entries as **`Canonical IEC Term (CHINT Code)`** (e.g. `Closing release (CEM)`, `Shunt release (SHT)`, `Ready-to-close contact (SPC)`, `Motor-operator (MOD)`).
-- **IEC 60947-2:2024 Orthography**: Use British nouns (`circuit-breaker`, `moulded`, `withdrawable`, `colour`, `aluminium`, `catalogue`, `behaviour`, `programme`, `analogue`, `signalling`), ISO/IEC Oxford `-ize` (`utilization`, `utilize`, `energize`, `energization`), standard hyphens (`lock-out`, `back-up`, `pick-up`, `time-delay`, `making-current release`, `let-through`, `cut-off`), and unhyphenated `undervoltage` and `Coordination`.
+## Step 1 — Lock Scope & Load Single Branch
 
-## Step 1 — Scope, Standards & Branch-Isolated Loading
+1. Lock **Direction** (`ZH→EN` / `EN→ZH`), **Branch** (`Branch A: Fast Translation` / `Branch B: Long-Text & Catalogue Audit`), **Department** (`ACB` or `MCCB`), and **Jurisdiction** (default `IEC 60947-2:2024 ⟷ GB/T 14048.2—2020`).
+2. Load only files matching the active branch:
+   - **Standard Base**: [iec_60947_2_standard.md](references/iec_60947_2_standard.md).
+   - **Single Department**: [acb.md](references/departments/acb.md) (`NXA`, `NA8`, `NA1`) OR [mccb.md](references/departments/mccb.md) (`NXM`, `NXS`, `NM8`, `NM5`). Consult §4 Blacklist only in `Branch B` or `EN→ZH` decoding.
+   - **Regional Override (Isolated)**: [references/regions/_region_template.md](references/regions/_region_template.md) (or `references/regions/<country>.md`) loaded strictly when targeting another jurisdiction.
+   - **Office Document Handoff**: Delegate `.pdf`, `.docx`, and `.xlsx` I/O to `chint-office-suite`: run `extract_doc.py --summary` for PDFs >20 pages, extract `chint-office-extract/v1` JSON via `extract_doc.py --json`, and hand errata back via `annotate_pdf.py` on a new PDF copy.
+3. *Done when*: direction, branch, single department, and jurisdiction are locked and extracted JSON/plain text is staged.
 
-1. Lock **Direction** (`ZH→EN` / `EN→ZH`), **Mode** (`Mode A: Translation` / `Mode B: Exhaustive Audit`), **Single Department** (`ACB` or `MCCB`), and **Target Jurisdiction** (default `IEC 60947-2:2024 ⟷ GB/T 14048.2—2020`; override only when user specifies another country/region).
-2. Load only files matching your active branch:
-   - **Standard Base (All Tasks)**: Read [iec_60947_2_standard.md](references/iec_60947_2_standard.md).
-   - **Single Department (Exactly One)**: Read [acb.md](references/departments/acb.md) (`NXA`, `NA8`, `NA1`) OR [mccb.md](references/departments/mccb.md) (`NXM`, `NXS`, `NM8`, `NM5`). Read §1–§3 for positive terms; read §4 Blacklist only in `Mode B` or `EN→ZH` decoding.
-   - **Regional Override (Optional, Isolated)**: Read [references/regions/_region_template.md](references/regions/_region_template.md) (or the specific `references/regions/<country>.md` when added) **only** when targeting a country outside default IEC/GB; otherwise leave unloaded.
-   - **Office Document Inputs (`.pdf`, `.docx`, `.xlsx`)**: Delegate file extraction and non-destructive PDF annotation via the decoupled `chint-office-suite` handoff contract (Step 2 & Step 4); this skill handles pure text and structured extraction JSON only.
-3. *Done when*: direction, mode, single department, and jurisdiction are locked with zero cross-department or unrequested regional files loaded.
+## Step 2 — Deterministic Script Pass (Branch-Specific)
 
-## Step 2 — Mechanical Text Lint (Pure-Stdlib Sweep)
+1. **`Branch A` (Fast Translation)**:
+   - Run `python3 scripts/glossary_lookup.py <src_or_-> --dir <zh2en|en2zh> --dept <acb|mccb>` to lock every matched canonical term and `万次` cycle conversion directly from the reference tables.
+   - Draft target text using locked terms and verified `{{param_name: unit}}` slots, then run `python3 scripts/lint_text.py - --dept <acb|mccb> --mode <en|zh>` until `finding_count == 0`.
+2. **`Branch B` (Long-Text & Catalogue Audit)**:
+   - Run `python3 scripts/lint_text.py <src_or_extract_json> --dept <acb|mccb> --mode <en|zh> --report-md [--emit-annotate <errata.json>]` for 100%-coverage deduplicated mechanical errata and optional `chint-office-annotate/v1` export.
+   - For inputs exceeding 50 non-empty units, run `--chunk-size 50 --chunks-info` and inspect chunks `--chunk-index 1..N` sequentially with `glossary_lookup.py` to catch every semantic/technical defect without context overflow.
+3. *Done when*: `Branch A` target hits `0` lint defects; `Branch B` covers all chunks `1..N` and preserves any `low_text_pages` (`<50`-char visual PDF pages).
 
-1. If the user supplies an Office file (`.pdf`, `.docx`, `.xlsx`), extract `chint-office-extract/v1` JSON via `chint-office-suite` (`extract_doc.py --json`) first and pipe it into [lint_text.py](scripts/lint_text.py); for plain text/markdown, pipe directly (`-`):
-   - `python3 scripts/lint_text.py <text_or_extract_json_or_-> --dept <acb|mccb> --mode <en|zh> --json`
-2. Record `total_units`, `scanned_units`, any preserved `low_text_pages` (`<50`-char visual PDF pages), and all hits (`Mode B` triages all hits; `Mode A` resolves drafted output to `0` hits).
-3. *Done when*: 100% of units linted (`0` mechanical hits on `Mode A` target text; every visual-only page disclosed).
+## Step 3 — Semantic Verification & Deliverable Contract
 
-## Step 3 — Exhaustive Semantic & Value-Slot Verification
-
-Inspect **every** unit, table, header, caption, and footnote sequentially without sampling:
-1. **Statutory & CHINT Integrity**: Confirm dual-standard match (`IEC 2024` EN ⟷ `GB/T 2020` ZH), `kA rms` ($I_{cu}/I_{cs}/I_{cw}/I_{cu1}$) vs `kA peak` ($I_{cm}$), clause edition match, `Category A` vs `Isd`/`Icw` (`IEC 5.4` / `GB 4.4`), `frame size` (`IEC 3.1.1` / `GB 2.1.1`), `ground-fault` vs `earth fault`, `Annex B` (`Type AC/A/B`) vs `IEC 62423`, and `Cl. 6` / `GB 5.2` markings.
-2. **Zero-Fabrication Value Slots**: Populate `{{param_name: unit}}` strictly from verified datasheets (named in department §1) or user source; isolate unverified/contradictory figures into Pending Verification List; scope family-wide claims (`100% of Ics`, rotatable terminals); preserve asymmetric bounds (`≥` vs `>`).
-3. **Formatting**: Use normative `shall`, department §3.2 sentence frames, single half-width number-unit space (`250 A`, `415 V AC`, `-5 °C` to `+40 °C`), and plain integer `operating cycles` (`操作循环次数`) for `N 万次`.
-4. *Done when*: every unit verified; every defect carries exact coordinate, quoted source, unique statutory fix, and clause/code basis.
-
-## Step 4 — Deliverable Contract & PDF Annotation Handoff
-
-- **Mode B (`Exhaustive Audit`)** emits three mandatory blocks:
-  1. `Errata Table`: `Location | Quoted Source | Defect Class | Unique Statutory Replacement | Standard / CHINT Basis`
-  2. `Coverage Ledger`: `Total units | Scanned | Unscanned Visual Pages (<50 chars) | Mechanical hits | Semantic hits`
-  3. `Pending Verification List`: unverified ratings, missing mandatory parameters, and technical contradictions.
-  - When the user requests annotated PDF output for branding execution, emit `chint-office-annotate/v1` JSON (`page`, `search`, `comment`) and hand off to `chint-office-suite` (`annotate_pdf.py`) to write a new annotated PDF copy.
-- **Mode A (`Translation`)** emits clean target text (`0` lint defects, `0` unresolved `{{...}}`), Key Term Mapping Table, and Pending Verification List if needed.
-- **Completion Gate**: Steps 1–4 satisfied; dual-standard statutory rules and department/region isolation honoured; zero fabricated ratings.
+1. Verify every unit and table cell for `kA rms` ($I_{cu}/I_{cs}/I_{cw}/I_{cu1}$) vs `kA peak` ($I_{cm}$), `Selectivity category A` vs `Isd`/`Icw` (`IEC 5.4` / `GB 4.4`), `frame size` (`IEC 3.1.1` / `GB 2.1.1`), asymmetric bounds (`≥` vs `>`), normative `shall`, and datasheet-verified values (isolate unverified/missing figures into Pending Verification List).
+2. **Branch Outputs**:
+   - **`Branch A`**: Clean Target Text (`0` lint hits, `0` unresolved `{{...}}`), Key Term Mapping Table, and Pending Verification List (if any).
+   - **`Branch B`**: Errata Table (`Location | Quoted Source | Severity/Class | Statutory Fix | Basis`), Coverage Ledger (`Total units | Scanned | Visual-Only Pages (<50 chars) | Mechanical Hits | Semantic Hits`), Pending Verification List, and `chint-office-annotate/v1` JSON handoff to `chint-office-suite` (`annotate_pdf.py`) when PDF annotation is requested.
+3. *Completion Gate*: Steps 1–3 satisfied; every matched term, chunk, and visual-only page accounted for; all numbers traceable to source data.

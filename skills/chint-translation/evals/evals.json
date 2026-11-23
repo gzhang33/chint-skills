@@ -1,6 +1,6 @@
 {
   "skill_name": "chint-translation",
-  "version": "4.0.0",
+  "version": "0.0.1",
   "evals": [
     {
       "id": 0,
@@ -117,13 +117,13 @@
     {
       "id": 4,
       "name": "catalogue-exhaustive-audit-handoff",
-      "prompt": "请按 chint-translation v4.0.0 与 chint-office-suite 协同契约，对一份包含第 1–3 页内容的空气断路器样本 PDF 初稿执行全量 Mode B 审查（说明应先通过哪两个解耦脚本串联提取与核查、并输出勘误表、覆盖率台账、待确认清单及供 PDF 批注用的 JSON 载荷，不直接修改原文件）：\n\n第 1 页：[图片/纯矢量封面，无文字层]\n第 2 页：NXA Air Circuit Breaker Catalogue — Equipped with Closed electromagnet (XF) and Shunt Trip (MX). Mechanical durability: 10000 times. Ui: 1000V, Icu: 85kA at 415V.\n第 3 页：Withdrawable cradle in Separation position；hole opener dia 28mm。Rated operational voltage Ue: (参数待补)。",
-      "expected_output": "Decoupled workflow invoking chint-office-suite (extract_doc.py --json) -> chint-translation (lint_text.py --dept acb --mode en) -> semantic sweep -> Errata Table, Coverage Ledger (Page 1 Unscanned Visual Page <50 chars), Pending Verification List, and chint-office-annotate/v1 JSON payload handed back to annotate_pdf.py.",
+      "prompt": "请按 chint-translation v0.0.1 Branch B 与 chint-office-suite 协同契约，对一份包含第 1–3 页内容的空气断路器样本 PDF 初稿执行全量检查与术语锁定（说明应先通过哪几个确定性脚本串联提取、查表与扫描、并输出勘误表、覆盖率台账、待确认清单及供 PDF 批注用的 JSON 载荷，不直接修改原文件）：\n\n第 1 页：[图片/纯矢量封面，无文字层]\n第 2 页：NXA Air Circuit Breaker Catalogue — Equipped with Closed electromagnet (XF) and Shunt Trip (MX). Mechanical durability: 10000 times. Ui: 1000V, Icu: 85kA at 415V.\n第 3 页：Withdrawable cradle in Separation position；hole opener dia 28mm。Rated operational voltage Ue: (参数待补)。",
+      "expected_output": "Decoupled workflow invoking chint-office-suite (extract_doc.py --json) -> chint-translation (lint_text.py --report-md --emit-annotate + glossary_lookup.py) -> semantic sweep -> Errata Table, Coverage Ledger (Page 1 Unscanned Visual Page <50 chars), Pending Verification List, and chint-office-annotate/v1 JSON payload handed back to annotate_pdf.py.",
       "files": [],
       "assertions": [
         {
           "id": "f1",
-          "text": "遵循解耦交接契约：先通过 chint-office-suite 的 extract_doc.py 提取结构化 JSON（含 low_text_pages），再送入 chint-translation 的 lint_text.py 完成机械扫描与逐页语义复核"
+          "text": "遵循解耦交接契约：先通过 chint-office-suite 的 extract_doc.py 提取结构化 JSON（含 low_text_pages），再送入 chint-translation 的 lint_text.py（--report-md / --emit-annotate）与 glossary_lookup.py 完成确定性扫描、术语锁定与逐项语义复核"
         },
         {
           "id": "f2",

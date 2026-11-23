@@ -19,6 +19,7 @@ def annotate_pdf(input_pdf: Path, items: list[dict], output_pdf: Path, default_a
 
     doc = fitz.open(str(input_pdf))
     highlights, stickies = 0, 0
+    page_stickies: dict[int, int] = {}
     for idx, item in enumerate(items, 1):
         pno = int(item["page"])
         if pno < 1 or pno > len(doc):
@@ -30,12 +31,17 @@ def annotate_pdf(input_pdf: Path, items: list[dict], output_pdf: Path, default_a
         rects = page.search_for(query) if query else []
         if rects:
             annot = page.add_highlight_annot(rects[0])
+            note_body = comment
             highlights += 1
         else:
-            y = 24 + (stickies % 10) * 22
-            annot = page.add_text_annot(fitz.Point(24, y), f"[{query}] {comment}" if query else comment)
+            idx_on_page = page_stickies.get(pno, 0)
+            page_stickies[pno] = idx_on_page + 1
+            x = 24 + (idx_on_page // 10) * 28
+            y = 24 + (idx_on_page % 10) * 22
+            note_body = f"[{query}] {comment}" if query else comment
+            annot = page.add_text_annot(fitz.Point(x, y), note_body)
             stickies += 1
-        annot.set_info(title=author, content=comment)
+        annot.set_info(title=author, content=note_body)
         annot.update()
 
     output_pdf.parent.mkdir(parents=True, exist_ok=True)
@@ -64,8 +70,10 @@ def run_self_test() -> int:
         assert summary["highlight_count"] == 1 and summary["sticky_fallback_count"] == 1, summary
         with fitz.open(str(src)) as sdoc, fitz.open(str(dst)) as ddoc:
             assert len(list(sdoc[0].annots())) == 0, "Original PDF was modified!"
-            assert len(list(ddoc[0].annots())) == 2, "Annotated PDF missing annotations!"
-    print("SELF-TEST PASS: annotate_pdf.py verified (highlight + sticky fallback, original untouched).")
+            annots = list(ddoc[0].annots())
+            assert len(annots) == 2, "Annotated PDF missing annotations!"
+            assert "[UNMATCHED_SPLIT_RUN]" in (annots[1].info.get("content") or ""), annots[1].info
+    print("SELF-TEST PASS: annotate_pdf.py verified (highlight + sticky fallback + content intact, original untouched).")
     return 0
 
 

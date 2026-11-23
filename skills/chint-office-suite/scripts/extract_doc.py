@@ -91,6 +91,25 @@ def extract_document(source: str, pages_filter: set[int] | None = None) -> dict:
     return {"schema": SCHEMA_ID, "source": str(p), "format": ext.lstrip(".") or "text", "total_units": len(lines), "scanned_units": len(lines), "low_text_pages": [], "units": units}
 
 
+def build_summary(result: dict, batch_size: int = 20) -> dict:
+    batches: list[str] = []
+    if result.get("format") == "pdf" and result.get("total_units", 0) > 0:
+        total_p = int(result["total_units"])
+        for start in range(1, total_p + 1, batch_size):
+            end = min(start + batch_size - 1, total_p)
+            batches.append(f"{start}-{end}")
+    return {
+        "schema": SCHEMA_ID,
+        "source": result.get("source", ""),
+        "format": result.get("format", ""),
+        "total_units": result.get("total_units", 0),
+        "scanned_units": result.get("scanned_units", 0),
+        "text_unit_count": len(result.get("units", [])),
+        "low_text_pages": result.get("low_text_pages", []),
+        "recommended_page_batches": batches,
+    }
+
+
 def run_self_test() -> int:
     import fitz
     import openpyxl
@@ -110,6 +129,10 @@ def run_self_test() -> int:
         assert res_pdf["total_units"] == 2 and res_pdf["scanned_units"] == 2
         assert res_pdf["low_text_pages"] == [2], res_pdf
         assert res_pdf["units"][0]["location"] == "P1:L1"
+        sum_pdf = build_summary(res_pdf)
+        assert sum_pdf["text_unit_count"] == 1 and sum_pdf["recommended_page_batches"] == ["1-2"]
+        sum_45 = build_summary({"format": "pdf", "total_units": 45, "scanned_units": 45, "units": []})
+        assert sum_45["recommended_page_batches"] == ["1-20", "21-40", "41-45"], sum_45
 
         docx_p = td / "sample.docx"
         with zipfile.ZipFile(str(docx_p), "w") as zf:
@@ -126,7 +149,7 @@ def run_self_test() -> int:
         res_xlsx = extract_document(str(xlsx_p))
         assert res_xlsx["units"][0] == {"location": "Specs!B2", "text": "Frame size 250 A"}
 
-    print("SELF-TEST PASS: extract_doc.py verified (.pdf + low_text_pages, .docx, .xlsx, schema).")
+    print("SELF-TEST PASS: extract_doc.py verified (.pdf + low_text_pages + --summary, .docx, .xlsx, schema).")
     return 0
 
 
@@ -135,6 +158,7 @@ def main() -> int:
     parser.add_argument("source", nargs="?", help="Input (.pdf/.docx/.xlsx/.md/.txt) or '-'")
     parser.add_argument("--pages", help="PDF page range, e.g. 1-20 or 1,3,5")
     parser.add_argument("--json", action="store_true", help="Emit chint-office-extract/v1 JSON")
+    parser.add_argument("--summary", action="store_true", help="Emit compact metadata, low_text_pages, and recommended batches without raw text")
     parser.add_argument("--self-test", action="store_true", help="Run built-in verification suite")
     args = parser.parse_args()
 
@@ -144,6 +168,13 @@ def main() -> int:
         parser.error("source is required unless --self-test is set")
 
     result = extract_document(args.source, parse_page_spec(args.pages))
+    if args.summary:
+        summary = build_summary(result)
+        if args.json:
+            print(json.dumps(summary, ensure_ascii=False, indent=2))
+        else:
+            print(f"{summary['format']} | total={summary['total_units']} | scanned={summary['scanned_units']} | text_units={summary['text_unit_count']} | low_text_pages={summary['low_text_pages']} | batches={summary['recommended_page_batches']}")
+        return 0
     if args.json:
         print(json.dumps(result, ensure_ascii=False))
     else:
