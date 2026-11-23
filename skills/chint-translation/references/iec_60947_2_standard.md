@@ -129,7 +129,9 @@
 
 ---
 
-## 6. Universal IEC Orthography, CAD & Anti-Chinglish Guardrails
+## 6. Universal IEC Orthography, CAD & Anti-Chinglish Blacklist
+
+> **Single Source of Truth**: Consulted in `Mode B` audit or `EN→ZH` decoding only; mirrored programmatically by [audit_catalogue.py](../scripts/audit_catalogue.py).
 
 | Chinese Term / Rule | ❌ Strictly Forbidden (Chinglish / US / Legacy) | ✅ Unique Canonical IEC Output |
 | :--- | :--- | :--- |

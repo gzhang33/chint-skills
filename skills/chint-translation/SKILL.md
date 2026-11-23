@@ -1,60 +1,47 @@
 ---
 name: chint-translation
-description: Pure single-track IEC 60947-2:2024 bidirectional (ZH↔EN) B2B translation, localization, and technical-audit standard for CHINT low-voltage circuit-breakers (ACB, MCCB, and Annex A–R derivatives). Enforces one canonical IEC English term per concept paired with CHINT-specific accessory codes, UK + ISO/IEC Oxford -ize orthography, an anti-Chinglish audit blacklist, a 1+1+N department-isolated loading rule, and a value-slot convention that forbids inventing any product rating. Use whenever translating, localizing, back-translating, or auditing electrical-apparatus specs, catalogues, datasheets, or manuals between Chinese and English.
+description: IEC 60947-2:2024 single-track ZH↔EN translation and exhaustive catalogue audit for CHINT ACB & MCCB. Use when translating catalogues, datasheets, or manuals to English, back-translating to Chinese, or auditing drafts for IEC terminology, CHINT accessory codes, and parameter defects.
 ---
 
-# CHINT Low-Voltage Translation & Audit Standard (`chint-translation` v3.0.0)
+# CHINT Low-Voltage Translation & Audit Standard (`chint-translation` v3.1.0)
 
-## 1. Pure IEC Single-Track Mandate (纯正 IEC 单轨铁律)
+## Single-Track Standard & Orthography
 
-1. **One Canonical Output Per Concept**: Every Chinese electrotechnical or product term maps to **one unique IEC-aligned English term** across catalogues, datasheets, tenders, and manuals alike. Dual-track translation (separate catalogue vs manual vocabularies) and North American UL columns are abolished.
-2. **CHINT Exclusive Codes Only**: When an accessory or sub-assembly carries an official CHINT code (`SHT`, `CEM`, `UVT`, `MOD`, `SPC`, `KL`, `DD`, `FD`, etc.), format as **`Canonical IEC Term (CHINT Code)`** — e.g. `Closing release (CEM)`, `Shunt release (SHT)`, `Ready-to-close contact (SPC)`. Never output competitor codes (`MX`, `MN`, `XF`, `OF`, `SDE`, `PF`, `MCH`, `KLC`).
-3. **IEC 60947-2:2024 Orthography**: Enforce British nouns (`circuit-breaker`, `moulded`, `withdrawable`, `colour`, `aluminium`, `catalogue`, `behaviour`, `programme`, `analogue`, `signalling`) + ISO/IEC Oxford `-ize` (`utilization`, `utilize`, `energize`, `energization`) + standard hyphenation (`lock-out`, `back-up`, `pick-up`, `time-delay`, `making-current release`, `let-through`, `cut-off`) + unhyphenated `undervoltage` and `Coordination`.
+- **One Canonical Output Per Concept**: Produce one unique `IEC 60947-2:2024` (Ed. 6.0) English term (for `ZH→EN`) or one `GB/T 14048.2` Chinese term (for `EN→ZH`) across catalogues, datasheets, tenders, and manuals alike.
+- **CHINT Exclusive Codes**: Format accessories carrying official CHINT codes as **`Canonical IEC Term (CHINT Code)`** — e.g. `Closing release (CEM)`, `Shunt release (SHT)`, `Ready-to-close contact (SPC)`, `Motor-operator (MOD)`.
+- **IEC 60947-2:2024 Orthography**: Use British nouns (`circuit-breaker`, `moulded`, `withdrawable`, `colour`, `aluminium`, `catalogue`, `behaviour`, `programme`, `analogue`, `signalling`), ISO/IEC Oxford `-ize` (`utilization`, `utilize`, `energize`, `energization`), standard hyphens (`lock-out`, `back-up`, `pick-up`, `time-delay`, `making-current release`, `let-through`, `cut-off`), and unhyphenated `undervoltage` and `Coordination`.
 
----
+## Step 1 — Scope, Direction & Branch-Isolated Loading
 
-## 2. `1 + 1 + N` Context-Hygiene Routing (按需独立加载，严禁跨部门混读)
+1. Lock **Direction** (`ZH→EN` or `EN→ZH`), **Mode** (`Mode A: Direct Translation` or `Mode B: Exhaustive Audit`), and **Single Department** (`ACB` or `MCCB`).
+2. Load only the files required by your active branch (`1 + 1 + N` strict isolation):
+   - **Standard Base (All Tasks)**: Read [iec_60947_2_standard.md](references/iec_60947_2_standard.md).
+   - **Single Department (Load Exactly One)**: Read [acb.md](references/departments/acb.md) for ACB (`NXA`, `NA8`, `NA1`) OR [mccb.md](references/departments/mccb.md) for MCCB (`NXM`, `NXS`, `NM8`, `NM5`). Read §1–§3 for positive terminology; consult §4 Audit Blacklist only in `Mode B` or when decoding legacy `EN→ZH` drafts.
+   - **New Department Only**: Read [_template.md](references/departments/_template.md) exclusively when scaffolding a separate product line.
+   - **Local Datasheet Anchor**: Inspect local files named in department §1 only to resolve exact SKU codes or `{{...}}` value slots.
+3. *Done when*: direction, mode, and single department are locked with zero cross-department files loaded.
 
-To prevent context bloat and cross-department collisions, this skill uses a strict **`1 + 1 + N`** layout:
+## Step 2 — Mechanical-First Sweep (Deterministic Recall)
 
-| Tier | File Path | When to Load | Rule |
-| :--- | :--- | :--- | :--- |
-| **`1` Master SOP** | `SKILL.md` (this file) | Every task | Inline rules, direction, value slots, completion gate. |
-| **`1` IEC Standard** | [iec_60947_2_standard.md](references/iec_60947_2_standard.md) | Any circuit-breaker / parameter / standard task | Authoritative `IEC 60947-2:2024` (Ed. 6.0, Cl. 3–9 & Annexes A–R) + `IEC 60947-1:2020` definitions, symbols, and clauses. |
-| **`N` Department** | [departments/acb.md](references/departments/acb.md) | **ACB (框架断路器)** tasks only (`NXA`, `NA8`, `NA1`) | CHINT ACB ETUs, 24+ exclusive accessory codes, native sentence frames, ACB blacklist, custom extension table. |
-| **`N` Department** | [departments/mccb.md](references/departments/mccb.md) | **MCCB (塑壳断路器)** tasks only (`NXM`, `NXS`, `NM8`, `NM5`) | CHINT MCCB releases, mounting/connection accessories, MCCB blacklist, custom extension table. |
-| **Template** | [departments/_template.md](references/departments/_template.md) | Only when creating a new department file | Standalone template for new product departments (MCB, ATS, Contactors, etc.) — **never merge two departments into one file**. |
+Run [audit_catalogue.py](scripts/audit_catalogue.py) across 100% of the source file (`.pdf`, `.docx`, `.xlsx`, `.md`, `.txt`) or piped text (`-`) to guarantee exhaustive pattern detection:
+- **Mode B (`Exhaustive Audit`)**: Run `python3 scripts/audit_catalogue.py <source> --dept <acb|mccb> --mode <en|zh> --json` **before** semantic reading. Record `total_units`, `scanned_units`, every PDF page in `low_text_pages` (`<50` chars, image/vector-only), and every finding (`ORTHOGRAPHY_US_HYPHEN`, `BLACKLIST_CHINGLISH_UL`, `COMPETITOR_CODE`, `OBSOLETE_CLAUSE_ED5`, `UNIT_SPACING_PUNCT`).
+- **Mode A (`Direct Translation`)**: Pipe drafted target text into `python3 scripts/audit_catalogue.py - --dept <acb|mccb> --mode <en|zh>` and resolve all hits to `0`.
+- *Done when*: scanner completed across 100% of input scope, every `<50`-char PDF page is recorded in `Unscanned Visual Pages`, and mechanical hits are triaged (`Mode B`) or zeroed (`Mode A`).
 
-- **Hard Isolation Rule**: Load **only** the single `departments/<dept>.md` matching the product in scope. Never load another department's file.
-- **Local Workspace Reference Rule**: When translating or auditing a specific CHINT series, check the local reference folder named in §1 of that department's file (e.g. `Areas/样本册修改/NXA/参考资料/` or `Projects/5 系列海外导入/`) to verify model designations, CHINT accessory codes, and datasheet numbers. Take only verified model/parameter facts from local files — never copy raw unreviewed ERP typos or legacy Chinglish.
+## Step 3 — Exhaustive Semantic & Technical Sweep
 
----
+Inspect **every** page, table, header, diagram caption, and footnote sequentially without sampling:
+1. **Single-Track Terminology & CHINT Coding**: Verify every term matches `iec_60947_2_standard.md` + active `departments/<dept>.md` §2–§3; flag any §4 blacklist match, legacy Chinglish phrasing, competitor code, or missing CHINT code.
+2. **IEC 60947-2:2024 Technical Integrity**: Check `kA rms` ($I_{cu}/I_{cs}/I_{cw}/I_{cu1}$) vs `kA peak` ($I_{cm}$), Ed. 6.0 clause accuracy, `Category A` vs `Isd`/`Icw` (`Cl. 5.4`), `frame size` (`Cl. 3.1.1`) vs `Inm` (`GB/T 14048.2`), `ground-fault` (G-stage) vs `earth fault` (Annex B), `Icu1` phase-to-neutral meaning (`Cl. 5.3.6.2.3`), `Annex B` waveforms (`Type AC/A/B` only) vs `IEC 62423`, and `Cl. 6` markings.
+3. **Zero-Fabrication Value-Slot Rule**: Populate `{{param_name: unit}}` strictly from the exact model's datasheet or user source; flag unverified ratings, missing mandatory fields, or technical contradictions cleanly in the Pending Verification List; scope family-wide claims (`100% of Ics`, rotatable terminals) to verified models; preserve asymmetric bounds (`≥` vs `>`).
+4. **Native Engineering Style & Formatting**: Apply normative `shall` for requirements, §3.2 native sentence frames, exactly one half-width space between number and unit (`250 A`, `415 V AC`, `-5 °C` to `+40 °C`), and plain integer `operating cycles` for `N 万次` (`Table 7`).
+- *Done when*: every page, table, caption, and footnote has been audited, and every defect carries an exact location, quoted source, unique canonical fix, and IEC/CHINT basis.
 
-## 3. Value-Slot & Formatting Invariant (值槽与排版红线)
+## Step 4 — Deliverable Contract & Completion Gate
 
-Reference files store **terminology and `{{param_name: unit}}` slots, never product ratings**:
-
-1. **Resolve from a datasheet or rewrite qualitatively**: Fill a slot only from the exact model's datasheet or user-supplied source. Never inherit a rating from another model, competitor catalogue, or memory.
-2. **Zero unresolved slots in deliverables**: Never output literal `{{...}}` in a finished translation or audit.
-3. **Unit spacing & numbers**: Insert **exactly one half-width space** between number and unit (`250 A`, `415 V AC`, `36 kA rms`, `50 Hz`, `8 kV`, `10 N·m`, `-5 °C` to `+40 °C`). Never use full-width `℃`, `400A` concatenation, or literal `"ten thousand times"` (convert `N 万次` to plain integer `{{ops: operating cycles}}`).
-4. **Scoped claims**: Superlative or family-wide claims (`100% Ics`, rotatable terminals) require an explicit verified model scope (`{{claim_scope}}`) backed by datasheet rows.
-
----
-
-## 4. Direction & Operating Modes (双向与双模式规则)
-
-| Direction / Mode | Deliverable Language | Execution Rule |
-| :--- | :--- | :--- |
-| **ZH → EN (Default)** | English (Chinese allowed only in mapping-table source column or Mode B quoted source) | Output **only** the ✅ canonical IEC English term (+ CHINT code where applicable). Strip all full-width Chinese punctuation (`；` `（）` `：`). |
-| **EN → ZH (Back-translation / Review)** | Chinese (English allowed only in mapping-table source column or quoted source; keep units/symbols half-width: `kA rms`, `V AC`) | Land strictly on the ✅ canonical Chinese term (`GB/T 14048.2` aligned). Legacy OEM/US terms in the ❌ blacklist are recognized for comprehension and mapped to the ✅ Chinese term — never invent fresh calques. |
-| **Mode A: Direct Translation** | Target language per direction | Produce idiomatic, single-track IEC technical prose obeying §1–§4. Use normative `shall` for mandatory safety/installation instructions. |
-| **Mode B: Technical & Translation Audit** | Target language per direction | Inspect draft against `iec_60947_2_standard.md` and the active `departments/<dept>.md`. Flag every ❌ blacklist term, US spelling leak, obsolete Ed. 5.x clause ref, unit-spacing error, unverified rating, or technical contradiction (e.g. `Category A` paired with `Isd` short-time delay) with location, clause basis, and exact fix. |
-
----
-
-## 5. Completion Gate (交付前逐项核验)
-
-- [ ] **Single-track & pure IEC**: Zero Track 2 legacy Chinglish (`Closed electromagnet`, `Drawer seat`, `refuses to open`), zero UL/US leaks (`Molded`, `Color`, `Aluminum`, `Shunt Trip`, `LVPCB`, unhyphenated `Circuit Breaker`), zero competitor codes (`MX`, `MN`, `XF`, `OF`, `SDE`, `PF`).
-- [ ] **Exact `IEC 60947-2:2024` (Ed. 6.0) clauses & terms**: Verified against `iec_60947_2_standard.md` (zero obsolete Ed. 5.x `Cl. 2.x / 4.3.x`, zero `durability`, zero `discrimination`, `frame size` per `Cl. 3.1.1` vs `Inm` per `GB/T 14048.2`).
-- [ ] **Zero unresolved slots & zero fabricated ratings**: No `{{...}}` remains; every number traces to source/datasheet with single half-width unit spacing and `°C`.
-- [ ] **Department isolation honoured**: Only the target department module loaded; department-specific CHINT codes verified.
+- **Mode B (`Exhaustive Audit` — errata ready for branding execution without modifying source PDF/docx layout)** outputs three mandatory blocks:
+  1. `Errata Table`: `Location (Page/Table/Row) | Quoted Source | Defect Class | Unique Canonical Replacement | IEC / CHINT Basis`
+  2. `Coverage Ledger`: `Total pages/sections | Scanned | Unscanned Visual Pages (<50 chars) | Mechanical hits | Semantic hits`
+  3. `Pending Verification List`: unverified ratings, missing mandatory parameters, and technical contradictions.
+- **Mode A (`Direct Translation`)** outputs: (1) clean single-track target text (`0` scanner defects, `0` unresolved `{{...}}` slots), (2) Key Term & CHINT Code Mapping Table, and (3) Pending Verification List where source omits mandatory specs.
+- **Completion Gate**: Steps 1–4 executed in order; deterministic scanner run recorded; 100% coverage ledger accounted for; zero fabricated parameters; department isolation intact.

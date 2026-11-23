@@ -1,6 +1,6 @@
 # ACB Department Terminology & CHINT Accessory Standard (`acb.md`)
 
-> **Department Isolation (`1 + 1 + N`)**: Owned by the **Air Circuit-Breaker (框架断路器) Department**. Load this file **only** for ACB tasks (`NXA`, `NA8`, `NA1`), paired with `SKILL.md` and `references/iec_60947_2_standard.md`. Never merge with other departments.
+> **Department Isolation**: ACB Department only (`NXA`, `NA8`, `NA1`). Load alongside `SKILL.md` and `iec_60947_2_standard.md`.
 
 ## 1. Applicable Series & Local Workspace Reference Pointers
 
@@ -75,7 +75,9 @@
 
 ---
 
-## 4. ACB Audit Blacklist (❌ 严禁中译英输出 · 仅供审查拦截与旧稿识别)
+## 4. ACB Audit Blacklist (❌ Mode B 审查拦截与旧稿识别唯一真源)
+
+> Consulted in `Mode B` audit or `EN→ZH` legacy decoding only; mirrored programmatically by [audit_catalogue.py](../../scripts/audit_catalogue.py).
 
 | ❌ Forbidden / Legacy / Non-IEC Form | Defect Category | ✅ Mandatory Single-Track Replacement |
 | :--- | :--- | :--- |

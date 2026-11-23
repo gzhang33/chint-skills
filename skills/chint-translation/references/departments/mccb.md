@@ -1,6 +1,6 @@
 # MCCB Department Terminology & CHINT Accessory Standard (`mccb.md`)
 
-> **Department Isolation (`1 + 1 + N`)**: Owned by the **Moulded-Case Circuit-Breaker (塑壳断路器) Department**. Load this file **only** for MCCB and `IEC 60947-2:2024` derivative tasks (`NXM`, `NXS`, `NM8`, `NM5`, `CBR`, `MRCD`, `CBI`, `ICB`, `PV DC`, `CBAR`), paired with `SKILL.md` and `references/iec_60947_2_standard.md`. Never merge with other departments.
+> **Department Isolation**: MCCB Department only (`NXM`, `NXS`, `NM8`, `NM5`, `CBR`, `MRCD`, `CBI`, `ICB`, `PV DC`, `CBAR`). Load alongside `SKILL.md` and `iec_60947_2_standard.md`.
 
 ## 1. Applicable Series & Local Workspace Reference Pointers
 
@@ -49,7 +49,9 @@
 
 ---
 
-## 4. MCCB Audit Blacklist (❌ 严禁中译英输出 · 仅供审查拦截与旧稿识别)
+## 4. MCCB Audit Blacklist (❌ Mode B 审查拦截与旧稿识别唯一真源)
+
+> Consulted in `Mode B` audit or `EN→ZH` legacy decoding only; mirrored programmatically by [audit_catalogue.py](../../scripts/audit_catalogue.py).
 
 | ❌ Forbidden / Legacy / Non-IEC Form | Defect Category | ✅ Mandatory Single-Track Replacement |
 | :--- | :--- | :--- |
