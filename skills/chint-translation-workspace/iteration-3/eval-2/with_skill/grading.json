@@ -1,0 +1,46 @@
+{
+  "expectations": [
+    {
+      "id": "c1",
+      "text": "用 Open Transition (Break-Before-Make, BBM) / Open Transition (BBM) 与 Closed Transition (Make-Before-Break, MBB) / Closed Transition (MBB)，缩写 BBM/MBB 原样保留不译",
+      "passed": true,
+      "evidence": "Body L13: \"open transition (Break-Before-Make, BBM) and closed transition (Make-Before-Break, MBB)\"; Table L27-28 retain BBM / MBB verbatim."
+    },
+    {
+      "id": "c2",
+      "text": "规范性动词「应」译为 shall（如 shall ensure），不用 should 或 must",
+      "passed": true,
+      "evidence": "Body L17: \"The mechanical interlocking mechanism shall ensure that the two power sources cannot be closed simultaneously.\""
+    },
+    {
+      "id": "c3",
+      "text": "「恢复转换延时」译为 return transfer delay（可附 RTD），不用笼统 time delay",
+      "passed": true,
+      "evidence": "Body L13: \"and the return transfer delay (RTD) can be set within the range of 0 s to 180 s.\""
+    },
+    {
+      "id": "c4",
+      "text": "保留 100 ms / 1.5 s / 0 to 180 s（或 0–180 s），但明确标注这些时间参数未经对应型号数据表核实（IEC 60947-6-1 只定类别不定时间）",
+      "passed": true,
+      "evidence": "Body L13 keeps 100 ms, 1.5 s, 0 s to 180 s; L39 explicitly notes \"IEC 60947-6-1 defines transfer switching equipment classes (Class PC and Class CB) and transition types (BBM / MBB), not fixed operating times or delay limits\" and all three quantities \"must trace to the official NZ7 product datasheet\"."
+    },
+    {
+      "id": "c5",
+      "text": "保持 Track 2 说明书语体（完整规范性条款句式，未混入 Track 1 样本册营销压缩话术）",
+      "passed": true,
+      "evidence": "L4, L11-17, L41: maintains normative Track 2 OEM installation-and-operation manual prose (numbered clauses 4.3/4.4, \"does not exceed\", \"is not greater than\", \"shall ensure\") without Track 1 catalogue marketing phrasing."
+    },
+    {
+      "id": "c6",
+      "text": "数字与单位之间严格有单个半角空格（100 ms / 1.5 s / 180 s），且正文无残留中文全角标点",
+      "passed": true,
+      "evidence": "Body L13: \"100 ms\", \"1.5 s\", \"0 s to 180 s\" — all spaced with single half-width space; zero Chinese full-width punctuation in English body."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

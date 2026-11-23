@@ -1,0 +1,70 @@
+{
+  "expectations": [
+    {
+      "id": "d1",
+      "text": "交付物正文为中文（EN→ZH 方向），英文仅出现在术语对照表源语列或引用原文处，标题/说明/待确认清单均为中文",
+      "passed": true,
+      "evidence": "Deliverable body, tables, and review checklist are in Chinese; English appears only in the source terminology column and quoted text."
+    },
+    {
+      "id": "d2",
+      "text": "Moulded-Case Circuit-Breaker 译为「塑壳断路器」，未直译为「模制外壳断路器」或「塑料外壳断路器」",
+      "passed": false,
+      "evidence": "Deliverable heading L9 renders Moulded-Case Circuit-Breaker as \"塑料外壳式断路器\" (and L37 sets \"塑料外壳式断路器\" as the primary translation, demoting \"塑壳断路器\" to a secondary abbreviation column) instead of landing directly on \"塑壳断路器\"."
+    },
+    {
+      "id": "d3",
+      "text": "Rated impulse withstand voltage 译为「额定冲击耐受电压」（用「冲击」不用「脉冲」）",
+      "passed": true,
+      "evidence": "Table L14: \"额定冲击耐受电压 | U_imp | 8 kV\"."
+    },
+    {
+      "id": "d4",
+      "text": "Rated service short-circuit breaking capacity 中的 service 译为「运行」（额定运行短路分断能力），不译「服务」",
+      "passed": true,
+      "evidence": "Table L20: \"额定运行短路分断能力 | I_cs | 36 kA（有效值，AC 415 V，100% I_cu）\"."
+    },
+    {
+      "id": "d5",
+      "text": "Selectivity category 译为「选择性类别」（不误译为「使用类别」或「区分/歧视类别」），且准确译出 Icu1（相间对中性线交流电压下极极限短路分断能力 / 单极极限短路分断能力）并保留 Icu1 符号",
+      "passed": true,
+      "evidence": "Table L22: \"选择性类别 | — | A 类\"; Table L19: \"交流相-中性线电压下额定单极极限短路分断能力 | I_cu1 | 18 kA（有效值）\"."
+    },
+    {
+      "id": "d6",
+      "text": "单位符号保留原文 kA rms / kA peak / V AC，未改写成「有效值」「峰值」「交流」",
+      "passed": false,
+      "evidence": "Table L13, L15, L18-21 rewrite units into Chinese words (\"AC 800 V\", \"36 kA（有效值，AC 415 V）\", \"18 kA（有效值）\", \"72 kA（峰值）\") instead of preserving \"V AC\", \"kA rms\", \"kA peak\"."
+    },
+    {
+      "id": "d7",
+      "text": "所有数值照抄未换算（800 V、8 kV、250 A、36 kA rms、18 kA rms、72 kA peak、20,000、8,000）",
+      "passed": true,
+      "evidence": "Table L13-27 preserve 800 V, 8 kV, 415 V, 250 A, 36 kA, 18 kA, 72 kA, 20,000, 8,000 unchanged."
+    },
+    {
+      "id": "d8",
+      "text": "指出源文内部矛盾：选择性类别 A 与给出 Isd（2～10 × Ir）短延时整定不能同时成立，且未擅自删除或改写参数",
+      "passed": true,
+      "evidence": "Preserves both A 类 and Isd in table and flags the contradiction under Issue 1 (L64-68: \"选择性类别 A 类与 I_sd 整定参数直接冲突\")."
+    },
+    {
+      "id": "d9",
+      "text": "未补造源文缺失的 Icw 数值，并在待确认清单中明确指出 Icw 缺失",
+      "passed": true,
+      "evidence": "No fabricated Icw value in table; L65 & L68 explicitly note Icw is undeclared and must be supplied if Category B."
+    },
+    {
+      "id": "d10",
+      "text": "中文正文使用全角标点，参数符号/数值/单位内保持半角且数值与单位之间有单个半角空格",
+      "passed": true,
+      "evidence": "Chinese prose uses full-width punctuation; numbers and units use half-width characters with single spaces (8 kV, 250 A, 36 kA, 18 kA, 72 kA)."
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 2,
+    "total": 10,
+    "pass_rate": 0.8
+  }
+}

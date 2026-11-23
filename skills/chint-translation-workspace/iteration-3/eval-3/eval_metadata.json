@@ -1,0 +1,47 @@
+{
+  "eval_id": 3,
+  "eval_name": "en-to-zh-datasheet-backtranslation",
+  "prompt": "请将以下 NXM-250S 英文数据表初稿反译为中文，供国内技术部评审，并附术语对照与待确认问题说明：\n\n\"NXM-250S Moulded-Case Circuit-Breaker (IEC 60947-2:2024)\n- Rated insulation voltage Ui: 800 V AC\n- Rated impulse withstand voltage Uimp: 8 kV\n- Rated operational voltage Ue: 415 V AC, 50/60 Hz\n- Frame size: 250 A; Rated current In: 250 A\n- Rated ultimate short-circuit breaking capacity Icu: 36 kA rms at 415 V AC\n- Rated individual pole ultimate short-circuit breaking capacity at phase-to-neutral AC voltage Icu1: 18 kA rms\n- Rated service short-circuit breaking capacity Ics: 36 kA rms at 415 V AC (100% Icu)\n- Rated short-circuit making capacity Icm: 72 kA peak\n- Selectivity category: A\n- Operational performance without current: 20,000 operating cycles\n- Operational performance with current: 8,000 operating cycles at 415 V AC\n- Overload current setting Ir: 0.7 to 1.0 × In\n- Short-time pick-up current setting Isd: 2 to 10 × Ir\n- Instantaneous short-circuit current setting Ii: 5 to 10 × In\n\nNote: Availability of the short-time pick-up setting (Isd) requires selectivity category B with a declared rated short-time withstand current Icw. Category A circuit-breakers do not provide intentional short-time delay per Cl. 5.3.6.4.\"",
+  "assertions": [
+    {
+      "id": "d1",
+      "text": "交付物正文为中文（EN→ZH 方向），英文仅出现在术语对照表源语列或引用原文处，标题/说明/待确认清单均为中文"
+    },
+    {
+      "id": "d2",
+      "text": "Moulded-Case Circuit-Breaker 译为「塑壳断路器」，未直译为「模制外壳断路器」或「塑料外壳断路器」"
+    },
+    {
+      "id": "d3",
+      "text": "Rated impulse withstand voltage 译为「额定冲击耐受电压」（用「冲击」不用「脉冲」）"
+    },
+    {
+      "id": "d4",
+      "text": "Rated service short-circuit breaking capacity 中的 service 译为「运行」（额定运行短路分断能力），不译「服务」"
+    },
+    {
+      "id": "d5",
+      "text": "Selectivity category 译为「选择性类别」（不误译为「使用类别」或「区分/歧视类别」），且准确译出 Icu1（相间对中性线交流电压下极极限短路分断能力 / 单极极限短路分断能力）并保留 Icu1 符号"
+    },
+    {
+      "id": "d6",
+      "text": "单位符号保留原文 kA rms / kA peak / V AC，未改写成「有效值」「峰值」「交流」"
+    },
+    {
+      "id": "d7",
+      "text": "所有数值照抄未换算（800 V、8 kV、250 A、36 kA rms、18 kA rms、72 kA peak、20,000、8,000）"
+    },
+    {
+      "id": "d8",
+      "text": "指出源文内部矛盾：选择性类别 A 与给出 Isd（2～10 × Ir）短延时整定不能同时成立，且未擅自删除或改写参数"
+    },
+    {
+      "id": "d9",
+      "text": "未补造源文缺失的 Icw 数值，并在待确认清单中明确指出 Icw 缺失"
+    },
+    {
+      "id": "d10",
+      "text": "中文正文使用全角标点，参数符号/数值/单位内保持半角且数值与单位之间有单个半角空格"
+    }
+  ]
+}

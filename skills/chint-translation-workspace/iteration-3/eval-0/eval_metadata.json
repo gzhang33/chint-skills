@@ -1,0 +1,39 @@
+{
+  "eval_id": 0,
+  "eval_name": "acb-accessory-catalog-translation",
+  "prompt": "请把以下框架断路器（ACB）附件样本描述翻译成英文，用于面向海外经销商的 IEC 国际通用样本册（Track 1 样本语体，非产品说明书语体），并附简短术语与数值处理说明：\n\n「分励脱扣器：用于远程分断断路器，工作电压范围 70%~110% 额定控制电源电压，动作时间不大于 50ms。闭合电磁铁与分励脱扣器均属于脉冲通电工作制，必须保证脉冲时间 t1 不小于 200ms，通电间隔 t2 大于 15s。断路器本体钥匙锁：3 把锁 2 把钥匙配置；现场安装需使用开孔器在柜门开孔，孔径 Φ28mm。」",
+  "assertions": [
+    {
+      "id": "a1",
+      "text": "主术语用 Shunt release（含大小写变体 Shunt Release），不以北美 Shunt trip 或禁用 shunt opening release / Excitation release 作为主术语"
+    },
+    {
+      "id": "a2",
+      "text": "闭合电磁铁用 Track 1 样本语体 Closing release（可括注 closing coil），不用 Track 2 Closed electromagnet 或禁用 Closing electromagnet / Close electromagnet"
+    },
+    {
+      "id": "a3",
+      "text": "钥匙锁用 Track 1 样本语体 ACB Key Lock (KLC)（或 ACB Key Lock / Circuit-breaker key lock），不用 Track 2 Keys and locks (KL) 或直译 Body key lock"
+    },
+    {
+      "id": "a4",
+      "text": "开孔工具用样本语体 hole saw / panel hole saw 或 hole punch，不用说明书语体 hole opener"
+    },
+    {
+      "id": "a5",
+      "text": "遵循 IEC 60947-2:2024 英式拼写与连字符规范：正文统一使用连字符 circuit-breaker（非无连字符 circuit breaker），且通电用词采用 -ize 拼写（pulse-energized / pulse energization，非 energis*）"
+    },
+    {
+      "id": "a6",
+      "text": "保留 t1 用不小于/≥（not less than 200 ms / ≥ 200 ms）与 t2 用大于/>（greater than 15 s / more than 15 s / > 15 s）的不对称边界，未统一为同一个符号"
+    },
+    {
+      "id": "a7",
+      "text": "数字与单位之间严格有单个半角空格（50 ms / 200 ms / 15 s / 28 mm），无粘连写法"
+    },
+    {
+      "id": "a8",
+      "text": "显式说明原文未提供额定控制电源电压的具体电压值，未编造任何电压数值"
+    }
+  ]
+}

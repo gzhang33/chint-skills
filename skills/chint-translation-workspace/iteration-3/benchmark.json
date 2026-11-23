@@ -1,0 +1,727 @@
+{
+  "metadata": {
+    "skill_name": "chint-translation",
+    "skill_version": "2.0.0",
+    "skill_path": "/Users/gianni/Documents/chint/resources/chint-skills/skills/chint-translation",
+    "executor_model": "gemini-4-neon-high",
+    "analyzer_model": "gemini-4-neon-high",
+    "timestamp": "2026-11-23T16:10:00Z",
+    "evals_run": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "eval_name": "acb-accessory-catalog-translation",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 8,
+        "failed": 0,
+        "total": 8,
+        "time_seconds": 259.0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "id": "a1",
+          "text": "主术语用 Shunt release（含大小写变体 Shunt Release），不以北美 Shunt trip 或禁用 shunt opening release / Excitation release 作为主术语",
+          "passed": true,
+          "evidence": "Body L12-13: \"**Shunt Release (SHT / MX)** ... and the shunt release\"; Table L24: \"Shunt release (SHT / MX)\" and excludes \"Excitation release, Shunting release, Shunt opening release; North American / UL only: Shunt Trip (ST)\"."
+        },
+        {
+          "id": "a2",
+          "text": "闭合电磁铁用 Track 1 样本语体 Closing release（可括注 closing coil），不用 Track 2 Closed electromagnet 或禁用 Closing electromagnet / Close electromagnet",
+          "passed": true,
+          "evidence": "Body L13: \"Both the closing release (CC / CEM) and the shunt release\"; Table L28: \"Closing release (CC / CEM) (admitted synonym: closing coil)\" and excludes Track 2 \"Closed electromagnet (CEM)\" and forbidden \"Close electromagnet, Closing magnet\"."
+        },
+        {
+          "id": "a3",
+          "text": "钥匙锁用 Track 1 样本语体 ACB Key Lock (KLC)（或 ACB Key Lock / Circuit-breaker key lock），不用 Track 2 Keys and locks (KL) 或直译 Body key lock",
+          "passed": true,
+          "evidence": "Body L15: \"**ACB Key Lock (KLC)**\"; Table L30: \"ACB Key Lock (KLC) / circuit-breaker key lock\", excluding Track 2 \"Keys and locks (KL)\" and forbidden \"Body key lock\"."
+        },
+        {
+          "id": "a4",
+          "text": "开孔工具用样本语体 hole saw / panel hole saw 或 hole punch，不用说明书语体 hole opener",
+          "passed": true,
+          "evidence": "Body L16: \"using a panel hole saw or hole punch\"; Table L32: \"panel hole saw or hole punch | Track 1 catalogue standard | Track 2 OEM manual: hole opener\"."
+        },
+        {
+          "id": "a5",
+          "text": "遵循 IEC 60947-2:2024 英式拼写与连字符规范：正文统一使用连字符 circuit-breaker（非无连字符 circuit breaker），且通电用词采用 -ize 拼写（pulse-energized / pulse energization，非 energis*）",
+          "passed": true,
+          "evidence": "Body L13: \"Remotely opens the circuit-breaker\", \"pulse energization working mode\", \"energization interval t2\"; L29 excludes \"-ise\" (\"energisation\"); zero unhyphenated \"circuit breaker\" in deliverable body."
+        },
+        {
+          "id": "a6",
+          "text": "保留 t1 用不小于/≥（not less than 200 ms / ≥ 200 ms）与 t2 用大于/>（greater than 15 s / more than 15 s / > 15 s）的不对称边界，未统一为同一个符号",
+          "passed": true,
+          "evidence": "Body L13: \"ensure that the pulse time t1 is not less than 200 ms and the energization interval t2 is greater than 15 s\" — preserves >= vs > asymmetry."
+        },
+        {
+          "id": "a7",
+          "text": "数字与单位之间严格有单个半角空格（50 ms / 200 ms / 15 s / 28 mm），无粘连写法",
+          "passed": true,
+          "evidence": "Body L13 & L16: \"50 ms\", \"200 ms\", \"15 s\", \"Ø 28 mm\"; L41 explicitly confirms single half-width space before every SI unit."
+        },
+        {
+          "id": "a8",
+          "text": "显式说明原文未提供额定控制电源电压的具体电压值，未编造任何电压数值",
+          "passed": true,
+          "evidence": "Table L26: \"no assumed voltage rating added\"; L43: \"No unstated ratings (such as specific control voltage values, frame sizes, series designations, or power consumption) were invented or inherited\"."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "acb-accessory-catalog-translation",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.5,
+        "passed": 4,
+        "failed": 4,
+        "total": 8,
+        "time_seconds": 75.0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "id": "a1",
+          "text": "主术语用 Shunt release（含大小写变体 Shunt Release），不以北美 Shunt trip 或禁用 shunt opening release / Excitation release 作为主术语",
+          "passed": true,
+          "evidence": "Body L5: \"**Shunt Release**\"; Table L23: \"采用 IEC 60947-2 标准术语，避免美标/UL 体系常见的 shunt trip\"."
+        },
+        {
+          "id": "a2",
+          "text": "闭合电磁铁用 Track 1 样本语体 Closing release（可括注 closing coil），不用 Track 2 Closed electromagnet 或禁用 Closing electromagnet / Close electromagnet",
+          "passed": true,
+          "evidence": "Body L9: \"Both the closing release and shunt release\"; Table L24: \"闭合电磁铁 | Closing release\"."
+        },
+        {
+          "id": "a3",
+          "text": "钥匙锁用 Track 1 样本语体 ACB Key Lock (KLC)（或 ACB Key Lock / Circuit-breaker key lock），不用 Track 2 Keys and locks (KL) 或直译 Body key lock",
+          "passed": false,
+          "evidence": "Body L11: \"**Breaker-Mounted Keylock**\"; Table L28: \"断路器本体钥匙锁 | Breaker-Mounted Keylock\" — misses required Track 1 term \"ACB Key Lock (KLC)\" / \"Circuit-breaker key lock\"."
+        },
+        {
+          "id": "a4",
+          "text": "开孔工具用样本语体 hole saw / panel hole saw 或 hole punch，不用说明书语体 hole opener",
+          "passed": false,
+          "evidence": "Body L13: \"using a hole cutter\"; Table L29: \"开孔器 | hole cutter\" — does not use required catalogue idiom \"hole saw\" / \"hole punch\"."
+        },
+        {
+          "id": "a5",
+          "text": "遵循 IEC 60947-2:2024 英式拼写与连字符规范：正文统一使用连字符 circuit-breaker（非无连字符 circuit breaker），且通电用词采用 -ize 拼写（pulse-energized / pulse energization，非 energis*）",
+          "passed": false,
+          "evidence": "Body L6: \"Enables remote opening of the circuit breaker.\" — uses unhyphenated \"circuit breaker\" instead of IEC 60947-2:2024 hyphenated \"circuit-breaker\"."
+        },
+        {
+          "id": "a6",
+          "text": "保留 t1 用不小于/≥（not less than 200 ms / ≥ 200 ms）与 t2 用大于/>（greater than 15 s / more than 15 s / > 15 s）的不对称边界，未统一为同一个符号",
+          "passed": true,
+          "evidence": "Body L9: \"pulse duration t₁ ≥ 200 ms and an energization interval t₂ > 15 s\"; L35 explicitly distinguishes ≥ vs >."
+        },
+        {
+          "id": "a7",
+          "text": "数字与单位之间严格有单个半角空格（50 ms / 200 ms / 15 s / 28 mm），无粘连写法",
+          "passed": true,
+          "evidence": "Body L8-9, L13: \"≤ 50 ms\", \"≥ 200 ms\", \"> 15 s\", \"Ø28 mm\" — all number-unit pairs have a single half-width space."
+        },
+        {
+          "id": "a8",
+          "text": "显式说明原文未提供额定控制电源电压的具体电压值，未编造任何电压数值",
+          "passed": false,
+          "evidence": "No statement in L17-41 acknowledging that the rated control supply voltage value is absent from source and was not fabricated (L26 only notes \"可简写为 70%–110% Us\")."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "eval_name": "mccb-datasheet-audit",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 9,
+        "failed": 0,
+        "total": 9,
+        "time_seconds": 251.0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "id": "b1",
+          "text": "明确判定 Frame size: 250 A（修正空格后）在 IEC 60947-2:2024（Cl. 3.1.1）中合法有效，不应改为 Inm，并说明 Inm 属 GB/T 14048.2 国内约定符号（IEC 60947-2 中未出现）",
+          "passed": true,
+          "evidence": "L23 & L29: \"Verdict: Retain Frame size (corrected for unit spacing to Frame size: 250 A). Reject the colleague's proposal to mandate Frame current Inm\"; L33-41 cite IEC 60947-2:2024 Cl. 3.1.1 (P20, 28 occurrences) and clarify Inm has 0 occurrences in IEC 60947-2 and belongs exclusively to GB/T 14048.2."
+        },
+        {
+          "id": "b2",
+          "text": "指出 Mechanical durability / Electrical durability 中的 durability 不属于 IEC 60947-2:2024 术语（0 次出现），应改为 operational performance / operating cycles（Cl. 8.2.4.2 & Table 7）或 endurance（Annex M / R）",
+          "passed": true,
+          "evidence": "L102: \"durability has 0 occurrences in IEC 60947-2:2024... The main standard (Cl. 8.2.4.2 & Table 7, P39–40) uses operational performance without current / operational performance with current and number of operating cycles... Annex M Cl. M.7.2.3 / M.8.11, P222; Annex R Cl. R.8.5, the exact word is endurance (9×), never durability.\""
+        },
+        {
+          "id": "b3",
+          "text": "指出 times 为直译错误，应改为 operating cycles / operations / cycles",
+          "passed": true,
+          "evidence": "L103: \"times is a direct Chinglish rendering of the Chinese counter character. Use operating cycles (or cycles / operations, 07 §2).\""
+        },
+        {
+          "id": "b4",
+          "text": "指出 IEC 语境下美式拼写 Molded Case Circuit Breaker 与无连字符 circuit breaker 不合规，应改为英式连字符 moulded-case circuit-breaker 与 circuit-breaker（美式仅限北美 UL 489 语境）",
+          "passed": true,
+          "evidence": "L78-79 & L130: flags \"Molded\" (UL 489 US spelling) and unhyphenated \"Circuit Breaker\" / \"circuit breaker\", requiring IEC British hyphenated \"moulded-case circuit-breaker\" and \"circuit-breaker\", isolating US spelling strictly to North American UL 489."
+        },
+        {
+          "id": "b5",
+          "text": "指出 Icu 单位仅写 kA 缺少有效值限定，应写为 kA rms（并注明交流电压类型或频率）",
+          "passed": true,
+          "evidence": "L64, L93 & L179: flags missing current kind (AC/DC), rated frequency (Cl. 5.3.4), and \"rms qualifier (01 §1: kA rms)\"."
+        },
+        {
+          "id": "b6",
+          "text": "指出 100% Icu 缺少范围限定/试验电压核对（及 of Icu 规范写法），需按对应型号数据表核实",
+          "passed": true,
+          "evidence": "L94 & L186: flags \"100% Icu\" -> \"100 % of Icu\" and per CLM-001 requires datasheet confirmation that 100 % of Icu applies strictly to NXM-250S at 415 V without extrapolating."
+        },
+        {
+          "id": "b7",
+          "text": "指出数值与单位之间缺半角空格（250A / 800V / 8kV / 36kA / 415V）",
+          "passed": true,
+          "evidence": "L84-86: quotes \"250A\", \"800V\", \"8kV\", \"36kA\", \"415V\" and mandates single half-width space (\"250 A\", \"800 V\", \"8 kV\", \"36 kA\", \"415 V\")."
+        },
+        {
+          "id": "b8",
+          "text": "明确声明初稿中所有数值未经产品数据表核实，不代填、不背书",
+          "passed": true,
+          "evidence": "L7, L159, L176 & L185-188: explicitly declares no unprovided ratings added and all draft ratings (Ics ratio, 20 000 / 8 000 cycles, etc.) remain unverified pending official NXM-250S datasheet verification."
+        },
+        {
+          "id": "b9",
+          "text": "指出缺失必备字段（如 Ue / In / Icm / Icw / tsd / 选择性类别 A 或 B / 脱扣器类型中的至少两项）",
+          "passed": true,
+          "evidence": "L178-184: lists 7+ missing mandatory fields (In, Ue/AC/frequency, poles, selectivity category A/B & Icw, release type & tr/tsd/ti, Icm & Icu1, installation/IP/power loss)."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "eval_name": "mccb-datasheet-audit",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.5556,
+        "passed": 5,
+        "failed": 4,
+        "total": 9,
+        "time_seconds": 143.0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "id": "b1",
+          "text": "明确判定 Frame size: 250 A（修正空格后）在 IEC 60947-2:2024（Cl. 3.1.1）中合法有效，不应改为 Inm，并说明 Inm 属 GB/T 14048.2 国内约定符号（IEC 60947-2 中未出现）",
+          "passed": true,
+          "evidence": "L11-21: rejects colleague proposal and validates \"Frame size: 250 A\" under IEC 60947-2:2024, noting Inm is a domestic Chinese symbol absent from IEC 60947-2 (note: omits exact Cl. 3.1.1 and GB/T 14048.2 citation, guessing \"沿袭 2016 版 2.18 条\")."
+        },
+        {
+          "id": "b2",
+          "text": "指出 Mechanical durability / Electrical durability 中的 durability 不属于 IEC 60947-2:2024 术语（0 次出现），应改为 operational performance / operating cycles（Cl. 8.2.4.2 & Table 7）或 endurance（Annex M / R）",
+          "passed": false,
+          "evidence": "L38 explicitly permits keeping \"durability\" (\"部分样本亦写作 durability，须全册统一\" / \"若样本体系已固定用 durability，至少须将 times 改为 operating cycles\"), failing to identify that durability has 0 occurrences in IEC 60947-2:2024 or cite Cl. 8.2.4.2 / Table 7 operational performance."
+        },
+        {
+          "id": "b3",
+          "text": "指出 times 为直译错误，应改为 operating cycles / operations / cycles",
+          "passed": true,
+          "evidence": "L38: \"times 系'次'的直译，不用于 IEC 开关设备寿命参数... 计量单位为 operating cycles\"."
+        },
+        {
+          "id": "b4",
+          "text": "指出 IEC 语境下美式拼写 Molded Case Circuit Breaker 与无连字符 circuit breaker 不合规，应改为英式连字符 moulded-case circuit-breaker 与 circuit-breaker（美式仅限北美 UL 489 语境）",
+          "passed": true,
+          "evidence": "L47, L66, L75: flags US \"Molded\" and unhyphenated \"circuit breaker\" -> \"Moulded-Case Circuit-Breaker\" and \"circuit-breaker\"."
+        },
+        {
+          "id": "b5",
+          "text": "指出 Icu 单位仅写 kA 缺少有效值限定，应写为 kA rms（并注明交流电压类型或频率）",
+          "passed": false,
+          "evidence": "L46 & L70 revise Icu to \"36 kA at 415 V\" with zero mention of \"rms\" / \"kA rms\" anywhere in the report."
+        },
+        {
+          "id": "b6",
+          "text": "指出 100% Icu 缺少范围限定/试验电压核对（及 of Icu 规范写法），需按对应型号数据表核实",
+          "passed": false,
+          "evidence": "L46 allows \"100 % of Icu（或 100 % Icu）\" and Section 5 never flags \"100% Icu\" as an unscoped claim requiring model/voltage-scope datasheet verification."
+        },
+        {
+          "id": "b7",
+          "text": "指出数值与单位之间缺半角空格（250A / 800V / 8kV / 36kA / 415V）",
+          "passed": true,
+          "evidence": "L48: flags missing spaces in \"250A, 800V, 8kV, 36kA, 415V, 100%\" -> \"250 A、800 V、8 kV、36 kA、415 V、100 %\"."
+        },
+        {
+          "id": "b8",
+          "text": "明确声明初稿中所有数值未经产品数据表核实，不代填、不背书",
+          "passed": false,
+          "evidence": "L5 & L62 only say not to fill in missing parameters; never explicitly declares that all existing numerical values in the draft are unverified against a product datasheet."
+        },
+        {
+          "id": "b9",
+          "text": "指出缺失必备字段（如 Ue / In / Icm / Icw / tsd / 选择性类别 A 或 B / 脱扣器类型中的至少两项）",
+          "passed": true,
+          "evidence": "L83-96: flags missing In, Ue/AC/frequency/poles, tr/tsd, Icw, Icm, isolation suitability, pollution degree (note: L89 erroneously calls Cat A/B \"Utilization category A / B\")."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "ats-manual-translation-track2",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 133.0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "id": "c1",
+          "text": "用 Open Transition (Break-Before-Make, BBM) / Open Transition (BBM) 与 Closed Transition (Make-Before-Break, MBB) / Closed Transition (MBB)，缩写 BBM/MBB 原样保留不译",
+          "passed": true,
+          "evidence": "Body L13: \"open transition (Break-Before-Make, BBM) and closed transition (Make-Before-Break, MBB)\"; Table L27-28 retain BBM / MBB verbatim."
+        },
+        {
+          "id": "c2",
+          "text": "规范性动词「应」译为 shall（如 shall ensure），不用 should 或 must",
+          "passed": true,
+          "evidence": "Body L17: \"The mechanical interlocking mechanism shall ensure that the two power sources cannot be closed simultaneously.\""
+        },
+        {
+          "id": "c3",
+          "text": "「恢复转换延时」译为 return transfer delay（可附 RTD），不用笼统 time delay",
+          "passed": true,
+          "evidence": "Body L13: \"and the return transfer delay (RTD) can be set within the range of 0 s to 180 s.\""
+        },
+        {
+          "id": "c4",
+          "text": "保留 100 ms / 1.5 s / 0 to 180 s（或 0–180 s），但明确标注这些时间参数未经对应型号数据表核实（IEC 60947-6-1 只定类别不定时间）",
+          "passed": true,
+          "evidence": "Body L13 keeps 100 ms, 1.5 s, 0 s to 180 s; L39 explicitly notes \"IEC 60947-6-1 defines transfer switching equipment classes (Class PC and Class CB) and transition types (BBM / MBB), not fixed operating times or delay limits\" and all three quantities \"must trace to the official NZ7 product datasheet\"."
+        },
+        {
+          "id": "c5",
+          "text": "保持 Track 2 说明书语体（完整规范性条款句式，未混入 Track 1 样本册营销压缩话术）",
+          "passed": true,
+          "evidence": "L4, L11-17, L41: maintains normative Track 2 OEM installation-and-operation manual prose (numbered clauses 4.3/4.4, \"does not exceed\", \"is not greater than\", \"shall ensure\") without Track 1 catalogue marketing phrasing."
+        },
+        {
+          "id": "c6",
+          "text": "数字与单位之间严格有单个半角空格（100 ms / 1.5 s / 180 s），且正文无残留中文全角标点",
+          "passed": true,
+          "evidence": "Body L13: \"100 ms\", \"1.5 s\", \"0 s to 180 s\" — all spaced with single half-width space; zero Chinese full-width punctuation in English body."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "ats-manual-translation-track2",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.6667,
+        "passed": 4,
+        "failed": 2,
+        "total": 6,
+        "time_seconds": 67.0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "id": "c1",
+          "text": "用 Open Transition (Break-Before-Make, BBM) / Open Transition (BBM) 与 Closed Transition (Make-Before-Break, MBB) / Closed Transition (MBB)，缩写 BBM/MBB 原样保留不译",
+          "passed": false,
+          "evidence": "Body L7: \"break-before-make (BBM) and make-before-break (MBB)\" — omits required head terms \"Open Transition\" / \"Closed Transition\" in the transfer modes sentence (only uses \"closed-transition transfer\" in sentence 2)."
+        },
+        {
+          "id": "c2",
+          "text": "规范性动词「应」译为 shall（如 shall ensure），不用 should 或 must",
+          "passed": true,
+          "evidence": "Body L11: \"The mechanical interlock mechanism shall ensure that the two power sources cannot be closed simultaneously.\""
+        },
+        {
+          "id": "c3",
+          "text": "「恢复转换延时」译为 return transfer delay（可附 RTD），不用笼统 time delay",
+          "passed": true,
+          "evidence": "Body L7: \"and the return transfer delay can be set within the range of 0 s to 180 s.\""
+        },
+        {
+          "id": "c4",
+          "text": "保留 100 ms / 1.5 s / 0 to 180 s（或 0–180 s），但明确标注这些时间参数未经对应型号数据表核实（IEC 60947-6-1 只定类别不定时间）",
+          "passed": false,
+          "evidence": "L31-38 only discuss SI spacing, range formatting, and boundary fidelity; zero caveat that 100 ms / 1.5 s / 0 s to 180 s are unverified against a datasheet or that IEC 60947-6-1 does not fix timing values."
+        },
+        {
+          "id": "c5",
+          "text": "保持 Track 2 说明书语体（完整规范性条款句式，未混入 Track 1 样本册营销压缩话术）",
+          "passed": true,
+          "evidence": "Body L5-11 uses numbered manual clauses (4.3, 4.4) and normative manual prose (\"does not exceed\", \"is no greater than\", \"shall ensure\")."
+        },
+        {
+          "id": "c6",
+          "text": "数字与单位之间严格有单个半角空格（100 ms / 1.5 s / 180 s），且正文无残留中文全角标点",
+          "passed": true,
+          "evidence": "Body L7: \"100 ms\", \"1.5 s\", \"0 s to 180 s\" — single half-width spaces and no full-width punctuation in English body."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "en-to-zh-datasheet-backtranslation",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 10,
+        "failed": 0,
+        "total": 10,
+        "time_seconds": 211.0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "id": "d1",
+          "text": "交付物正文为中文（EN→ZH 方向），英文仅出现在术语对照表源语列或引用原文处，标题/说明/待确认清单均为中文",
+          "passed": true,
+          "evidence": "Entire deliverable (headings, parameter table, terminology mapping, Section 3 technical review) is in Chinese; English appears only in the source column of Section 2 and standard symbols."
+        },
+        {
+          "id": "d2",
+          "text": "Moulded-Case Circuit-Breaker 译为「塑壳断路器」，未直译为「模制外壳断路器」或「塑料外壳断路器」",
+          "passed": true,
+          "evidence": "Heading L11: \"**NXM-250S 塑壳断路器（IEC 60947-2:2024）**\"; Table L41: \"Moulded-Case Circuit-Breaker | MCCB | 塑壳断路器\"."
+        },
+        {
+          "id": "d3",
+          "text": "Rated impulse withstand voltage 译为「额定冲击耐受电压」（用「冲击」不用「脉冲」）",
+          "passed": true,
+          "evidence": "Table L16: \"额定冲击耐受电压 | Uimp | 8 kV\"; L43 explicitly rules out \"耐碰撞电压\"."
+        },
+        {
+          "id": "d4",
+          "text": "Rated service short-circuit breaking capacity 中的 service 译为「运行」（额定运行短路分断能力），不译「服务」",
+          "passed": true,
+          "evidence": "Table L22: \"额定运行短路分断能力 | Ics | 36 kA rms（415 V AC 下，100% Icu）\"; L49 aligns to IEC 60947-2:2024 Cl. 5.3.6.2.4."
+        },
+        {
+          "id": "d5",
+          "text": "Selectivity category 译为「选择性类别」（不误译为「使用类别」或「区分/歧视类别」），且准确译出 Icu1（相间对中性线交流电压下极极限短路分断能力 / 单极极限短路分断能力）并保留 Icu1 符号",
+          "passed": true,
+          "evidence": "Table L24: \"选择性类别 | — | A 类\" (L51 warns against conflating with 使用类别); Table L21: \"额定相间对中性线交流电压下极极限短路分断能力 | Icu1 | 18 kA rms\" (L48 cites Cl. 5.3.6.2.3 & 9.3.11)."
+        },
+        {
+          "id": "d6",
+          "text": "单位符号保留原文 kA rms / kA peak / V AC，未改写成「有效值」「峰值」「交流」",
+          "passed": true,
+          "evidence": "Table L15, L17, L20-23 retain \"800 V AC\", \"415 V AC\", \"36 kA rms\", \"18 kA rms\", \"72 kA peak\" verbatim without rewriting into 「有效值」「峰值」「交流」."
+        },
+        {
+          "id": "d7",
+          "text": "所有数值照抄未换算（800 V、8 kV、250 A、36 kA rms、18 kA rms、72 kA peak、20,000、8,000）",
+          "passed": true,
+          "evidence": "Table L15-29 preserve all numeric values verbatim (800 V AC, 8 kV, 415 V AC, 250 A, 36 kA rms, 18 kA rms, 72 kA peak, 20,000, 8,000) without conversion or silent edits."
+        },
+        {
+          "id": "d8",
+          "text": "指出源文内部矛盾：选择性类别 A 与给出 Isd（2～10 × Ir）短延时整定不能同时成立，且未擅自删除或改写参数",
+          "passed": true,
+          "evidence": "Preserves both A 类 (L24) and Isd 2 至 10 × Ir (L28), and flags the contradiction as Issue 1 (L66-75: \"【阻断项】选择性类别（A 类）与短延时整定电流（Isd）自相矛盾\")."
+        },
+        {
+          "id": "d9",
+          "text": "未补造源文缺失的 Icw 数值，并在待确认清单中明确指出 Icw 缺失",
+          "passed": true,
+          "evidence": "No fabricated Icw value in parameter table; L66, L68 & L74 explicitly flag Icw (and tsd) as missing for technical department confirmation."
+        },
+        {
+          "id": "d10",
+          "text": "中文正文使用全角标点，参数符号/数值/单位内保持半角且数值与单位之间有单个半角空格",
+          "passed": true,
+          "evidence": "Chinese prose uses full-width punctuation (，。：（）【】); all parameter symbols, values, and units remain half-width with single half-width spaces (800 V AC, 8 kV, 250 A, 36 kA rms, 18 kA rms, 72 kA peak)."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "en-to-zh-datasheet-backtranslation",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.8,
+        "passed": 8,
+        "failed": 2,
+        "total": 10,
+        "time_seconds": 118.0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "id": "d1",
+          "text": "交付物正文为中文（EN→ZH 方向），英文仅出现在术语对照表源语列或引用原文处，标题/说明/待确认清单均为中文",
+          "passed": true,
+          "evidence": "Deliverable body, tables, and review checklist are in Chinese; English appears only in the source terminology column and quoted text."
+        },
+        {
+          "id": "d2",
+          "text": "Moulded-Case Circuit-Breaker 译为「塑壳断路器」，未直译为「模制外壳断路器」或「塑料外壳断路器」",
+          "passed": false,
+          "evidence": "Deliverable heading L9 renders Moulded-Case Circuit-Breaker as \"塑料外壳式断路器\" (and L37 sets \"塑料外壳式断路器\" as the primary translation, demoting \"塑壳断路器\" to a secondary abbreviation column) instead of landing directly on \"塑壳断路器\"."
+        },
+        {
+          "id": "d3",
+          "text": "Rated impulse withstand voltage 译为「额定冲击耐受电压」（用「冲击」不用「脉冲」）",
+          "passed": true,
+          "evidence": "Table L14: \"额定冲击耐受电压 | U_imp | 8 kV\"."
+        },
+        {
+          "id": "d4",
+          "text": "Rated service short-circuit breaking capacity 中的 service 译为「运行」（额定运行短路分断能力），不译「服务」",
+          "passed": true,
+          "evidence": "Table L20: \"额定运行短路分断能力 | I_cs | 36 kA（有效值，AC 415 V，100% I_cu）\"."
+        },
+        {
+          "id": "d5",
+          "text": "Selectivity category 译为「选择性类别」（不误译为「使用类别」或「区分/歧视类别」），且准确译出 Icu1（相间对中性线交流电压下极极限短路分断能力 / 单极极限短路分断能力）并保留 Icu1 符号",
+          "passed": true,
+          "evidence": "Table L22: \"选择性类别 | — | A 类\"; Table L19: \"交流相-中性线电压下额定单极极限短路分断能力 | I_cu1 | 18 kA（有效值）\"."
+        },
+        {
+          "id": "d6",
+          "text": "单位符号保留原文 kA rms / kA peak / V AC，未改写成「有效值」「峰值」「交流」",
+          "passed": false,
+          "evidence": "Table L13, L15, L18-21 rewrite units into Chinese words (\"AC 800 V\", \"36 kA（有效值，AC 415 V）\", \"18 kA（有效值）\", \"72 kA（峰值）\") instead of preserving \"V AC\", \"kA rms\", \"kA peak\"."
+        },
+        {
+          "id": "d7",
+          "text": "所有数值照抄未换算（800 V、8 kV、250 A、36 kA rms、18 kA rms、72 kA peak、20,000、8,000）",
+          "passed": true,
+          "evidence": "Table L13-27 preserve 800 V, 8 kV, 415 V, 250 A, 36 kA, 18 kA, 72 kA, 20,000, 8,000 unchanged."
+        },
+        {
+          "id": "d8",
+          "text": "指出源文内部矛盾：选择性类别 A 与给出 Isd（2～10 × Ir）短延时整定不能同时成立，且未擅自删除或改写参数",
+          "passed": true,
+          "evidence": "Preserves both A 类 and Isd in table and flags the contradiction under Issue 1 (L64-68: \"选择性类别 A 类与 I_sd 整定参数直接冲突\")."
+        },
+        {
+          "id": "d9",
+          "text": "未补造源文缺失的 Icw 数值，并在待确认清单中明确指出 Icw 缺失",
+          "passed": true,
+          "evidence": "No fabricated Icw value in table; L65 & L68 explicitly note Icw is undeclared and must be supplied if Category B."
+        },
+        {
+          "id": "d10",
+          "text": "中文正文使用全角标点，参数符号/数值/单位内保持半角且数值与单位之间有单个半角空格",
+          "passed": true,
+          "evidence": "Chinese prose uses full-width punctuation; numbers and units use half-width characters with single spaces (8 kV, 250 A, 36 kA, 18 kA, 72 kA)."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 4,
+      "eval_name": "mccb-iec60947-2-2024-annexes-translation",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 8,
+        "failed": 0,
+        "total": 8,
+        "time_seconds": 224.0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "id": "e1",
+          "text": "严格遵循 IEC 60947-2:2024 英式拼写与连字符规范：正文全部使用 moulded-case circuit-breaker / circuit-breaker（无未连字符 circuit breaker 或美式 molded）、withdrawable（非 drawout/drawer）、aluminium（非 aluminum）、utilisation（非 utilization）及 colour（非 color）",
+          "passed": true,
+          "evidence": "Body L1, L11, L13: \"moulded-case circuit-breakers\", \"withdrawable versions\", \"aluminium conductors\", \"utilisation category AC-22\", \"colour shall not be red or green\"; zero US spellings (molded/aluminum/utilization/color/drawout) or unhyphenated \"circuit breaker\"."
+        },
+        {
+          "id": "e2",
+          "text": "准确译出 Annex B（CBR）术语与符号：circuit-breaker incorporating residual current protection (CBR)、Type B、rated residual operating current（IΔn）与 rated residual short-circuit making and breaking capacity（IΔm），未误译为 ELCB / RCCB / leakage breaker",
+          "passed": true,
+          "evidence": "Body L13 & Table L29-33: \"Circuit-breaker incorporating residual current protection (CBR)\", \"Type B\", \"rated residual operating current I_Δn (Cl. B.4.2.1)\", \"rated residual short-circuit making and breaking capacity I_Δm (Cl. B.4.1.3)\"; L57 distinguishes CBR from RCCB/RCBO."
+        },
+        {
+          "id": "e3",
+          "text": "准确译出 Annex H（IT 系统）术语与符号：引用 Annex H、IT systems、I_IT（或 IIT），并译出不适用电压标示带叉 IT 符号（crossed-out IT）",
+          "passed": true,
+          "evidence": "Body L14 & Table L34-35: cites Annex H (Cl. H.2–H.5, Table H.2), \"IT systems\", I_IT, and \"crossed-out IT symbol (IEC 60417-6363:2016-07)\"."
+        },
+        {
+          "id": "e4",
+          "text": "准确译出 Annex P（光伏直流）术语与规则：使用 DC circuit-breaker for use in photovoltaic (PV) applications（或 PV circuit-breaker / PV DC circuit-breaker，不用 solar DC breaker），引用 Annex P（含 P.1/P.5/P.7.2/P.8.3.9 等），译出双向（forward and reverse）分断及 critical DC load current（Test Sequence VII / 9.3.10 / P.8.3.9）",
+          "passed": true,
+          "evidence": "Body L15 & Table L36-38: \"DC circuit-breaker for use in photovoltaic (PV) applications (PV circuit-breaker)\", cites Annex P (Cl. P.1, P.4, P.5, P.7.2, P.8.3.2, P.8.3.9, Table P.2 marking \"IEC 60947-2:2024, Annex P\"), \"non-polarized interruption of both forward and reverse currents\", \"Test Sequence VII for critical DC load current (Cl. 9.3.10 & Cl. P.8.3.9)\"."
+        },
+        {
+          "id": "e5",
+          "text": "准确译出 Annex A 上下级配合术语与符号：使用 selectivity（禁用 discrimination）、selectivity limit current（Is）、连字符 back-up protection（禁用 backup）与 take-over current（IB，禁用 transfer current / handover current）",
+          "passed": true,
+          "evidence": "Body L16 & Table L39-41: \"selectivity\" (no discrimination), \"selectivity limit current I_s (Cl. 8.2.7, Cl. A.5)\", hyphenated \"back-up protection (Cl. A.6)\", and \"take-over current I_B (Cl. 9.3.8, Annex A)\"."
+        },
+        {
+          "id": "e6",
+          "text": "准确译出 Annex D（aluminium conductors / unprepared round aluminium conductors，D.8.5）与 Annex L（CBI / circuit-breaker not fulfilling the requirements for overcurrent protection，utilisation category AC-22，L.4.1）",
+          "passed": true,
+          "evidence": "Body L11 & Table L26-28: Annex D (\"aluminium conductors\", \"unprepared round aluminium conductors\", Cl. D.1/D.3/D.5.2/D.8.5) and Annex L (\"circuit-breaker not fulfilling the requirements for overcurrent protection (CBI)\", \"utilisation category AC-22\", Cl. L.1–L.5, Cl. L.4.1 Note)."
+        },
+        {
+          "id": "e7",
+          "text": "所引用的 IEC 60947-2:2024 条款号全部为 2024 第 6 版有效条款（如 Cl. 3.5/4.4/8.1.2/8.2.7/8.2.8/9.3.8/9.3.10 及 Annex A/B/D/H/L/P 子条款），未混入作废的 Ed. 5.x 旧编号（如 Cl. 2.x、Cl. 4.3.x、Cl. 7.2.x、Cl. 8.3.x）",
+          "passed": true,
+          "evidence": "All cited clauses verified 100% against IEC 60947-2:2024 Ed. 6.0 clause_index.json (Cl. 3.1/3.5/4.4/5.3.2.1/8.1.2/8.1.6/8.2.7/8.2.8/9.3.3.3/9.3.8/9.3.10 and Annex A/B/D/H/K/L/P subclauses); zero obsolete Ed. 5.x clause numbers."
+        },
+        {
+          "id": "e8",
+          "text": "数值与单位之间保留单个半角空格（1 500 V DC 或 1500 V DC，无 1500V 粘连），且未为原文未提供的产品参数（如 IΔn、IΔm、I_IT、Is、IB）编造具体额定数值",
+          "passed": true,
+          "evidence": "Body L15 uses half-width spaced \"1 500 V DC\" (no \"1500V\"); L70 explicitly confirms zero fabricated product ratings (I_Δn, I_Δm, I_IT, I_s, I_B, etc.), separating standard ceilings from product claims."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 4,
+      "eval_name": "mccb-iec60947-2-2024-annexes-translation",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.5,
+        "passed": 4,
+        "failed": 4,
+        "total": 8,
+        "time_seconds": 242.0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "id": "e1",
+          "text": "严格遵循 IEC 60947-2:2024 英式拼写与连字符规范：正文全部使用 moulded-case circuit-breaker / circuit-breaker（无未连字符 circuit breaker 或美式 molded）、withdrawable（非 drawout/drawer）、aluminium（非 aluminum）、utilisation（非 utilization）及 colour（非 color）",
+          "passed": false,
+          "evidence": "Body L7, Table L23 & Notes L43 use US spelling \"utilization\" (\"utilization category AC-22\") instead of IEC British spelling \"utilisation\"."
+        },
+        {
+          "id": "e2",
+          "text": "准确译出 Annex B（CBR）术语与符号：circuit-breaker incorporating residual current protection (CBR)、Type B、rated residual operating current（IΔn）与 rated residual short-circuit making and breaking capacity（IΔm），未误译为 ELCB / RCCB / leakage breaker",
+          "passed": true,
+          "evidence": "Body L9 & Table L24-26: \"Circuit-Breakers Incorporating Residual Current Protection (CBR)\", \"Type B\", I_Δn, I_Δm, test push-button T colour rule."
+        },
+        {
+          "id": "e3",
+          "text": "准确译出 Annex H（IT 系统）术语与符号：引用 Annex H、IT systems、I_IT（或 IIT），并译出不适用电压标示带叉 IT 符号（crossed-out IT）",
+          "passed": true,
+          "evidence": "Body L10 & Table L27-28: cites Annex H, \"IT systems\", I_IT, and crossed-out IT symbol."
+        },
+        {
+          "id": "e4",
+          "text": "准确译出 Annex P（光伏直流）术语与规则：使用 DC circuit-breaker for use in photovoltaic (PV) applications（或 PV circuit-breaker / PV DC circuit-breaker，不用 solar DC breaker），引用 Annex P（含 P.1/P.5/P.7.2/P.8.3.9 等），译出双向（forward and reverse）分断及 critical DC load current（Test Sequence VII / 9.3.10 / P.8.3.9）",
+          "passed": false,
+          "evidence": "Body L11 uses \"Photovoltaic (PV) DC Version\" and Table L29-31 cites only bare \"Annex P\" with zero subclauses (misses P.1, P.5 marking, P.7.2, P.8.3.9) and omits Test Sequence VII / Cl. 9.3.10."
+        },
+        {
+          "id": "e5",
+          "text": "准确译出 Annex A 上下级配合术语与符号：使用 selectivity（禁用 discrimination）、selectivity limit current（Is）、连字符 back-up protection（禁用 backup）与 take-over current（IB，禁用 transfer current / handover current）",
+          "passed": true,
+          "evidence": "Body L12: \"selectivity limit current (I_s)\" and \"take-over current (I_B)\" with \"back-up short-circuit protective device (SCPD)\" (note: L32 erroneously calls Annex A Informative instead of Normative)."
+        },
+        {
+          "id": "e6",
+          "text": "准确译出 Annex D（aluminium conductors / unprepared round aluminium conductors，D.8.5）与 Annex L（CBI / circuit-breaker not fulfilling the requirements for overcurrent protection，utilisation category AC-22，L.4.1）",
+          "passed": false,
+          "evidence": "Table L22 completely misses Annex D (D.8.5) for unprepared round aluminium conductors — hallucinating Cl. 8.1.7 & Cl. 9.2.4 instead — and uses US \"utilization category\" without Annex L Cl. L.4.1."
+        },
+        {
+          "id": "e7",
+          "text": "所引用的 IEC 60947-2:2024 条款号全部为 2024 第 6 版有效条款（如 Cl. 3.5/4.4/8.1.2/8.2.7/8.2.8/9.3.8/9.3.10 及 Annex A/B/D/H/L/P 子条款），未混入作废的 Ed. 5.x 旧编号（如 Cl. 2.x、Cl. 4.3.x、Cl. 7.2.x、Cl. 8.3.x）",
+          "passed": false,
+          "evidence": "Multiple wrong/fabricated IEC 60947-2:2024 clauses: L22 misattributes Cl. 8.1.7 (actually Neutral pole in Ed. 6.0) to terminals and invents non-existent Cl. 9.2.4; L32 falsely calls Annex A Informative (it is Normative); omits all subclauses across Annexes A/B/H/L/P."
+        },
+        {
+          "id": "e8",
+          "text": "数值与单位之间保留单个半角空格（1 500 V DC 或 1500 V DC，无 1500V 粘连），且未为原文未提供的产品参数（如 IΔn、IΔm、I_IT、Is、IB）编造具体额定数值",
+          "passed": true,
+          "evidence": "Body L11 uses spaced \"1 500 V d.c.\" (no \"1500V\"); L53 explicitly declares zero fabricated product ratings."
+        }
+      ],
+      "notes": []
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "micro_pass_rate": 1.0,
+      "assertions_passed": 41,
+      "assertions_total": 41,
+      "time_seconds": {
+        "mean": 215.6,
+        "stddev": 50.1278,
+        "min": 133.0,
+        "max": 259.0
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 0.6045,
+        "stddev": 0.1288,
+        "min": 0.5,
+        "max": 0.8
+      },
+      "micro_pass_rate": 0.6098,
+      "assertions_passed": 25,
+      "assertions_total": 41,
+      "time_seconds": {
+        "mean": 129.0,
+        "stddev": 70.4379,
+        "min": 67.0,
+        "max": 242.0
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.40",
+      "micro_pass_rate": "+0.39",
+      "time_seconds": "+86.6"
+    }
+  },
+  "notes": [
+    "All 10 blind comparison runs (5 with_skill + 5 without_skill) executed as independent fresh swarm workers on gemini-4-neon-high after @verifier 100% PASS (#22).",
+    "with_skill achieved 41/41 (100.0%) across all 5 evals vs without_skill 25/41 (61.0% micro, 60.4% macro mean), a +0.40 macro (+0.39 micro) pass-rate delta."
+  ]
+}

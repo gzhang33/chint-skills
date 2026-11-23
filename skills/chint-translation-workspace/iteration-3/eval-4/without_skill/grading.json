@@ -1,0 +1,58 @@
+{
+  "expectations": [
+    {
+      "id": "e1",
+      "text": "严格遵循 IEC 60947-2:2024 英式拼写与连字符规范：正文全部使用 moulded-case circuit-breaker / circuit-breaker（无未连字符 circuit breaker 或美式 molded）、withdrawable（非 drawout/drawer）、aluminium（非 aluminum）、utilisation（非 utilization）及 colour（非 color）",
+      "passed": false,
+      "evidence": "Body L7, Table L23 & Notes L43 use US spelling \"utilization\" (\"utilization category AC-22\") instead of IEC British spelling \"utilisation\"."
+    },
+    {
+      "id": "e2",
+      "text": "准确译出 Annex B（CBR）术语与符号：circuit-breaker incorporating residual current protection (CBR)、Type B、rated residual operating current（IΔn）与 rated residual short-circuit making and breaking capacity（IΔm），未误译为 ELCB / RCCB / leakage breaker",
+      "passed": true,
+      "evidence": "Body L9 & Table L24-26: \"Circuit-Breakers Incorporating Residual Current Protection (CBR)\", \"Type B\", I_Δn, I_Δm, test push-button T colour rule."
+    },
+    {
+      "id": "e3",
+      "text": "准确译出 Annex H（IT 系统）术语与符号：引用 Annex H、IT systems、I_IT（或 IIT），并译出不适用电压标示带叉 IT 符号（crossed-out IT）",
+      "passed": true,
+      "evidence": "Body L10 & Table L27-28: cites Annex H, \"IT systems\", I_IT, and crossed-out IT symbol."
+    },
+    {
+      "id": "e4",
+      "text": "准确译出 Annex P（光伏直流）术语与规则：使用 DC circuit-breaker for use in photovoltaic (PV) applications（或 PV circuit-breaker / PV DC circuit-breaker，不用 solar DC breaker），引用 Annex P（含 P.1/P.5/P.7.2/P.8.3.9 等），译出双向（forward and reverse）分断及 critical DC load current（Test Sequence VII / 9.3.10 / P.8.3.9）",
+      "passed": false,
+      "evidence": "Body L11 uses \"Photovoltaic (PV) DC Version\" and Table L29-31 cites only bare \"Annex P\" with zero subclauses (misses P.1, P.5 marking, P.7.2, P.8.3.9) and omits Test Sequence VII / Cl. 9.3.10."
+    },
+    {
+      "id": "e5",
+      "text": "准确译出 Annex A 上下级配合术语与符号：使用 selectivity（禁用 discrimination）、selectivity limit current（Is）、连字符 back-up protection（禁用 backup）与 take-over current（IB，禁用 transfer current / handover current）",
+      "passed": true,
+      "evidence": "Body L12: \"selectivity limit current (I_s)\" and \"take-over current (I_B)\" with \"back-up short-circuit protective device (SCPD)\" (note: L32 erroneously calls Annex A Informative instead of Normative)."
+    },
+    {
+      "id": "e6",
+      "text": "准确译出 Annex D（aluminium conductors / unprepared round aluminium conductors，D.8.5）与 Annex L（CBI / circuit-breaker not fulfilling the requirements for overcurrent protection，utilisation category AC-22，L.4.1）",
+      "passed": false,
+      "evidence": "Table L22 completely misses Annex D (D.8.5) for unprepared round aluminium conductors — hallucinating Cl. 8.1.7 & Cl. 9.2.4 instead — and uses US \"utilization category\" without Annex L Cl. L.4.1."
+    },
+    {
+      "id": "e7",
+      "text": "所引用的 IEC 60947-2:2024 条款号全部为 2024 第 6 版有效条款（如 Cl. 3.5/4.4/8.1.2/8.2.7/8.2.8/9.3.8/9.3.10 及 Annex A/B/D/H/L/P 子条款），未混入作废的 Ed. 5.x 旧编号（如 Cl. 2.x、Cl. 4.3.x、Cl. 7.2.x、Cl. 8.3.x）",
+      "passed": false,
+      "evidence": "Multiple wrong/fabricated IEC 60947-2:2024 clauses: L22 misattributes Cl. 8.1.7 (actually Neutral pole in Ed. 6.0) to terminals and invents non-existent Cl. 9.2.4; L32 falsely calls Annex A Informative (it is Normative); omits all subclauses across Annexes A/B/H/L/P."
+    },
+    {
+      "id": "e8",
+      "text": "数值与单位之间保留单个半角空格（1 500 V DC 或 1500 V DC，无 1500V 粘连），且未为原文未提供的产品参数（如 IΔn、IΔm、I_IT、Is、IB）编造具体额定数值",
+      "passed": true,
+      "evidence": "Body L11 uses spaced \"1 500 V d.c.\" (no \"1500V\"); L53 explicitly declares zero fabricated product ratings."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 4,
+    "total": 8,
+    "pass_rate": 0.5
+  }
+}

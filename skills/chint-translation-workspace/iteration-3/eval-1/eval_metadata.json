@@ -1,0 +1,43 @@
+{
+  "eval_id": 1,
+  "eval_name": "mccb-datasheet-audit",
+  "prompt": "请按 IEC 60947-2:2024（海外 IEC 样本册口径）对以下英文塑壳断路器规格书初稿执行 Mode B 翻译与术语审查（仅输出审查报告与修改建议，不代填未提供的参数）。另外同事评审时提出 `Frame size: 250A` 写法有误、必须改成 `Frame current Inm`，请结合 IEC 60947-2:2024 原文一并核实。\n\n待审查初稿：\n\"NXM-250S Molded Case Circuit Breaker (IEC 60947-2).\nFrame size: 250A.\nRated insulation voltage Ui: 800V.\nRated impulse withstand voltage Uimp: 8kV.\nUltimate breaking capacity Icu: 36kA at 415V.\nService breaking capacity Ics: 100% Icu.\nMechanical durability: 20000 times.\nElectrical durability: 8000 times.\nOverload setting Ir: 0.7~1.0In. Short-time pickup Isd: 2~10Ir. Instantaneous pickup Ii: 5~10In.\nThis circuit breaker is suitable for distribution protection.\"",
+  "assertions": [
+    {
+      "id": "b1",
+      "text": "明确判定 Frame size: 250 A（修正空格后）在 IEC 60947-2:2024（Cl. 3.1.1）中合法有效，不应改为 Inm，并说明 Inm 属 GB/T 14048.2 国内约定符号（IEC 60947-2 中未出现）"
+    },
+    {
+      "id": "b2",
+      "text": "指出 Mechanical durability / Electrical durability 中的 durability 不属于 IEC 60947-2:2024 术语（0 次出现），应改为 operational performance / operating cycles（Cl. 8.2.4.2 & Table 7）或 endurance（Annex M / R）"
+    },
+    {
+      "id": "b3",
+      "text": "指出 times 为直译错误，应改为 operating cycles / operations / cycles"
+    },
+    {
+      "id": "b4",
+      "text": "指出 IEC 语境下美式拼写 Molded Case Circuit Breaker 与无连字符 circuit breaker 不合规，应改为英式连字符 moulded-case circuit-breaker 与 circuit-breaker（美式仅限北美 UL 489 语境）"
+    },
+    {
+      "id": "b5",
+      "text": "指出 Icu 单位仅写 kA 缺少有效值限定，应写为 kA rms（并注明交流电压类型或频率）"
+    },
+    {
+      "id": "b6",
+      "text": "指出 100% Icu 缺少范围限定/试验电压核对（及 of Icu 规范写法），需按对应型号数据表核实"
+    },
+    {
+      "id": "b7",
+      "text": "指出数值与单位之间缺半角空格（250A / 800V / 8kV / 36kA / 415V）"
+    },
+    {
+      "id": "b8",
+      "text": "明确声明初稿中所有数值未经产品数据表核实，不代填、不背书"
+    },
+    {
+      "id": "b9",
+      "text": "指出缺失必备字段（如 Ue / In / Icm / Icw / tsd / 选择性类别 A 或 B / 脱扣器类型中的至少两项）"
+    }
+  ]
+}

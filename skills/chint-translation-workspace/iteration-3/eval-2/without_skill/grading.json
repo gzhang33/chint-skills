@@ -1,0 +1,46 @@
+{
+  "expectations": [
+    {
+      "id": "c1",
+      "text": "用 Open Transition (Break-Before-Make, BBM) / Open Transition (BBM) 与 Closed Transition (Make-Before-Break, MBB) / Closed Transition (MBB)，缩写 BBM/MBB 原样保留不译",
+      "passed": false,
+      "evidence": "Body L7: \"break-before-make (BBM) and make-before-break (MBB)\" — omits required head terms \"Open Transition\" / \"Closed Transition\" in the transfer modes sentence (only uses \"closed-transition transfer\" in sentence 2)."
+    },
+    {
+      "id": "c2",
+      "text": "规范性动词「应」译为 shall（如 shall ensure），不用 should 或 must",
+      "passed": true,
+      "evidence": "Body L11: \"The mechanical interlock mechanism shall ensure that the two power sources cannot be closed simultaneously.\""
+    },
+    {
+      "id": "c3",
+      "text": "「恢复转换延时」译为 return transfer delay（可附 RTD），不用笼统 time delay",
+      "passed": true,
+      "evidence": "Body L7: \"and the return transfer delay can be set within the range of 0 s to 180 s.\""
+    },
+    {
+      "id": "c4",
+      "text": "保留 100 ms / 1.5 s / 0 to 180 s（或 0–180 s），但明确标注这些时间参数未经对应型号数据表核实（IEC 60947-6-1 只定类别不定时间）",
+      "passed": false,
+      "evidence": "L31-38 only discuss SI spacing, range formatting, and boundary fidelity; zero caveat that 100 ms / 1.5 s / 0 s to 180 s are unverified against a datasheet or that IEC 60947-6-1 does not fix timing values."
+    },
+    {
+      "id": "c5",
+      "text": "保持 Track 2 说明书语体（完整规范性条款句式，未混入 Track 1 样本册营销压缩话术）",
+      "passed": true,
+      "evidence": "Body L5-11 uses numbered manual clauses (4.3, 4.4) and normative manual prose (\"does not exceed\", \"is no greater than\", \"shall ensure\")."
+    },
+    {
+      "id": "c6",
+      "text": "数字与单位之间严格有单个半角空格（100 ms / 1.5 s / 180 s），且正文无残留中文全角标点",
+      "passed": true,
+      "evidence": "Body L7: \"100 ms\", \"1.5 s\", \"0 s to 180 s\" — single half-width spaces and no full-width punctuation in English body."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 2,
+    "total": 6,
+    "pass_rate": 0.6667
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "expectations": [
+    {
+      "id": "a1",
+      "text": "主术语用 Shunt release（含大小写变体 Shunt Release），不以北美 Shunt trip 或禁用 shunt opening release / Excitation release 作为主术语",
+      "passed": true,
+      "evidence": "Body L5: \"**Shunt Release**\"; Table L23: \"采用 IEC 60947-2 标准术语，避免美标/UL 体系常见的 shunt trip\"."
+    },
+    {
+      "id": "a2",
+      "text": "闭合电磁铁用 Track 1 样本语体 Closing release（可括注 closing coil），不用 Track 2 Closed electromagnet 或禁用 Closing electromagnet / Close electromagnet",
+      "passed": true,
+      "evidence": "Body L9: \"Both the closing release and shunt release\"; Table L24: \"闭合电磁铁 | Closing release\"."
+    },
+    {
+      "id": "a3",
+      "text": "钥匙锁用 Track 1 样本语体 ACB Key Lock (KLC)（或 ACB Key Lock / Circuit-breaker key lock），不用 Track 2 Keys and locks (KL) 或直译 Body key lock",
+      "passed": false,
+      "evidence": "Body L11: \"**Breaker-Mounted Keylock**\"; Table L28: \"断路器本体钥匙锁 | Breaker-Mounted Keylock\" — misses required Track 1 term \"ACB Key Lock (KLC)\" / \"Circuit-breaker key lock\"."
+    },
+    {
+      "id": "a4",
+      "text": "开孔工具用样本语体 hole saw / panel hole saw 或 hole punch，不用说明书语体 hole opener",
+      "passed": false,
+      "evidence": "Body L13: \"using a hole cutter\"; Table L29: \"开孔器 | hole cutter\" — does not use required catalogue idiom \"hole saw\" / \"hole punch\"."
+    },
+    {
+      "id": "a5",
+      "text": "遵循 IEC 60947-2:2024 英式拼写与连字符规范：正文统一使用连字符 circuit-breaker（非无连字符 circuit breaker），且通电用词采用 -ize 拼写（pulse-energized / pulse energization，非 energis*）",
+      "passed": false,
+      "evidence": "Body L6: \"Enables remote opening of the circuit breaker.\" — uses unhyphenated \"circuit breaker\" instead of IEC 60947-2:2024 hyphenated \"circuit-breaker\"."
+    },
+    {
+      "id": "a6",
+      "text": "保留 t1 用不小于/≥（not less than 200 ms / ≥ 200 ms）与 t2 用大于/>（greater than 15 s / more than 15 s / > 15 s）的不对称边界，未统一为同一个符号",
+      "passed": true,
+      "evidence": "Body L9: \"pulse duration t₁ ≥ 200 ms and an energization interval t₂ > 15 s\"; L35 explicitly distinguishes ≥ vs >."
+    },
+    {
+      "id": "a7",
+      "text": "数字与单位之间严格有单个半角空格（50 ms / 200 ms / 15 s / 28 mm），无粘连写法",
+      "passed": true,
+      "evidence": "Body L8-9, L13: \"≤ 50 ms\", \"≥ 200 ms\", \"> 15 s\", \"Ø28 mm\" — all number-unit pairs have a single half-width space."
+    },
+    {
+      "id": "a8",
+      "text": "显式说明原文未提供额定控制电源电压的具体电压值，未编造任何电压数值",
+      "passed": false,
+      "evidence": "No statement in L17-41 acknowledging that the rated control supply voltage value is absent from source and was not fabricated (L26 only notes \"可简写为 70%–110% Us\")."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 4,
+    "total": 8,
+    "pass_rate": 0.5
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "eval_id": 4,
+  "eval_name": "mccb-iec60947-2-2024-annexes-translation",
+  "prompt": "请把以下塑壳断路器（MCCB）及特种派生系列技术规格说明翻译成英文（IEC 60947-2:2024 国际样本册语体 Track 1），并为每项核心技术特性标注对应的 IEC 60947-2:2024（第 6 版）准确条款号及标准符号；同时附简短术语与标准依据说明（未在原文中给出的额定参数不得自行编造）：\n\n「本系列塑壳断路器（含抽出式安装型）按 IEC 60947-2:2024 设计，支持连接铝导体接线端子（适用于未经预处理的圆铝导线），可匹配外部继电器构成使用类别为 AC-22 的无过电流保护派生型号（CBI）。\n1. 剩余电流保护派生型（CBR）：提供 B 型剩余电流保护，涵盖额定剩余动作电流 IΔn 与额定剩余短路接通和分断能力 IΔm；若带测试按钮 T，按钮颜色不得为红色或绿色。\n2. IT 系统适用型：按 IT 系统单极短路试验程序验证，标注 IT 系统单极短路电流符号 I_IT；不适用的电压等级须标示带叉 IT 符号。\n3. 光伏直流派生型：专用于光伏直流回路，最高适用标准上限为 1500V DC，支持正向与反向电流无极性分断，并执行临界直流负载电流试验程序。\n4. 上下级选择性与后备保护配合：提供选择性极限电流 Is 曲线，并与上游熔断器或后备保护电器配合给出交接电流 IB。」",
+  "assertions": [
+    {
+      "id": "e1",
+      "text": "严格遵循 IEC 60947-2:2024 英式拼写与连字符规范：正文全部使用 moulded-case circuit-breaker / circuit-breaker（无未连字符 circuit breaker 或美式 molded）、withdrawable（非 drawout/drawer）、aluminium（非 aluminum）、utilisation（非 utilization）及 colour（非 color）"
+    },
+    {
+      "id": "e2",
+      "text": "准确译出 Annex B（CBR）术语与符号：circuit-breaker incorporating residual current protection (CBR)、Type B、rated residual operating current（IΔn）与 rated residual short-circuit making and breaking capacity（IΔm），未误译为 ELCB / RCCB / leakage breaker"
+    },
+    {
+      "id": "e3",
+      "text": "准确译出 Annex H（IT 系统）术语与符号：引用 Annex H、IT systems、I_IT（或 IIT），并译出不适用电压标示带叉 IT 符号（crossed-out IT）"
+    },
+    {
+      "id": "e4",
+      "text": "准确译出 Annex P（光伏直流）术语与规则：使用 DC circuit-breaker for use in photovoltaic (PV) applications（或 PV circuit-breaker / PV DC circuit-breaker，不用 solar DC breaker），引用 Annex P（含 P.1/P.5/P.7.2/P.8.3.9 等），译出双向（forward and reverse）分断及 critical DC load current（Test Sequence VII / 9.3.10 / P.8.3.9）"
+    },
+    {
+      "id": "e5",
+      "text": "准确译出 Annex A 上下级配合术语与符号：使用 selectivity（禁用 discrimination）、selectivity limit current（Is）、连字符 back-up protection（禁用 backup）与 take-over current（IB，禁用 transfer current / handover current）"
+    },
+    {
+      "id": "e6",
+      "text": "准确译出 Annex D（aluminium conductors / unprepared round aluminium conductors，D.8.5）与 Annex L（CBI / circuit-breaker not fulfilling the requirements for overcurrent protection，utilisation category AC-22，L.4.1）"
+    },
+    {
+      "id": "e7",
+      "text": "所引用的 IEC 60947-2:2024 条款号全部为 2024 第 6 版有效条款（如 Cl. 3.5/4.4/8.1.2/8.2.7/8.2.8/9.3.8/9.3.10 及 Annex A/B/D/H/L/P 子条款），未混入作废的 Ed. 5.x 旧编号（如 Cl. 2.x、Cl. 4.3.x、Cl. 7.2.x、Cl. 8.3.x）"
+    },
+    {
+      "id": "e8",
+      "text": "数值与单位之间保留单个半角空格（1 500 V DC 或 1500 V DC，无 1500V 粘连），且未为原文未提供的产品参数（如 IΔn、IΔm、I_IT、Is、IB）编造具体额定数值"
+    }
+  ]
+}

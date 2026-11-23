@@ -1,0 +1,70 @@
+{
+  "expectations": [
+    {
+      "id": "d1",
+      "text": "交付物正文为中文（EN→ZH 方向），英文仅出现在术语对照表源语列或引用原文处，标题/说明/待确认清单均为中文",
+      "passed": true,
+      "evidence": "Entire deliverable (headings, parameter table, terminology mapping, Section 3 technical review) is in Chinese; English appears only in the source column of Section 2 and standard symbols."
+    },
+    {
+      "id": "d2",
+      "text": "Moulded-Case Circuit-Breaker 译为「塑壳断路器」，未直译为「模制外壳断路器」或「塑料外壳断路器」",
+      "passed": true,
+      "evidence": "Heading L11: \"**NXM-250S 塑壳断路器（IEC 60947-2:2024）**\"; Table L41: \"Moulded-Case Circuit-Breaker | MCCB | 塑壳断路器\"."
+    },
+    {
+      "id": "d3",
+      "text": "Rated impulse withstand voltage 译为「额定冲击耐受电压」（用「冲击」不用「脉冲」）",
+      "passed": true,
+      "evidence": "Table L16: \"额定冲击耐受电压 | Uimp | 8 kV\"; L43 explicitly rules out \"耐碰撞电压\"."
+    },
+    {
+      "id": "d4",
+      "text": "Rated service short-circuit breaking capacity 中的 service 译为「运行」（额定运行短路分断能力），不译「服务」",
+      "passed": true,
+      "evidence": "Table L22: \"额定运行短路分断能力 | Ics | 36 kA rms（415 V AC 下，100% Icu）\"; L49 aligns to IEC 60947-2:2024 Cl. 5.3.6.2.4."
+    },
+    {
+      "id": "d5",
+      "text": "Selectivity category 译为「选择性类别」（不误译为「使用类别」或「区分/歧视类别」），且准确译出 Icu1（相间对中性线交流电压下极极限短路分断能力 / 单极极限短路分断能力）并保留 Icu1 符号",
+      "passed": true,
+      "evidence": "Table L24: \"选择性类别 | — | A 类\" (L51 warns against conflating with 使用类别); Table L21: \"额定相间对中性线交流电压下极极限短路分断能力 | Icu1 | 18 kA rms\" (L48 cites Cl. 5.3.6.2.3 & 9.3.11)."
+    },
+    {
+      "id": "d6",
+      "text": "单位符号保留原文 kA rms / kA peak / V AC，未改写成「有效值」「峰值」「交流」",
+      "passed": true,
+      "evidence": "Table L15, L17, L20-23 retain \"800 V AC\", \"415 V AC\", \"36 kA rms\", \"18 kA rms\", \"72 kA peak\" verbatim without rewriting into 「有效值」「峰值」「交流」."
+    },
+    {
+      "id": "d7",
+      "text": "所有数值照抄未换算（800 V、8 kV、250 A、36 kA rms、18 kA rms、72 kA peak、20,000、8,000）",
+      "passed": true,
+      "evidence": "Table L15-29 preserve all numeric values verbatim (800 V AC, 8 kV, 415 V AC, 250 A, 36 kA rms, 18 kA rms, 72 kA peak, 20,000, 8,000) without conversion or silent edits."
+    },
+    {
+      "id": "d8",
+      "text": "指出源文内部矛盾：选择性类别 A 与给出 Isd（2～10 × Ir）短延时整定不能同时成立，且未擅自删除或改写参数",
+      "passed": true,
+      "evidence": "Preserves both A 类 (L24) and Isd 2 至 10 × Ir (L28), and flags the contradiction as Issue 1 (L66-75: \"【阻断项】选择性类别（A 类）与短延时整定电流（Isd）自相矛盾\")."
+    },
+    {
+      "id": "d9",
+      "text": "未补造源文缺失的 Icw 数值，并在待确认清单中明确指出 Icw 缺失",
+      "passed": true,
+      "evidence": "No fabricated Icw value in parameter table; L66, L68 & L74 explicitly flag Icw (and tsd) as missing for technical department confirmation."
+    },
+    {
+      "id": "d10",
+      "text": "中文正文使用全角标点，参数符号/数值/单位内保持半角且数值与单位之间有单个半角空格",
+      "passed": true,
+      "evidence": "Chinese prose uses full-width punctuation (，。：（）【】); all parameter symbols, values, and units remain half-width with single half-width spaces (800 V AC, 8 kV, 250 A, 36 kA rms, 18 kA rms, 72 kA peak)."
+    }
+  ],
+  "summary": {
+    "passed": 10,
+    "failed": 0,
+    "total": 10,
+    "pass_rate": 1.0
+  }
+}

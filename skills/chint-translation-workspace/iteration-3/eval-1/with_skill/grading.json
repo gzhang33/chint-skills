@@ -1,0 +1,64 @@
+{
+  "expectations": [
+    {
+      "id": "b1",
+      "text": "明确判定 Frame size: 250 A（修正空格后）在 IEC 60947-2:2024（Cl. 3.1.1）中合法有效，不应改为 Inm，并说明 Inm 属 GB/T 14048.2 国内约定符号（IEC 60947-2 中未出现）",
+      "passed": true,
+      "evidence": "L23 & L29: \"Verdict: Retain Frame size (corrected for unit spacing to Frame size: 250 A). Reject the colleague's proposal to mandate Frame current Inm\"; L33-41 cite IEC 60947-2:2024 Cl. 3.1.1 (P20, 28 occurrences) and clarify Inm has 0 occurrences in IEC 60947-2 and belongs exclusively to GB/T 14048.2."
+    },
+    {
+      "id": "b2",
+      "text": "指出 Mechanical durability / Electrical durability 中的 durability 不属于 IEC 60947-2:2024 术语（0 次出现），应改为 operational performance / operating cycles（Cl. 8.2.4.2 & Table 7）或 endurance（Annex M / R）",
+      "passed": true,
+      "evidence": "L102: \"durability has 0 occurrences in IEC 60947-2:2024... The main standard (Cl. 8.2.4.2 & Table 7, P39–40) uses operational performance without current / operational performance with current and number of operating cycles... Annex M Cl. M.7.2.3 / M.8.11, P222; Annex R Cl. R.8.5, the exact word is endurance (9×), never durability.\""
+    },
+    {
+      "id": "b3",
+      "text": "指出 times 为直译错误，应改为 operating cycles / operations / cycles",
+      "passed": true,
+      "evidence": "L103: \"times is a direct Chinglish rendering of the Chinese counter character. Use operating cycles (or cycles / operations, 07 §2).\""
+    },
+    {
+      "id": "b4",
+      "text": "指出 IEC 语境下美式拼写 Molded Case Circuit Breaker 与无连字符 circuit breaker 不合规，应改为英式连字符 moulded-case circuit-breaker 与 circuit-breaker（美式仅限北美 UL 489 语境）",
+      "passed": true,
+      "evidence": "L78-79 & L130: flags \"Molded\" (UL 489 US spelling) and unhyphenated \"Circuit Breaker\" / \"circuit breaker\", requiring IEC British hyphenated \"moulded-case circuit-breaker\" and \"circuit-breaker\", isolating US spelling strictly to North American UL 489."
+    },
+    {
+      "id": "b5",
+      "text": "指出 Icu 单位仅写 kA 缺少有效值限定，应写为 kA rms（并注明交流电压类型或频率）",
+      "passed": true,
+      "evidence": "L64, L93 & L179: flags missing current kind (AC/DC), rated frequency (Cl. 5.3.4), and \"rms qualifier (01 §1: kA rms)\"."
+    },
+    {
+      "id": "b6",
+      "text": "指出 100% Icu 缺少范围限定/试验电压核对（及 of Icu 规范写法），需按对应型号数据表核实",
+      "passed": true,
+      "evidence": "L94 & L186: flags \"100% Icu\" -> \"100 % of Icu\" and per CLM-001 requires datasheet confirmation that 100 % of Icu applies strictly to NXM-250S at 415 V without extrapolating."
+    },
+    {
+      "id": "b7",
+      "text": "指出数值与单位之间缺半角空格（250A / 800V / 8kV / 36kA / 415V）",
+      "passed": true,
+      "evidence": "L84-86: quotes \"250A\", \"800V\", \"8kV\", \"36kA\", \"415V\" and mandates single half-width space (\"250 A\", \"800 V\", \"8 kV\", \"36 kA\", \"415 V\")."
+    },
+    {
+      "id": "b8",
+      "text": "明确声明初稿中所有数值未经产品数据表核实，不代填、不背书",
+      "passed": true,
+      "evidence": "L7, L159, L176 & L185-188: explicitly declares no unprovided ratings added and all draft ratings (Ics ratio, 20 000 / 8 000 cycles, etc.) remain unverified pending official NXM-250S datasheet verification."
+    },
+    {
+      "id": "b9",
+      "text": "指出缺失必备字段（如 Ue / In / Icm / Icw / tsd / 选择性类别 A 或 B / 脱扣器类型中的至少两项）",
+      "passed": true,
+      "evidence": "L178-184: lists 7+ missing mandatory fields (In, Ue/AC/frequency, poles, selectivity category A/B & Icw, release type & tr/tsd/ti, Icm & Icu1, installation/IP/power loss)."
+    }
+  ],
+  "summary": {
+    "passed": 9,
+    "failed": 0,
+    "total": 9,
+    "pass_rate": 1.0
+  }
+}

@@ -11,7 +11,7 @@
 | 技能名称 | 目录路径 | 业务适用场景与核心能力 | 权威标准 / 业务系统依据 |
 |:---|:---|:---|:---|
 | **`chint-pptx`** | `skills/chint-pptx/` | **正泰企业级 PPTX 智能演示文稿生成**<br>按 2026 VI 规范生成可编辑的产品演示文稿。内容页收敛为表格契约（`ARCH_TABLE`）加三张原生图表（趋势 / 占比 / 雷达），封面与章节页继承模板版式保持原生可编辑。内置结构合规门禁、开源 OpenXML 校验、源页保真校验与渲染预览链路。 | CHINT 2026 VI 视觉规范指导手册<br>2026 年正泰 PPT 通用基础模板 |
-| **`chint-translation`** | `skills/chint-translation/` | **B2B 工业品翻译与本地化标准**<br>覆盖「三断一接」（ACB / MCCB / MCB / 接触器）、双电源（ATS）、电能质量（SVG / APF）、固态断路器、传感器与继电器。收录 8 大分域知识库（产品名称、电气参数、脱扣器与智能控制器、内外附件机构、安装接线与结构、环境与标准、样本高频句式、翻译禁忌词库）及结构化术语主数据。 | IEC 60947 / 60898 / 61000<br>GB/T 14048.2<br>UL 489 / 1066 / 1008 |
+| **`chint-translation`** | `skills/chint-translation/` | **B2B 工业品翻译与本地化标准（v2.0.0）**<br>覆盖「三断一接」（ACB / MCCB / MCB / 接触器）、IEC 60947-2:2024 (Ed. 6.0) 附录 A–R 特种断路器（CBR / MRCD / CBI / ICB / PV DC / CBAR）、双电源（ATS）、电能质量（SVG / APF）、传感器与继电器。双轨均强制执行 IEC 60947-2:2024 英式拼写与连字符规范，UL 美式术语严格隔离至北美专栏，内置防呆禁忌词库与统一 JSON 术语主数据。 | IEC 60947-2:2024 (Ed. 6.0)<br>IEC 60947 / 60898 / 61000<br>GB/T 14048.2<br>UL 489 / 1066 / 1008 |
 | **`chint-pm-copywriter`** | `skills/chint-pm-copywriter/` | **B2B 工业品 PM 文案与汇报语法引擎**<br>向上汇报、QBR 复盘、PRD 价值主张与产品样本提炼。内置极简量化三要素、三段式负向建设性语法、黑白名单词典与出稿门禁，杜绝浮夸黑话与战役化暗喻。 | 正泰高管汇报标准<br>B2B 工业品 PM 务实文案规范 |
 | **`chint-pm-fabe`** | `skills/chint-pm-fabe/` | **产品卖点 FABE 提炼**<br>把工程参数写成一句式卖点（特征 + 量化优势 + 客户利益）。A 段支持对比型（较上一代提升 55%）与后果型（铜排用量减少 5%）两种写法；B 段收敛为成本、工时、停机、用量/占地、风险/资格五类客户指标。内置单位与术语自查、证据分场景强度（内部评审精确到源 / 对外投标文书级 / 口播给区间）。 | ACB / MCCB / ATS 技术参数表<br>IEC 60947 术语与单位规范 |
 | **`chint-brand-design`** | `skills/chint-brand-design/` | **正泰品牌资产与视觉规范系统**<br>为 PPTX、Web 前端、数据图表、HTML/PDF 报告提供自包含的品牌资产治理。内置正泰拓新体全套字体、2026 VI 配色矩阵与 Token 导出工具。具体 PPTX 生成请走 `chint-pptx`。 | CHINT 官方 2026 VI |
@@ -84,11 +84,11 @@ cp -r skills/chint-translation ~/.gemini/config/skills/
 - `references/05_universal_safety_imperatives.md`：安全提示与警示语的标准译法。
 - `references/06_universal_technical_headings_and_claims.md`：样本册标准栏目标题与产品亮点宣传统一表达。
 - `references/07_universal_anti_chinglish.md`：中式英语防呆规则与常见错译拦截。
-- `references/08_mccb_taxonomy_and_releases.md`：塑壳断路器分类与脱扣单元系列。
+- `references/08_mccb_taxonomy_and_releases.md`：塑壳断路器分类与脱扣单元系列，完整覆盖 IEC 60947-2:2024 (Ed. 6.0) 条款 3–9 及附录 A–R（CBR、MRCD、CBI、ICB、1 500 V PV DC、CBAR、铝导体、EMC、功率损耗、IT/相接地试验）。
 - `references/09_mcb_rcbo_curves_and_accessories.md`：微型断路器 / 漏电保护器的脱扣曲线与附件。
 - `references/10_ats_classes_and_controllers.md`：双电源转换开关的类别与控制器。
 - `references/11_power_quality_and_contactors.md`：电能质量装置（SVG / APF）与接触器术语。
-- `references/acb_terminology_master.json`：结构化术语主数据，支持程序化检索。
+- `references/iec60947_2_terminology_master.json`：统一 IEC 60947-2:2024 (Ed. 6.0) 结构化术语主数据（涵盖 ACB、MCCB、条款 3–9 与附录 A–R），支持程序化检索与双轨英式拼写校验。
 
 ---
 

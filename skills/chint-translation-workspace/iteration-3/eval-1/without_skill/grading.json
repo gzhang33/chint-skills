@@ -1,0 +1,64 @@
+{
+  "expectations": [
+    {
+      "id": "b1",
+      "text": "明确判定 Frame size: 250 A（修正空格后）在 IEC 60947-2:2024（Cl. 3.1.1）中合法有效，不应改为 Inm，并说明 Inm 属 GB/T 14048.2 国内约定符号（IEC 60947-2 中未出现）",
+      "passed": true,
+      "evidence": "L11-21: rejects colleague proposal and validates \"Frame size: 250 A\" under IEC 60947-2:2024, noting Inm is a domestic Chinese symbol absent from IEC 60947-2 (note: omits exact Cl. 3.1.1 and GB/T 14048.2 citation, guessing \"沿袭 2016 版 2.18 条\")."
+    },
+    {
+      "id": "b2",
+      "text": "指出 Mechanical durability / Electrical durability 中的 durability 不属于 IEC 60947-2:2024 术语（0 次出现），应改为 operational performance / operating cycles（Cl. 8.2.4.2 & Table 7）或 endurance（Annex M / R）",
+      "passed": false,
+      "evidence": "L38 explicitly permits keeping \"durability\" (\"部分样本亦写作 durability，须全册统一\" / \"若样本体系已固定用 durability，至少须将 times 改为 operating cycles\"), failing to identify that durability has 0 occurrences in IEC 60947-2:2024 or cite Cl. 8.2.4.2 / Table 7 operational performance."
+    },
+    {
+      "id": "b3",
+      "text": "指出 times 为直译错误，应改为 operating cycles / operations / cycles",
+      "passed": true,
+      "evidence": "L38: \"times 系'次'的直译，不用于 IEC 开关设备寿命参数... 计量单位为 operating cycles\"."
+    },
+    {
+      "id": "b4",
+      "text": "指出 IEC 语境下美式拼写 Molded Case Circuit Breaker 与无连字符 circuit breaker 不合规，应改为英式连字符 moulded-case circuit-breaker 与 circuit-breaker（美式仅限北美 UL 489 语境）",
+      "passed": true,
+      "evidence": "L47, L66, L75: flags US \"Molded\" and unhyphenated \"circuit breaker\" -> \"Moulded-Case Circuit-Breaker\" and \"circuit-breaker\"."
+    },
+    {
+      "id": "b5",
+      "text": "指出 Icu 单位仅写 kA 缺少有效值限定，应写为 kA rms（并注明交流电压类型或频率）",
+      "passed": false,
+      "evidence": "L46 & L70 revise Icu to \"36 kA at 415 V\" with zero mention of \"rms\" / \"kA rms\" anywhere in the report."
+    },
+    {
+      "id": "b6",
+      "text": "指出 100% Icu 缺少范围限定/试验电压核对（及 of Icu 规范写法），需按对应型号数据表核实",
+      "passed": false,
+      "evidence": "L46 allows \"100 % of Icu（或 100 % Icu）\" and Section 5 never flags \"100% Icu\" as an unscoped claim requiring model/voltage-scope datasheet verification."
+    },
+    {
+      "id": "b7",
+      "text": "指出数值与单位之间缺半角空格（250A / 800V / 8kV / 36kA / 415V）",
+      "passed": true,
+      "evidence": "L48: flags missing spaces in \"250A, 800V, 8kV, 36kA, 415V, 100%\" -> \"250 A、800 V、8 kV、36 kA、415 V、100 %\"."
+    },
+    {
+      "id": "b8",
+      "text": "明确声明初稿中所有数值未经产品数据表核实，不代填、不背书",
+      "passed": false,
+      "evidence": "L5 & L62 only say not to fill in missing parameters; never explicitly declares that all existing numerical values in the draft are unverified against a product datasheet."
+    },
+    {
+      "id": "b9",
+      "text": "指出缺失必备字段（如 Ue / In / Icm / Icw / tsd / 选择性类别 A 或 B / 脱扣器类型中的至少两项）",
+      "passed": true,
+      "evidence": "L83-96: flags missing In, Ue/AC/frequency/poles, tr/tsd, Icw, Icm, isolation suitability, pollution degree (note: L89 erroneously calls Cat A/B \"Utilization category A / B\")."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 4,
+    "total": 9,
+    "pass_rate": 0.5556
+  }
+}

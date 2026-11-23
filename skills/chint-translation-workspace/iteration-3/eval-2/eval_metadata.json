@@ -1,0 +1,31 @@
+{
+  "eval_id": 2,
+  "eval_name": "ats-manual-translation-track2",
+  "prompt": "请将以下 NZ7 系列双电源自动转换开关（ATS）产品安装与使用说明书节选翻译成英文（企业官方产品说明书语体 Track 2，非对外样本册语体），并附简短术语与数值说明：\n\n「4.3 转换方式\n本产品支持先断后通（BBM）和先通后断（MBB）两种转换方式。闭路转换时，两路电源短时并列时间不超过 100ms。转换动作时间不大于 1.5s，恢复转换延时可在 0~180s 范围内整定。\n\n4.4 机械联锁\n机械联锁机构应保证两路电源不能同时合闸。」",
+  "assertions": [
+    {
+      "id": "c1",
+      "text": "用 Open Transition (Break-Before-Make, BBM) / Open Transition (BBM) 与 Closed Transition (Make-Before-Break, MBB) / Closed Transition (MBB)，缩写 BBM/MBB 原样保留不译"
+    },
+    {
+      "id": "c2",
+      "text": "规范性动词「应」译为 shall（如 shall ensure），不用 should 或 must"
+    },
+    {
+      "id": "c3",
+      "text": "「恢复转换延时」译为 return transfer delay（可附 RTD），不用笼统 time delay"
+    },
+    {
+      "id": "c4",
+      "text": "保留 100 ms / 1.5 s / 0 to 180 s（或 0–180 s），但明确标注这些时间参数未经对应型号数据表核实（IEC 60947-6-1 只定类别不定时间）"
+    },
+    {
+      "id": "c5",
+      "text": "保持 Track 2 说明书语体（完整规范性条款句式，未混入 Track 1 样本册营销压缩话术）"
+    },
+    {
+      "id": "c6",
+      "text": "数字与单位之间严格有单个半角空格（100 ms / 1.5 s / 180 s），且正文无残留中文全角标点"
+    }
+  ]
+}

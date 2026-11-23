@@ -1,0 +1,58 @@
+{
+  "expectations": [
+    {
+      "id": "a1",
+      "text": "主术语用 Shunt release（含大小写变体 Shunt Release），不以北美 Shunt trip 或禁用 shunt opening release / Excitation release 作为主术语",
+      "passed": true,
+      "evidence": "Body L12-13: \"**Shunt Release (SHT / MX)** ... and the shunt release\"; Table L24: \"Shunt release (SHT / MX)\" and excludes \"Excitation release, Shunting release, Shunt opening release; North American / UL only: Shunt Trip (ST)\"."
+    },
+    {
+      "id": "a2",
+      "text": "闭合电磁铁用 Track 1 样本语体 Closing release（可括注 closing coil），不用 Track 2 Closed electromagnet 或禁用 Closing electromagnet / Close electromagnet",
+      "passed": true,
+      "evidence": "Body L13: \"Both the closing release (CC / CEM) and the shunt release\"; Table L28: \"Closing release (CC / CEM) (admitted synonym: closing coil)\" and excludes Track 2 \"Closed electromagnet (CEM)\" and forbidden \"Close electromagnet, Closing magnet\"."
+    },
+    {
+      "id": "a3",
+      "text": "钥匙锁用 Track 1 样本语体 ACB Key Lock (KLC)（或 ACB Key Lock / Circuit-breaker key lock），不用 Track 2 Keys and locks (KL) 或直译 Body key lock",
+      "passed": true,
+      "evidence": "Body L15: \"**ACB Key Lock (KLC)**\"; Table L30: \"ACB Key Lock (KLC) / circuit-breaker key lock\", excluding Track 2 \"Keys and locks (KL)\" and forbidden \"Body key lock\"."
+    },
+    {
+      "id": "a4",
+      "text": "开孔工具用样本语体 hole saw / panel hole saw 或 hole punch，不用说明书语体 hole opener",
+      "passed": true,
+      "evidence": "Body L16: \"using a panel hole saw or hole punch\"; Table L32: \"panel hole saw or hole punch | Track 1 catalogue standard | Track 2 OEM manual: hole opener\"."
+    },
+    {
+      "id": "a5",
+      "text": "遵循 IEC 60947-2:2024 英式拼写与连字符规范：正文统一使用连字符 circuit-breaker（非无连字符 circuit breaker），且通电用词采用 -ize 拼写（pulse-energized / pulse energization，非 energis*）",
+      "passed": true,
+      "evidence": "Body L13: \"Remotely opens the circuit-breaker\", \"pulse energization working mode\", \"energization interval t2\"; L29 excludes \"-ise\" (\"energisation\"); zero unhyphenated \"circuit breaker\" in deliverable body."
+    },
+    {
+      "id": "a6",
+      "text": "保留 t1 用不小于/≥（not less than 200 ms / ≥ 200 ms）与 t2 用大于/>（greater than 15 s / more than 15 s / > 15 s）的不对称边界，未统一为同一个符号",
+      "passed": true,
+      "evidence": "Body L13: \"ensure that the pulse time t1 is not less than 200 ms and the energization interval t2 is greater than 15 s\" — preserves >= vs > asymmetry."
+    },
+    {
+      "id": "a7",
+      "text": "数字与单位之间严格有单个半角空格（50 ms / 200 ms / 15 s / 28 mm），无粘连写法",
+      "passed": true,
+      "evidence": "Body L13 & L16: \"50 ms\", \"200 ms\", \"15 s\", \"Ø 28 mm\"; L41 explicitly confirms single half-width space before every SI unit."
+    },
+    {
+      "id": "a8",
+      "text": "显式说明原文未提供额定控制电源电压的具体电压值，未编造任何电压数值",
+      "passed": true,
+      "evidence": "Table L26: \"no assumed voltage rating added\"; L43: \"No unstated ratings (such as specific control voltage values, frame sizes, series designations, or power consumption) were invented or inherited\"."
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 0,
+    "total": 8,
+    "pass_rate": 1.0
+  }
+}
