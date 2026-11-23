@@ -1,6 +1,6 @@
 name: chint-translation
-version: 3.1.0
-description: IEC 60947-2:2024 single-track ZH↔EN translation and exhaustive catalogue audit for CHINT ACB & MCCB. Use when translating catalogues, datasheets, or manuals to English, back-translating to Chinese, or auditing drafts for IEC terminology, CHINT accessory codes, and parameter defects.
+version: 4.0.0
+description: IEC 60947-2:2024 (EN) and GB/T 14048.2-2020 (ZH) single-track translation and terminology audit for CHINT ACB & MCCB. Use when translating specs, catalogues, or manuals to English, back-translating to statutory Chinese, or auditing text/extracted documents for standard terms, CHINT accessory codes, and regional compliance.
 author: CHINT Overseas PM Team
 tags:
   - translation

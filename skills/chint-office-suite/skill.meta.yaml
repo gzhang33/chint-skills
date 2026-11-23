@@ -1,0 +1,12 @@
+name: chint-office-suite
+version: 1.0.0
+description: CHINT office document I/O and non-destructive PDF annotation hub (.pdf, .docx, .xlsx). Use when extracting structured text or visual-only page maps from catalogues/specs, writing highlight and sticky-note annotations onto new PDF copies, or routing generic Word/Excel/PDF authoring to installed office skills.
+author: CHINT Overseas PM Team
+tags:
+  - office
+  - pdf
+  - docx
+  - xlsx
+  - annotation
+  - catalogue
+  - extraction

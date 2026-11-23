@@ -13,22 +13,22 @@
 
 ---
 
-## 2. ACB Product Taxonomy, Electronic Trip Units & Protection (一词一译)
+## 2. ACB Product Taxonomy, Electronic Trip Units & Protection (双标唯一译法)
 
-| Chinese Term (✅ EN→ZH) | ✅ Unique Canonical IEC English (ZH→EN) | Symbol / Slot | Clause & Usage Note |
+| Statutory Chinese (`GB/T 14048.2—2020`) | ✅ Unique Canonical IEC English (`IEC 60947-2:2024`) | Symbol / Slot | Clause & Usage Note |
 | :--- | :--- | :--- | :--- |
-| 万能式断路器（框架断路器） | **`Air circuit-breaker (ACB)`** | `ACB` | Industry category term harmonized to `Cl. 3.1` hyphenated `circuit-breaker`. |
-| 抽出式 / 固定式万能式断路器 | **`Withdrawable air circuit-breaker`** / **`Fixed air circuit-breaker`** | — | `Cl. 3.5, 4.4, 8.1.2`. |
-| 智能型万能式断路器 | **`Air circuit-breaker with electronic trip unit`** | — | `Annex F`; never output literal `"intelligent air circuit-breaker"`. |
-| 智能控制器 / 电子脱扣器 | **`Electronic trip unit (ETU)`** | `ETU` | `Cl. 5.7, Annex F` (`Controller` recognized in EN→ZH). |
+| 空气断路器（分类：万能式） | **`Air circuit-breaker (ACB)`** | `ACB` | `GB/T 14048.2—2020 Cl. 2.7 & 3.3`; `IEC Cl. 3.1` hyphenated `circuit-breaker`. |
+| 抽屉式断路器 / 固定式断路器 | **`Withdrawable air circuit-breaker`** / **`Fixed air circuit-breaker`** | — | `IEC 3.5, 4.4, 8.1.2` / `GB 2.5, 3.7, 7.1.2`. |
+| 配电子式过电流脱扣器的空气断路器 | **`Air circuit-breaker with electronic trip unit`** | — | `Annex F`; never output literal `"intelligent air circuit-breaker"`. |
+| 电子脱扣器 | **`Electronic trip unit (ETU)`** | `ETU` | `IEC 5.7, Annex F` (`GB 4.7, 附录 F`). |
 | 基本配电型 / 电流表型 / 功率型 / 谐波型脱扣器 | **`Basic distribution trip unit (M type)`** / **`Ammeter trip unit (A type)`** / **`Power monitoring trip unit (P type)`** / **`Harmonic analysis trip unit (H type)`** | `M / A / P / H` | Display readings readable regardless of CB status (`Cl. 5.7.3`); PLC digital I/O per `Cl. 8.1.8`. |
-| 过载长延时保护（L 段） | **`Long-time overload protection (L)`** | $I_r$ = `{{Ir_setting: ×In}}`, $t_r$ = `{{tr_setting: s}}` | `Cl. 3.16, 5.7.1 (2c), Table 5, Fig. K.1`. |
-| 短路短延时保护（S 段） | **`Short-time delay short-circuit protection (S)`** | $I_{sd}$ = `{{Isd_setting: ×Ir}}`, $t_{sd}$ = `{{tsd_setting: s}}` | `Cl. 3.8, 3.17, 3.13` ($I^2t$ ON/OFF); state any upper cap separately. |
-| 短路瞬时保护（I 段） | **`Instantaneous short-circuit protection (I)`** | $I_i$ = `{{Ii_setting: ×In}}`, $t_i$ = `{{ti_max: ms}}` | `Cl. 3.7, 3.12, 3.15` (plus `OFF` if supported). |
-| 接地故障保护（G 段） | **`Ground-fault protection (G)`** | $I_g$ = `{{Ig_setting: ×In}}`, $t_g$ = `{{tg_setting: s}}` | `Cl. 5.7.1 (2d), 8.2.1.2.4 c), Table K.1, Fig. K.1` (`CI-A` / `CI-B`). |
-| 剩余电流保护（漏电保护） | **`Residual current protection`** | $I_{\Delta n}$ = `{{Idn_setting: A}}`, $\Delta t$ = `{{delta_t: s}}` | `Annex B, Annex M`; scaled directly in amperes, independent of $I_n$. |
-| 中性极保护（N 极） | **`Neutral pole protection (N)`** | $I_{nN}$ = `{{InN_ratios}}` | `Cl. 8.1.7, Table K.1`. |
-| 区域选择性联锁 / 合闸涌流保护 / 热记忆 / Ig 指示器 | **`Zone selective interlocking (ZSI)`** / **`Making-current release (MCR)`** / **`Thermal memory`** / **`Ig indicator`** | `ZSI` / `MCR` | `Annex A (A.5)` / `Cl. 3.6` / `Cl. 3.14, 5.7.1` (never `"Ig indicator light"`). |
+| 过载长延时保护 | **`Long-time overload protection (L)`** | $I_r$ = `{{Ir_setting: ×In}}`, $t_r$ = `{{tr_setting: s}}` | `Cl. 3.16, 5.7.1 (2c), Table 5, Fig. K.1`. |
+| 短路短延时保护 | **`Short-time delay short-circuit protection (S)`** | $I_{sd}$ = `{{Isd_setting: ×Ir}}`, $t_{sd}$ = `{{tsd_setting: s}}` | `Cl. 3.8, 3.17, 3.13` ($I^2t$ ON/OFF); state any upper cap separately. |
+| 短路瞬时保护 | **`Instantaneous short-circuit protection (I)`** | $I_i$ = `{{Ii_setting: ×In}}`, $t_i$ = `{{ti_max: ms}}` | `Cl. 3.7, 3.12, 3.15` (plus `OFF` if supported). |
+| 接地故障保护 | **`Ground-fault protection (G)`** | $I_g$ = `{{Ig_setting: ×In}}`, $t_g$ = `{{tg_setting: s}}` | `Cl. 5.7.1 (2d), 8.2.1.2.4 c), Table K.1, Fig. K.1` (`CI-A` / `CI-B`). |
+| 剩余电流保护 | **`Residual current protection`** | $I_{\Delta n}$ = `{{Idn_setting: A}}`, $\Delta t$ = `{{delta_t: s}}` | `Annex B, Annex M`; scaled directly in amperes, independent of $I_n$. |
+| 中性极保护 | **`Neutral pole protection (N)`** | $I_{nN}$ = `{{InN_ratios}}` | `IEC 8.1.7, Table K.1` / `GB 7.1.7`. |
+| 区域选择性联锁 / 接通电流脱扣器 / 热记忆 / Ig 指示器 | **`Zone selective interlocking (ZSI)`** / **`Making-current release (MCR)`** / **`Thermal memory`** / **`Ig indicator`** | `ZSI` / `MCR` | `Annex A (A.5)` / `IEC 3.6 (GB 2.10)` / `Cl. 3.14, 5.7.1` (never `"Ig indicator light"`). |
 
 - **Value Ordering in Protection Sentences**: Always keep `pick-up` → `time-delay` → `$I^2t$ curve state` → `resetting time` → `tolerance`.
 
@@ -40,12 +40,12 @@
 
 | CHINT Code | Chinese Term (✅ EN→ZH) | ✅ Unique Canonical IEC English (ZH→EN) | Function, Clause & Value Slots |
 | :--- | :--- | :--- | :--- |
-| **`SHT`** | 分励脱扣器 | **`Shunt release (SHT)`** | Remote opening (`Cl. 5.7.1, 8.2.1.2.3`); range `{{sht_range: ×Uc}}`, opening time `{{sht_time: ms}}`; `PT` pulse / `HT` continuous duty. |
-| **`CEM`** | 闭合电磁铁（闭合脱扣器） | **`Closing release (CEM)`** | Voltage-energized closing release (`Cl. 3.19, 5.7.1`; admitted IEC synonym `closing coil`); range `{{cem_range: ×Uc}}`, closing time `{{cem_time: ms}}`. |
-| **`UVT`** | 欠电压脱扣器（瞬时） | **`Undervoltage release (UVT)`** | Instantaneous opening on voltage drop (`Cl. 5.7.1, 8.2.1.2.2`); trip band `{{uvt_trip: ×Ue}}`, pick-up `{{uvt_pickup: ×Ue}}`. |
+| **`SHT`** | 分励脱扣器 | **`Shunt release (SHT)`** | Remote opening (`IEC 5.7.1, 8.2.1.2.3`); range `{{sht_range: ×Uc}}`, opening time `{{sht_time: ms}}`; `PT` pulse / `HT` continuous duty. |
+| **`CEM`** | 闭合脱扣器 | **`Closing release (CEM)`** | Voltage-energized closing release (`IEC 3.19` / `GB 2.23`; admitted synonym `closing coil`); range `{{cem_range: ×Uc}}`, closing time `{{cem_time: ms}}`. |
+| **`UVT`** | 欠电压脱扣器 | **`Undervoltage release (UVT)`** | Instantaneous opening on voltage drop (`IEC 5.7.1, 8.2.1.2.2`); trip band `{{uvt_trip: ×Ue}}`, pick-up `{{uvt_pickup: ×Ue}}`. |
 | **`UVTR`** | 欠电压延时脱扣器 | **`Undervoltage time-delay release (UVTR)`** | Delays tripping during voltage dips; delay steps `{{uvtr_delays: s}}`, ride-through fraction `{{uvtr_ride_through}}`. |
 | **`UVTZ`** | 失压延时脱扣器 | **`Loss-of-voltage time-delay release (UVTZ)`** | External DIN-rail delay module; delay range `{{uvtz_range: s}}`, step `{{uvtz_step: s}}`, multi-colour LED status indicator. |
-| **`MOD`** | 电动操作机构（电操） | **`Motor-operator (MOD)`** | Automatic spring charging & remote closing (`Cl. 4.2, 8.2.1.1.6, Annex N`); charging time `{{mod_time: s}}`, rate `{{mod_rate: cycles/min}}`. |
+| **`MOD`** | 电动机操作机构 | **`Motor-operator (MOD)`** | Automatic spring charging & remote closing (`IEC 4.2, Annex N` / `GB 8.4.2`); charging time `{{mod_time: s}}`, rate `{{mod_rate: cycles/min}}`. |
 | **`AX`** | 辅助触头 | **`Auxiliary contact (AX)`** | Reports main contact `O`/`|` status (`Cl. 5.6`); config `{{ax_config}}` (changeover contacts, `AC-15` / `DC-13`). |
 | **`AL`** | 故障脱扣报警开关 | **`Alarm switch (AL)`** | Operates only upon automatic overcurrent/fault tripping (`Cl. 3.9`); terminals `{{al_terminals}}`. |
 | **`SPC`** | 合闸准备就绪触点 | **`Ready-to-close contact (SPC)`** | Closes when CB is open, springs charged (`Cl. 8.2.1.1.6`), and no closing lock-out (`Cl. 3.10`) is active. |
@@ -77,7 +77,7 @@
 
 ## 4. ACB Audit Blacklist (❌ Mode B 审查拦截与旧稿识别唯一真源)
 
-> Consulted in `Mode B` audit or `EN→ZH` legacy decoding only; mirrored programmatically by [audit_catalogue.py](../../scripts/audit_catalogue.py).
+> Consulted in `Mode B` audit or `EN→ZH` legacy decoding only; mirrored programmatically by [lint_text.py](../../scripts/lint_text.py).
 
 | ❌ Forbidden / Legacy / Non-IEC Form | Defect Category | ✅ Mandatory Single-Track Replacement |
 | :--- | :--- | :--- |

@@ -12,22 +12,22 @@
 
 ---
 
-## 2. MCCB Taxonomy, Trip Units & Setting Slots (一词一译)
+## 2. MCCB Taxonomy, Trip Units & Setting Slots (双标唯一译法)
 
-| Chinese Term (✅ EN→ZH) | ✅ Unique Canonical IEC English (ZH→EN) | Symbol / Slot | Clause & Usage Note |
+| Statutory Chinese (`GB/T 14048.2—2020`) | ✅ Unique Canonical IEC English (`IEC 60947-2:2024`) | Symbol / Slot | Clause & Usage Note |
 | :--- | :--- | :--- | :--- |
-| 塑壳断路器（塑料外壳式断路器） | **`Moulded-case circuit-breaker (MCCB)`** | `MCCB` | Industry category term harmonized to `IEC 60947-2:2024` (`moulded case` `Cl. 9.3.3.3`, `moulding` `Cl. 8.1.6`, hyphenated `circuit-breaker` `Cl. 3.1`). |
-| 限流塑壳断路器 | **`Current-limiting moulded-case circuit-breaker`** | $I^2t$ | `Cl. 3.3, 3.13, Fig. K.2–K.5` (`let-through current` / admitted `cut-off current`; `let-through energy`). |
-| 热磁式脱扣器（固定 / 可调） | **`Thermal-magnetic overcurrent release (TM)`** | `TM-D` / `TM-A` | `Cl. 5.7.1 (2c), 5.7.3` (reference calibration temp `+30 °C ± 2 °C`; `Table 5` $1.05 / 1.30 \times I_{\text{set}}$). |
-| 电子式脱扣器（智能脱扣器） | **`Electronic trip unit (ETU)`** | `ETU` | `Cl. 5.7, Annex F` (temperature-independent `-5 °C` to `+40 °C`, `0.3 %/K`). |
-| 单磁式脱扣器 / 瞬时脱扣断路器 | **`Instantaneous trip circuit-breaker (ICB)`** | `ICB` | `Annex O` (`O.1, O.4, Table O.1`: short-circuit protection only, marked `"ICB"`, co-ordinated with motor-starters). |
-| 带剩余电流保护的塑壳断路器 | **`Circuit-breaker incorporating residual current protection (CBR)`** | `CBR` | `Annex B` (`Type AC`, `Type A`, `Type B`; $I_{\Delta n}$, $I_{\Delta no}$, $I_{\Delta m}$, $\Delta t$, test button `T` not red/green). |
-| 不满足过电流保护要求的断路器（无过流保护型） | **`Circuit-breaker not fulfilling the requirements for overcurrent protection (CBI)`** | `CBI-W / X / Y` | `Annex L` (`L.1–L.5, Table L.1`: rated conditional short-circuit current **$I_{cc}$**, correlated to `utilization category AC-22` per `L.4.1`). |
-| 光伏直流塑壳断路器 | **`DC circuit-breaker for use in photovoltaic (PV) applications`** | `PV circuit-breaker` | `Annex P` (up to `1 500 V DC`, interrupts `forward and reverse currents` `P.7.2`, `critical DC load current` Seq VII `9.3.10 / P.8.3.9`). |
-| 过载长延时整定电流 / 时间 | **`Overload current setting`** / **`Tripping time`** | $I_r$ = `{{Ir_setting: ×In}}` / $t_r$ = `{{tr_setting: s}}` | `Cl. 3.16, Fig. K.1`. |
-| 短路短延时整定电流 / 延时 | **`Short-time pick-up current setting`** / **`Intentional time-delay`** | $I_{sd}$ = `{{Isd_setting: ×Ir}}` / $t_{sd}$ = `{{tsd_setting: s}}` | `Cl. 3.8, 3.17, Fig. K.1` (requires `Selectivity category B` & declared $I_{cw}$ per `Cl. 5.4`). |
-| 短路瞬时整定电流 | **`Instantaneous short-circuit current setting`** | $I_i$ = `{{Ii_setting: ×In}}` | `Cl. 3.15, Fig. K.1`. |
-| 接地故障整定电流 / 延时 | **`Ground-fault current setting`** / **`Tripping time`** | $I_g$ = `{{Ig_setting: ×In}}` / $t_g$ = `{{tg_setting: s}}` | `Cl. 8.2.1.2.4 c), Table K.1, Fig. K.1`. |
+| 塑料外壳式断路器 | **`Moulded-case circuit-breaker (MCCB)`** | `MCCB` | `GB/T 14048.2—2020 Cl. 2.6 & 3.3`; `IEC Cl. 3.1` hyphenated `circuit-breaker`. |
+| 限流塑料外壳式断路器 | **`Current-limiting moulded-case circuit-breaker`** | $I^2t$ | `IEC 3.3, 3.13` / `GB 2.3, 2.18` (`let-through current` / `cut-off current`). |
+| 热磁式过电流脱扣器 | **`Thermal-magnetic overcurrent release (TM)`** | `TM-D` / `TM-A` | `IEC 5.7.1 (2c), 5.7.3` / `GB 4.7.1, 4.7.3` (`+30 °C ± 2 °C`). |
+| 电子脱扣器 | **`Electronic trip unit (ETU)`** | `ETU` | `IEC 5.7, Annex F` / `GB 4.7, 附录 F` (`-5 °C` to `+40 °C`, `0.3 %/K`). |
+| 瞬时脱扣断路器 | **`Instantaneous trip circuit-breaker (ICB)`** | `ICB` | `Annex O` (`O.1, O.4, Table O.1`: marked `"ICB"`). |
+| 具有剩余电流保护的断路器 | **`Circuit-breaker incorporating residual current protection (CBR)`** | `CBR` | `Annex B` (`Type AC`, `Type A`, `Type B`; $I_{\Delta n}$, $I_{\Delta no}$, $I_{\Delta m}$, $\Delta t$, test button `T` not red/green). |
+| 无过电流保护要求的断路器 | **`Circuit-breaker not fulfilling the requirements for overcurrent protection (CBI)`** | `CBI-W / X / Y` | `Annex L`: `X`/`Y` in both standards; **`Class W` ($I_{cu}=I_{cw}$) is IEC 2024 only** (国标 2020 暂未收录). |
+| 光伏用直流断路器 | **`DC circuit-breaker for use in photovoltaic (PV) applications`** | `PV circuit-breaker` | `Annex P` (up to `1 500 V DC`, `forward and reverse currents` `P.7.2`, `critical DC load current` `9.3.10 / P.8.3.9`). |
+| 过载电流整定值 / 脱扣时间 | **`Overload current setting`** / **`Tripping time`** | $I_r$ = `{{Ir_setting: ×In}}` / $t_r$ = `{{tr_setting: s}}` | `IEC 3.16` / `GB 2.21, 图 K.1`. |
+| 短时动作电流 / 人为短延时 | **`Short-time pick-up current setting`** / **`Intentional time-delay`** | $I_{sd}$ = `{{Isd_setting: ×Ir}}` / $t_{sd}$ = `{{tsd_setting: s}}` | `IEC 3.8, 3.17` / `GB 4.4, 图 K.1` (requires `Selectivity category B` & $I_{cw}$). |
+| 额定瞬时短路电流整定值 | **`Instantaneous short-circuit current setting`** | $I_i$ = `{{Ii_setting: ×In}}` | `IEC 3.15` / `GB 2.20, 图 K.1`. |
+| 接地故障电流整定值 / 脱扣时间 | **`Ground-fault current setting`** / **`Tripping time`** | $I_g$ = `{{Ig_setting: ×In}}` / $t_g$ = `{{tg_setting: s}}` | `IEC 8.2.1.2.4 c), Table K.1` / `GB 图 K.1`. |
 
 ---
 
@@ -38,20 +38,20 @@
 | **`F`** | 板前接线（固定式） | **`Front connection (fixed)`** | Standard front busbar or cable-lug termination (`Cl. 4.4`); aluminium terminals marked `AL` / `AL/CU` per `Annex D`. |
 | **`HR` / `VR`** | 板后水平 / 板后垂直接线 | **`Rear horizontal connection (HR)`** / **`Rear vertical connection (VR)`** | Rear flat busbar or stud connections (`HR` horizontal, `VR` vertical). |
 | **Rotatable / Spreaders** | 旋转端子 / 扩展扩散端子 | **`Rotatable terminal pads`** / **`Extended terminal spreaders`** | On-site orientation `{{terminal_rotation_deg: °}}` (state only when documented) / widened pole pitch for large cables. |
-| **Plug-in** | 插入式安装（插入式底座） | **`Plug-in circuit-breaker`** / **`Plug-in base`** | `Cl. 3.4, 4.4`; rapid replacement without disconnecting main busbars. |
-| **Withdrawable** | 抽出式安装（抽屉式底座） | **`Withdrawable circuit-breaker`** / **`Withdrawable base`** | `Cl. 3.5, 4.4, 8.1.2`; isolating contacts, position indication (`connected / test / disconnected`), and safety shutters. |
+| **Plug-in** | 插入式断路器 / 插入式底座 | **`Plug-in circuit-breaker`** / **`Plug-in base`** | `IEC 3.4, 4.4` / `GB 2.4, 3.7`; rapid replacement without disconnecting main busbars. |
+| **Withdrawable** | 抽屉式断路器 / 抽屉式底座 | **`Withdrawable circuit-breaker`** / **`Withdrawable base`** | `IEC 3.5, 4.4, 8.1.2` / `GB 2.5, 3.7, 7.1.2`; isolating contacts, position indication (`connected / test / disconnected`), and safety shutters. |
 | **Rotary Handle** | 旋转操作手柄（本体直接 / 柜门延伸） | **`Direct rotary handle`** / **`Extended door-mounted rotary handle`** | Manual rotary actuator on breaker cover or coupled through enclosure door (`{{handle_ip}}`, `Cl. 4.5`). |
-| **`MOD`** | 电动操作机构（电操） | **`Motor-operator (MOD)`** | Remote electrical closing and opening mechanism (`Cl. 4.2, Annex N`); control supply `{{Uc: V}}`. |
-| **`SHT` / `UVT`** | 分励脱扣器 / 欠电压脱扣器 | **`Shunt release (SHT)`** / **`Undervoltage release (UVT)`** | `Cl. 5.7.1, 8.2.1.2.2–8.2.1.2.3, Annex N`; control supply `{{Uc: V}}`. |
-| **`AX` / `AL`** | 辅助触头 / 报警开关 | **`Auxiliary contact (AX)`** / **`Alarm switch (AL)`** | `Cl. 5.6` main-contact status / `Cl. 3.9` automatic trip indication (`{{aux_config}}`). |
-| **Barriers / Shields** | 相间隔板 / 接线端子罩（扩展端子罩） | **`Interphase barrier`** / **`Terminal shield`** (`extended terminal shield`) | Phase-to-phase insulation / terminal IP protection `{{terminal_shield_ip}}` (`Cl. 4.5`). |
-| **Lock-out / Contact** | 挂锁装置 / 旋转双断点触头系统 | **`Padlocking device`** (`Cl. 3.10` lock-out device) / **`Rotary double-break contact system`** | Locks actuator in open (`O`) position / current-limiting electrodynamic contact architecture (`Cl. 3.3`). |
+| **`MOD`** | 电动机操作机构 | **`Motor-operator (MOD)`** | Remote electrical closing and opening mechanism (`IEC 4.2, Annex N`); control supply `{{Uc: V}}`. |
+| **`SHT` / `UVT`** | 分励脱扣器 / 欠电压脱扣器 | **`Shunt release (SHT)`** / **`Undervoltage release (UVT)`** | `IEC 5.7.1, 8.2.1.2.2–8.2.1.2.3, Annex N`; control supply `{{Uc: V}}`. |
+| **`AX` / `AL`** | 辅助触头 / 报警开关 | **`Auxiliary contact (AX)`** / **`Alarm switch (AL)`** | `IEC 5.6` main-contact status / `IEC 3.9` (`GB 2.13`) automatic trip indication (`{{aux_config}}`). |
+| **Barriers / Shields** | 相间隔板 / 接线端子罩 / 扩展端子罩 | **`Interphase barrier`** / **`Terminal shield`** (`extended terminal shield`) | Phase-to-phase insulation / terminal IP protection `{{terminal_shield_ip}}` (`Cl. 4.5`). |
+| **Lock-out / Contact** | 挂锁装置 / 旋转双断点触头系统 | **`Padlocking device`** (`IEC 3.10` / `GB 2.14` lock-out device) / **`Rotary double-break contact system`** | Locks actuator in open (`O`) position / current-limiting electrodynamic contact architecture (`Cl. 3.3`). |
 
 ---
 
 ## 4. MCCB Audit Blacklist (❌ Mode B 审查拦截与旧稿识别唯一真源)
 
-> Consulted in `Mode B` audit or `EN→ZH` legacy decoding only; mirrored programmatically by [audit_catalogue.py](../../scripts/audit_catalogue.py).
+> Consulted in `Mode B` audit or `EN→ZH` legacy decoding only; mirrored programmatically by [lint_text.py](../../scripts/lint_text.py).
 
 | ❌ Forbidden / Legacy / Non-IEC Form | Defect Category | ✅ Mandatory Single-Track Replacement |
 | :--- | :--- | :--- |

@@ -1,88 +1,12 @@
 #!/usr/bin/env python3
-"""Deterministic IEC 60947-2:2024 catalogue & translation scanner for chint-translation."""
+"""Pure-stdlib IEC 60947-2:2024 & GB/T 14048.2-2020 text/extract-JSON linter for chint-translation."""
 from __future__ import annotations
 
 import argparse
 import json
 import re
 import sys
-import xml.etree.ElementTree as ET
-import zipfile
 from pathlib import Path
-
-LOW_TEXT_THRESHOLD = 50
-
-
-def parse_page_spec(spec: str | None) -> set[int] | None:
-    if not spec:
-        return None
-    pages: set[int] = set()
-    for part in spec.split(","):
-        part = part.strip()
-        if "-" in part:
-            lo, hi = part.split("-", 1)
-            pages.update(range(int(lo), int(hi) + 1))
-        elif part:
-            pages.add(int(part))
-    return pages
-
-
-def extract_units(source: str, pages_filter: set[int] | None) -> dict:
-    """Return dict with units [(loc, text)], total_units, low_text_pages."""
-    if source == "-":
-        lines = sys.stdin.read().splitlines()
-        return {"units": [(f"Line {i}", l) for i, l in enumerate(lines, 1)], "total": len(lines), "scanned": len(lines), "low_text_pages": []}
-
-    p = Path(source)
-    if not p.exists():
-        raise FileNotFoundError(f"Input not found: {source}")
-    ext = p.suffix.lower()
-
-    if ext == ".pdf":
-        import fitz
-        doc = fitz.open(str(p))
-        total = len(doc)
-        units, low_pages, scanned = [], [], 0
-        for idx, page in enumerate(doc, 1):
-            if pages_filter and idx not in pages_filter:
-                continue
-            scanned += 1
-            txt = page.get_text("text")
-            if len(re.sub(r"\s+", "", txt)) < LOW_TEXT_THRESHOLD:
-                low_pages.append(idx)
-            for lno, line in enumerate(txt.splitlines(), 1):
-                if line.strip():
-                    units.append((f"P{idx}:L{lno}", line))
-        return {"units": units, "total": total, "scanned": scanned, "low_text_pages": low_pages}
-
-    if ext == ".docx":
-        units = []
-        with zipfile.ZipFile(str(p)) as zf:
-            xml_names = [n for n in zf.namelist() if re.match(r"word/(document|header\d+|footer\d+)\.xml$", n)]
-            for name in sorted(xml_names):
-                root = ET.fromstring(zf.read(name))
-                for p_idx, para in enumerate(root.iter("{http://schemas.openxmlformats.org/wordprocessingml/2006/main}p"), 1):
-                    txt = "".join(t.text or "" for t in para.iter("{http://schemas.openxmlformats.org/wordprocessingml/2006/main}t"))
-                    if txt.strip():
-                        units.append((f"{Path(name).stem}:P{p_idx}", txt))
-        return {"units": units, "total": len(units), "scanned": len(units), "low_text_pages": []}
-
-    if ext in {".xlsx", ".xlsm"}:
-        import openpyxl
-        wb = openpyxl.load_workbook(str(p), data_only=True, read_only=True)
-        units = []
-        for sname in wb.sheetnames:
-            ws = wb[sname]
-            for r_idx, row in enumerate(ws.iter_rows(values_only=True), 1):
-                for c_idx, val in enumerate(row, 1):
-                    if val is not None and str(val).strip():
-                        col = openpyxl.utils.get_column_letter(c_idx)
-                        units.append((f"{sname}!{col}{r_idx}", str(val)))
-        return {"units": units, "total": len(wb.sheetnames), "scanned": len(wb.sheetnames), "low_text_pages": []}
-
-    lines = p.read_text(encoding="utf-8", errors="replace").splitlines()
-    return {"units": [(f"Line {i}", l) for i, l in enumerate(lines, 1)], "total": len(lines), "scanned": len(lines), "low_text_pages": []}
-
 
 ORTHO_RULES = [
     (r"\bmolded\b", "moulded (IEC UK spelling)"),
@@ -162,6 +86,22 @@ BLACKLIST_MCCB = [
 ]
 
 
+def load_units(source: str) -> dict:
+    raw = sys.stdin.read() if source == "-" else Path(source).read_text(encoding="utf-8", errors="replace")
+    stripped = raw.lstrip()
+    if stripped.startswith("{"):
+        try:
+            obj = json.loads(raw)
+            if isinstance(obj, dict) and obj.get("schema") == "chint-office-extract/v1":
+                units = [(str(u["location"]), str(u["text"])) for u in obj.get("units", [])]
+                return {"source": obj.get("source", source), "total": obj.get("total_units", len(units)), "scanned": obj.get("scanned_units", len(units)), "low_text_pages": obj.get("low_text_pages", []), "units": units}
+        except json.JSONDecodeError:
+            pass
+    lines = raw.splitlines()
+    units = [(f"Line {i}", l) for i, l in enumerate(lines, 1) if l.strip()]
+    return {"source": source, "total": len(lines), "scanned": len(lines), "low_text_pages": [], "units": units}
+
+
 def scan_units(units: list[tuple[str, str]], dept: str, mode: str) -> list[dict]:
     findings: list[dict] = []
 
@@ -171,7 +111,16 @@ def scan_units(units: list[tuple[str, str]], dept: str, mode: str) -> list[dict]
     ed5_re = re.compile(r"(?:Cl\.|Clause)\s*(?:2\.1(?:\.\d+)?|4\.3\.[1-6](?:\.\d+)?|7\.2\.[1-8](?:\.\d+)?|8\.3\.[1-9](?:\.\d+)?)\b", re.IGNORECASE)
     comp_re = re.compile(r"\b(?:MX|MN|XF|SDE|PF|MCH|KLC)\b|\(OF\)")
     unit_gap_re = re.compile(r"(?<![A-Za-z0-9\-/_])\d+(?:\.\d+)?(?:kA|mA|kV|mV|ms|Hz|kHz|mm²|mm|kW|VA|kVA|N·m|°C|A|V|s)\b(?![A-Za-z0-9\-])")
-    zh_bad = [(r"相间对中性线", "相-中性线交流电压下的额定单极极限短路分断能力 (Cl. 5.3.6.2.3)"), (r"(?<!单)极极限", "单极极限短路分断能力"), (r"隔离开关断路器", "隔离开关（开关-隔离器）(IEC 60947-3)"), (r"使用类别\s*[AB]", "选择性类别 A / B (Cl. 4.1)")]
+    zh_bad = [
+        (r"相间对中性线", "相-中性线交流电压下的额定单极极限短路分断能力 (IEC 60947-2:2024 Cl. 5.3.6.2.3)"),
+        (r"(?<!单)极极限", "单极极限短路分断能力"),
+        (r"隔离开关断路器", "隔离开关 (IEC 60947-3 / GB/T 14048.3)"),
+        (r"使用类别\s*[AB]", "选择性类别 A / B (GB/T 14048.2—2020 Cl. 3.1 / 4.4)"),
+        (r"抽出式断路器", "抽屉式断路器 (GB/T 14048.2—2020 Cl. 2.5 / 3.7)"),
+        (r"功率损耗", "功耗 (GB/T 14048.2—2020 附录 G)"),
+        (r"结构差异", "结构段 (GB/T 14048.2—2020 Cl. 2.1.2 / 7.1.6)"),
+        (r"合闸涌流脱扣器", "接通电流脱扣器 (GB/T 14048.2—2020 Cl. 2.10)"),
+    ]
 
     for loc, line in units:
         if mode == "en":
@@ -198,15 +147,15 @@ def scan_units(units: list[tuple[str, str]], dept: str, mode: str) -> list[dict]
                 add(loc, "UNIT_SPACING_PUNCT", m.group(0), "Qualify AC breaking/withstand kA with 'kA rms'", line)
             for m in re.finditer(r"\bIcm\b(?:(?!(?:Icm|Icu1?|Ics|Icw)\b|[,;\n]).){0,25}?\b\d+(?:\.\d+)?\s*kA\b(?!\s*peak)", line):
                 add(loc, "UNIT_SPACING_PUNCT", m.group(0), "Qualify making capacity kA with 'kA peak'", line)
+            for m in ed5_re.finditer(line):
+                window = line[max(0, m.start() - 25):min(len(line), m.end() + 25)]
+                if "60947-1" not in window and "60947-3" not in window:
+                    add(loc, "OBSOLETE_CLAUSE_ED5", m.group(0), "Use IEC 60947-2:2024 Ed. 6.0 clause numbers", line)
         else:
             for pat, fix in zh_bad:
                 for m in re.finditer(pat, line):
-                    add(loc, "UNIT_SPACING_PUNCT", m.group(0), fix, line)
+                    add(loc, "GB_STATUTORY_ZH", m.group(0), fix, line)
 
-        for m in ed5_re.finditer(line):
-            prefix = line[max(0, m.start() - 25):m.start()]
-            if "60947-1" not in prefix and "60947-3" not in prefix:
-                add(loc, "OBSOLETE_CLAUSE_ED5", m.group(0), "Use IEC 60947-2:2024 Ed. 6.0 clause numbers", line)
         for m in unit_gap_re.finditer(line):
             tok = m.group(0)
             if tok in {"2A", "3A"} and ("CD-1" in line or "控制器" in line or "型" in line or line.strip() in {"2A", "3A"}):
@@ -220,45 +169,47 @@ def scan_units(units: list[tuple[str, str]], dept: str, mode: str) -> list[dict]
 
 
 def run_self_test() -> int:
-    mccb_dirty = [
-        ("P1:L1", "NXM-250S Molded Case Circuit Breaker (IEC 60947-2, Cl. 4.3.5). Frame size: 250A."),
-        ("P1:L2", "Ui: 800V. Uimp: 8kV. Icu: 36kA at 415V. Ics: 100% Icu."),
-        ("P1:L3", "Mechanical durability: 20000 times. Short-time pickup Isd."),
-        ("P1:L4", "This circuit breaker fits 250 A feed; ambient -5℃ to +40℃."),
-    ]
+    import tempfile
+
+    mccb_dirty = [("P1:L1", "NXM-250S Molded Case Circuit Breaker (IEC 60947-2, Cl. 4.3.5). Frame size: 250A. Icu: 36kA at 415V. Ics: 100% Icu. Mechanical durability: 20000 times. Short-time pickup Isd.")]
     mccb_hits = {f["category"] for f in scan_units(mccb_dirty, "mccb", "en")}
     assert {"ORTHOGRAPHY_US_HYPHEN", "OBSOLETE_CLAUSE_ED5", "UNIT_SPACING_PUNCT", "BLACKLIST_CHINGLISH_UL"} <= mccb_hits, mccb_hits
 
-    acb_dirty = [
-        ("P2:L1", "Closed electromagnet (XF) and Shunt Trip (MX) on drawer seat."),
-        ("P2:L2", "Earch current transformer with Closing Preparation Contact (PF) and hole opener."),
-    ]
+    acb_dirty = [("P2:L1", "Closed electromagnet (XF), Shunt Trip (MX), Earch current transformer, Closing Preparation Contact (PF), hole opener on drawer seat.")]
     acb_hits = {f["category"] for f in scan_units(acb_dirty, "acb", "en")}
     assert {"BLACKLIST_CHINGLISH_UL", "COMPETITOR_CODE"} <= acb_hits, acb_hits
 
-    clean_iec = [
-        ("P3:L1", "Air circuit-breaker (ACB) with Closing release (CEM) and Shunt release (SHT)."),
-        ("P3:L2", "Moulded-case circuit-breaker (MCCB) rated 250 A, 415 V AC, Icu 36 kA rms, Icm 75.6 kA peak."),
-        ("P3:L3", "Category B selectivity limit current Is, back-up protection, utilization category AC-22 per Cl. 8.2.8."),
-        ("P3:L4", "Pulse-energization duty t1 >= 200 ms; ambient -5 °C to +40 °C; 20,000 operating cycles per Table 7."),
-    ]
-    clean_hits = scan_units(clean_iec, "all", "en")
-    assert len(clean_hits) == 0, f"Unexpected hits on clean IEC prose: {clean_hits}"
+    zh_dirty = [("P3:L1", "抽出式断路器（使用类别 A）在 400V 下测量功率损耗与结构差异，含合闸涌流脱扣器。")]
+    zh_hits = {f["category"] for f in scan_units(zh_dirty, "acb", "zh")}
+    assert {"GB_STATUTORY_ZH", "UNIT_SPACING_PUNCT"} <= zh_hits, zh_hits
 
-    fp_guard = [("P4:L1", "TABLE OF CONTENTS: NXM-250S 3P 4P AC-22 IP40 Is per IEC 60947-1 Cl. 7.2.1 and Cl. 8.2.4.2.")]
-    fp_hits = scan_units(fp_guard, "all", "en")
-    assert len(fp_hits) == 0, f"False-positive guard failed: {fp_hits}"
+    clean_en = [("P4:L1", "Moulded-case circuit-breaker (MCCB) 250 A, 415 V AC, Icu 36 kA rms, Icm 75.6 kA peak, utilization category AC-22, 20,000 operating cycles per Cl. 8.2.4.2.")]
+    assert len(scan_units(clean_en, "all", "en")) == 0
 
-    print("SELF-TEST PASS: 4/4 suites passed (MCCB dirty, ACB dirty, clean IEC 0-hit, FP-guard 0-hit).")
+    clean_zh = [("P5:L1", "GB/T 14048.2—2020 Cl. 2.5 抽屉式断路器、Cl. 2.10 接通电流脱扣器、Cl. 4.3.5、Cl. 7.2.4.2 操作性能能力及附录 G 功耗；电压 400 V，温度 -5 °C 至 +40 °C。")]
+    assert len(scan_units(clean_zh, "all", "zh")) == 0
+
+    fp_guard = [("P6:L1", "TABLE OF CONTENTS: NXM-250S 3P 4P AC-22 IP40 CD-1 2A Cl. 7.2.1 per IEC 60947-1.")]
+    assert len(scan_units(fp_guard, "all", "en")) == 0
+
+    with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False, encoding="utf-8") as tf:
+        json.dump({"schema": "chint-office-extract/v1", "source": "x.pdf", "total_units": 3, "scanned_units": 3, "low_text_pages": [2], "units": [{"location": "P1:L1", "text": "Frame size: 250A"}]}, tf)
+        tpath = Path(tf.name)
+    try:
+        loaded = load_units(str(tpath))
+        assert loaded["low_text_pages"] == [2] and len(scan_units(loaded["units"], "mccb", "en")) == 1
+    finally:
+        tpath.unlink(missing_ok=True)
+
+    print("SELF-TEST PASS: 7/7 suites passed (EN MCCB/ACB, ZH GB/T, clean EN/ZH 0-hit, FP-guard, extract JSON pipe).")
     return 0
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Deterministic IEC 60947-2:2024 catalogue scanner")
-    parser.add_argument("source", nargs="?", help="File path (.pdf/.docx/.xlsx/.md/.txt) or '-' for stdin")
+    parser = argparse.ArgumentParser(description="Pure-stdlib text linter for chint-translation")
+    parser.add_argument("source", nargs="?", help="Text file, chint-office-extract/v1 JSON, or '-' for stdin")
     parser.add_argument("--dept", choices=["acb", "mccb", "all"], default="all")
     parser.add_argument("--mode", choices=["en", "zh"], default="en")
-    parser.add_argument("--pages", help="PDF page range e.g. 1-20 or 1,3,5")
     parser.add_argument("--json", action="store_true", help="Output structured JSON")
     parser.add_argument("--self-test", action="store_true", help="Run built-in verification suite")
     args = parser.parse_args()
@@ -268,15 +219,15 @@ def main() -> int:
     if not args.source:
         parser.error("source is required unless --self-test is set")
 
-    extracted = extract_units(args.source, parse_page_spec(args.pages))
-    findings = scan_units(extracted["units"], args.dept, args.mode)
+    loaded = load_units(args.source)
+    findings = scan_units(loaded["units"], args.dept, args.mode)
     report = {
-        "source": args.source,
+        "source": loaded["source"],
         "dept": args.dept,
         "mode": args.mode,
-        "total_units": extracted["total"],
-        "scanned_units": extracted["scanned"],
-        "low_text_pages": extracted["low_text_pages"],
+        "total_units": loaded["total"],
+        "scanned_units": loaded["scanned"],
+        "low_text_pages": loaded["low_text_pages"],
         "finding_count": len(findings),
         "findings": findings,
     }

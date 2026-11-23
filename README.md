@@ -11,7 +11,8 @@
 | 技能名称 | 目录路径 | 业务适用场景与核心能力 | 权威标准 / 业务系统依据 |
 |:---|:---|:---|:---|
 | **`chint-pptx`** | `skills/chint-pptx/` | **正泰企业级 PPTX 智能演示文稿生成**<br>按 2026 VI 规范生成可编辑的产品演示文稿。内容页收敛为表格契约（`ARCH_TABLE`）加三张原生图表（趋势 / 占比 / 雷达），封面与章节页继承模板版式保持原生可编辑。内置结构合规门禁、开源 OpenXML 校验、源页保真校验与渲染预览链路。 | CHINT 2026 VI 视觉规范指导手册<br>2026 年正泰 PPT 通用基础模板 |
-| **`chint-translation`** | `skills/chint-translation/` | **B2B 工业品纯 IEC 单轨翻译与样本全量审查标准（v3.1.0 · `1 + 1 + N` 部门隔离 + 确定性扫描引擎）**<br>面向框架断路器（ACB）与塑壳断路器（MCCB）及 `IEC 60947-2:2024`（Ed. 6.0）附录 A–R 特种派生型号（CBR / MRCD / CBI / ICB / 1 500 V PV DC / CBAR）。强制执行四步确定性流水线（分部门单载 → 机械扫描全量召回 → 逐页语义复核 → 勘误表与覆盖率台账交付），消除样本/说明书双轨制与北美 UL 混排，绑定正泰专属附件代号（`SHT` / `CEM` / `SPC` / `MOD` / `KL` / `DD` 等）。 | IEC 60947-2:2024 (Ed. 6.0)<br>IEC 60947-1:2020<br>GB/T 14048.2<br>正泰 NXA / NXM 本地编码规范 |
+| **`chint-translation`** | `skills/chint-translation/` | **B2B 工业品纯双标翻译与术语审核标准（v4.0.0 · 纯文本 + `1 + 1 + N` 隔离架构）**<br>英文严格锚定 `IEC 60947-2:2024`（Ed. 6.0），中文严格锚定 `GB/T 14048.2—2020` 法定词与国标条款号（零俗称括号），覆盖 ACB / MCCB 及附录 A–R（CBR / MRCD / CBI / ICB / 1 500 V PV DC / CBAR），支持正泰专属附件代号（`SHT` / `CEM` / `SPC` / `MOD` / `KL` / `DD` 等），内置纯标准库文本检查脚本与可按需挂载的区域政策 `regions/` 扩展槽；Office 文件读写与 PDF 批注通过解耦的 `chint-office-suite` 契约衔接。 | IEC 60947-2:2024 (Ed. 6.0)<br>IEC 60947-1:2020<br>GB/T 14048.2—2020 |
+| **`chint-office-suite`** | `skills/chint-office-suite/` | **正泰通用 Office 文档处理与 PDF 非破坏批注底座（v1.0.0 · 与业务技能完全解耦）**<br>面向 `.pdf` / `.docx` / `.xlsx` 样本与技术文档，提供统一结构化文本提取（`extract_doc.py` 自动识别并标记低文本量纯视觉 PDF 页）、原 PDF 精准高亮与附注另存新副本（`annotate_pdf.py` 不改动原版式、不覆盖原件），并按文件类型路由协同官方 `pdf` / `docx` / `xlsx` 通用技能与 OCR 技能。 | chint-office-extract/v1<br>chint-office-annotate/v1<br>PyMuPDF / OpenXML / openpyxl |
 | **`chint-pm-copywriter`** | `skills/chint-pm-copywriter/` | **B2B 工业品 PM 文案与汇报语法引擎**<br>向上汇报、QBR 复盘、PRD 价值主张与产品样本提炼。内置极简量化三要素、三段式负向建设性语法、黑白名单词典与出稿门禁，杜绝浮夸黑话与战役化暗喻。 | 正泰高管汇报标准<br>B2B 工业品 PM 务实文案规范 |
 | **`chint-pm-fabe`** | `skills/chint-pm-fabe/` | **产品卖点 FABE 提炼**<br>把工程参数写成一句式卖点（特征 + 量化优势 + 客户利益）。A 段支持对比型（较上一代提升 55%）与后果型（铜排用量减少 5%）两种写法；B 段收敛为成本、工时、停机、用量/占地、风险/资格五类客户指标。内置单位与术语自查、证据分场景强度（内部评审精确到源 / 对外投标文书级 / 口播给区间）。 | ACB / MCCB / ATS 技术参数表<br>IEC 60947 术语与单位规范 |
 | **`chint-brand-design`** | `skills/chint-brand-design/` | **正泰品牌资产与视觉规范系统**<br>为 PPTX、Web 前端、数据图表、HTML/PDF 报告提供自包含的品牌资产治理。内置正泰拓新体全套字体、2026 VI 配色矩阵与 Token 导出工具。具体 PPTX 生成请走 `chint-pptx`。 | CHINT 官方 2026 VI |
@@ -75,14 +76,21 @@ cp -r skills/chint-translation ~/.gemini/config/skills/
 
 ---
 
-## 📌 知识库架构说明 (`chint-translation` · v3.1.0 `1 + 1 + N` 部门隔离与确定性扫描)
+## 📌 知识库架构说明 (`chint-translation` · v4.0.0 纯文本双标 `1 + 1 + N` 架构)
 
-- `SKILL.md`（**`1` 主控四步流水线与门禁**）：作用域/部门单载 → 机械扫描全量召回 → 逐页语义复核 → 勘误表/覆盖率台账/待确认清单三段式交付。
-- `scripts/audit_catalogue.py`（**确定性样本与译稿扫描器**）：支持 `.pdf` / `.docx` / `.xlsx` / `.md` / `-`（stdin），程序化全量拦截美式拼写、无连字符词、旧版 Ed. 5.x 条款、ERP/中式英语黑名单、竞品代号（`MX`/`XF`/`PF`/`KLC`）、单位粘连、`℃`、未闭合并槽及低文本量（`<50` 字符）纯图片 PDF 页码漏检风险。
-- `references/iec_60947_2_standard.md`（**`1` 权威标准底座**）：完整锚定 `IEC 60947-2:2024`（Ed. 6.0）条款 3–9、试验程序 Seq I–VIII、附录 A–R（选择性/后备保护、CBR、相接地、铝导体、EMC、功率损耗、IT 系统、CBI、MRCD、ICB、1 500 V PV DC、CBAR）及 `IEC 60947-1:2020` 通用额定参数。
-- `references/departments/acb.md`（**`N` 框架断路器部门专属模块**）：覆盖 `NXA / NA8 / NA1` 系列脱扣器（M/A/P/H）、27 项正泰官方专属附件代号、6 类单轨原生句式、ERP/旧稿错译黑名单与部门自定义扩展表。
-- `references/departments/mccb.md`（**`N` 塑壳断路器部门专属模块**）：覆盖 `NXM / NXS / NM8 / NM5` 系列热磁/电子/单磁脱扣器、特种派生型（CBR / CBI / ICB / PV DC）、安装接线附件、错译黑名单与部门自定义扩展表。
-- `references/departments/_template.md`（**新产品线扩展模板**）：供后续 MCB、ATS、接触器等独立产品部门按统一五段式结构横向新增，严格保持单任务只加载单一部门模块。
+- `SKILL.md`（**`1` 主控四步流水线与门禁**）：双标法定词铁律（`IEC 60947-2:2024` ⟷ `GB/T 14048.2—2020`，零俗称括号）、与 `chint-office-suite` 的解耦输入/批注交接契约、文本预检、逐项复核与交付门禁。
+- `scripts/lint_text.py`（**纯标准库文本与提取载荷检查器**）：零 Office 二进制依赖，直接消费纯文本或 `chint-office-suite` 导出的 `chint-office-extract/v1` JSON（完整保留页码坐标与低文本视觉页标记）。
+- `references/iec_60947_2_standard.md`（**`1` 双标权威底座**）：精准对齐 `IEC 60947-2:2024`（Ed. 6.0 条款 3–9、附录 A–R）与 `GB/T 14048.2—2020` 法定中文及条款对照。
+- `references/departments/acb.md` / `mccb.md` / `_template.md`（**`N` 部门隔离词库**）：分别专责空气断路器与塑料外壳式断路器正泰专属附件代号、原生句式与黑名单，支持后续部门独立扩充。
+- `references/regions/_region_template.md`（**国家/区域合规隔离模板**）：预留独立 `regions/` 扩展位，仅在目标国别明确指定时按需单载。
+
+---
+
+## 📌 知识库架构说明 (`chint-office-suite` · v1.0.0 通用 Office 底座)
+
+- `SKILL.md`：`.pdf` / `.docx` / `.xlsx` 格式门禁、通用 Office 技能协同路由（`pdf` / `docx` / `xlsx` / OCR）与提取/批注工作流。
+- `scripts/extract_doc.py`：统一提取 PDF / Word / Excel / 文本并输出 `chint-office-extract/v1` JSON，自动标记 `<50` 字符低文本纯视觉 PDF 页。
+- `scripts/annotate_pdf.py`：消费任意业务技能生成的 `chint-office-annotate/v1` JSON，在原 PDF 新副本上写入精准高亮或页顶批注（零覆盖原件）。
 
 ---
 
