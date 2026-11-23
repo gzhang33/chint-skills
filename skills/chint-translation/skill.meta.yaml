@@ -1,6 +1,6 @@
 name: chint-translation
 version: 0.0.1
-description: Translate and audit CHINT ACB/MCCB specs, catalogues, and long texts against IEC 60947-2:2024 (EN) and GB/T 14048.2-2020 (ZH). Use for ZH-EN translation, EN-ZH statutory back-translation, or exhaustive error checking.
+description: Translate CHINT ACB/MCCB specs (ZH→EN IEC 60947-2:2024, EN→ZH GB/T 14048.2-2020) or audit long texts and PDF catalogues for statutory errata.
 author: CHINT Overseas PM Team
 tags:
   - translation
