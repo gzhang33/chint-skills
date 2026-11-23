@@ -1,6 +1,6 @@
 name: chint-translation
-version: 2.0.1
-description: Bidirectional (ZH↔EN) B2B industrial translation, localization, and technical-audit standard for CHINT low-voltage power distribution and industrial control apparatus — ACB, MCCB, CBR, MRCD, CBI, ICB, PV DC, CBAR, MCB/RCBO, contactors and starters, ATS, power quality (SVG/APF), sensors and electrical accessories, across datasheets, technical specifications, catalogues, and product manuals. Enforces IEC 60947-2:2024 (Edition 6.0, Clauses 3–9 & Annexes A–R) British spelling and hyphenation across both Track 1 (IEC catalogue) and Track 2 (OEM manual), isolates North American UL 489 / UL 1066 / UL 1008 terms to UL columns, and enforces an anti-Chinglish dictionary and a value-slot convention that forbids inventing or inheriting any product rating. Use this skill whenever the user asks to translate, localize, review, or audit electrical-apparatus content between Chinese and English — including English-to-Chinese back-translation and bilingual bid review — or asks why a term or number in a deliverable looks wrong, even if they do not name the skill or mention a standard.
+version: 3.0.0
+description: Pure single-track IEC 60947-2:2024 bidirectional (ZH↔EN) B2B translation, localization, and technical-audit standard for CHINT low-voltage circuit-breakers (ACB, MCCB, and Annex A–R derivatives). Enforces one canonical IEC English term per concept paired with CHINT-specific accessory codes, UK + ISO/IEC Oxford -ize orthography, an anti-Chinglish audit blacklist, a 1+1+N department-isolated loading rule, and a value-slot convention that forbids inventing any product rating. Use whenever translating, localizing, back-translating, or auditing electrical-apparatus specs, catalogues, datasheets, or manuals between Chinese and English.
 author: CHINT Overseas PM Team
 tags:
   - translation
@@ -9,12 +9,10 @@ tags:
   - iec-60947-2-2024
   - acb
   - mccb
-  - mcb
   - cbr
   - mrcd
+  - cbi
   - icb
   - pv-dc
   - cbar
-  - ats
-  - power-quality
   - catalogue

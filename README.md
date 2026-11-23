@@ -11,7 +11,7 @@
 | 技能名称 | 目录路径 | 业务适用场景与核心能力 | 权威标准 / 业务系统依据 |
 |:---|:---|:---|:---|
 | **`chint-pptx`** | `skills/chint-pptx/` | **正泰企业级 PPTX 智能演示文稿生成**<br>按 2026 VI 规范生成可编辑的产品演示文稿。内容页收敛为表格契约（`ARCH_TABLE`）加三张原生图表（趋势 / 占比 / 雷达），封面与章节页继承模板版式保持原生可编辑。内置结构合规门禁、开源 OpenXML 校验、源页保真校验与渲染预览链路。 | CHINT 2026 VI 视觉规范指导手册<br>2026 年正泰 PPT 通用基础模板 |
-| **`chint-translation`** | `skills/chint-translation/` | **B2B 工业品翻译与本地化标准（v2.0.0）**<br>覆盖「三断一接」（ACB / MCCB / MCB / 接触器）、IEC 60947-2:2024 (Ed. 6.0) 附录 A–R 特种断路器（CBR / MRCD / CBI / ICB / PV DC / CBAR）、双电源（ATS）、电能质量（SVG / APF）、传感器与继电器。双轨均强制执行 IEC 60947-2:2024 英式拼写与连字符规范，UL 美式术语严格隔离至北美专栏，内置防呆禁忌词库与统一 JSON 术语主数据。 | IEC 60947-2:2024 (Ed. 6.0)<br>IEC 60947 / 60898 / 61000<br>GB/T 14048.2<br>UL 489 / 1066 / 1008 |
+| **`chint-translation`** | `skills/chint-translation/` | **B2B 工业品纯 IEC 单轨翻译与技术审查标准（v3.0.0 · `1 + 1 + N` 部门隔离架构）**<br>面向框架断路器（ACB）与塑壳断路器（MCCB）及 `IEC 60947-2:2024`（Ed. 6.0）附录 A–R 特种派生型号（CBR / MRCD / CBI / ICB / 1 500 V PV DC / CBAR）。彻底取消样本/说明书双轨制与北美 UL 混排，强制执行「一词一译 + 正泰专属附件代号（`SHT` / `CEM` / `SPC` / `MOD` / `KL` / `DD` 等）」，按 `1` 主控 SOP + `1` 标准底座 + `N` 独立产品部门模块按需单载，内置防呆审查黑名单与部门自定义扩展表。 | IEC 60947-2:2024 (Ed. 6.0)<br>IEC 60947-1:2020<br>GB/T 14048.2<br>正泰 NXA / NXM 本地编码规范 |
 | **`chint-pm-copywriter`** | `skills/chint-pm-copywriter/` | **B2B 工业品 PM 文案与汇报语法引擎**<br>向上汇报、QBR 复盘、PRD 价值主张与产品样本提炼。内置极简量化三要素、三段式负向建设性语法、黑白名单词典与出稿门禁，杜绝浮夸黑话与战役化暗喻。 | 正泰高管汇报标准<br>B2B 工业品 PM 务实文案规范 |
 | **`chint-pm-fabe`** | `skills/chint-pm-fabe/` | **产品卖点 FABE 提炼**<br>把工程参数写成一句式卖点（特征 + 量化优势 + 客户利益）。A 段支持对比型（较上一代提升 55%）与后果型（铜排用量减少 5%）两种写法；B 段收敛为成本、工时、停机、用量/占地、风险/资格五类客户指标。内置单位与术语自查、证据分场景强度（内部评审精确到源 / 对外投标文书级 / 口播给区间）。 | ACB / MCCB / ATS 技术参数表<br>IEC 60947 术语与单位规范 |
 | **`chint-brand-design`** | `skills/chint-brand-design/` | **正泰品牌资产与视觉规范系统**<br>为 PPTX、Web 前端、数据图表、HTML/PDF 报告提供自包含的品牌资产治理。内置正泰拓新体全套字体、2026 VI 配色矩阵与 Token 导出工具。具体 PPTX 生成请走 `chint-pptx`。 | CHINT 官方 2026 VI |
@@ -75,20 +75,13 @@ cp -r skills/chint-translation ~/.gemini/config/skills/
 
 ---
 
-## 📌 知识库架构说明 (`chint-translation`)
+## 📌 知识库架构说明 (`chint-translation` · `1 + 1 + N` 部门隔离架构)
 
-- `references/01_universal_iec_parameters.md`：通用 IEC 电气参数定义（$U_e, U_i, U_{imp}, I_n, I_{cu}, I_{cs}, I_{cw}, I_{cm}$, Cat B 等）。
-- `references/02_acb_trip_units_and_protection.md`：脱扣器型号与保护曲线（M/A/P/H 型、L/S/I/G/N 保护、ZSI、MCR、热记忆等）。
-- `references/03_acb_accessories_and_mechanisms.md`：内外部附件与机构（SHT、UVR、CC/CEM、M/MOE、AX、AL、RTC、钥匙锁等）。
-- `references/04_universal_wiring_and_contact_logic.md`：接线与触点逻辑的通用表述。
-- `references/05_universal_safety_imperatives.md`：安全提示与警示语的标准译法。
-- `references/06_universal_technical_headings_and_claims.md`：样本册标准栏目标题与产品亮点宣传统一表达。
-- `references/07_universal_anti_chinglish.md`：中式英语防呆规则与常见错译拦截。
-- `references/08_mccb_taxonomy_and_releases.md`：塑壳断路器分类与脱扣单元系列，完整覆盖 IEC 60947-2:2024 (Ed. 6.0) 条款 3–9 及附录 A–R（CBR、MRCD、CBI、ICB、1 500 V PV DC、CBAR、铝导体、EMC、功率损耗、IT/相接地试验）。
-- `references/09_mcb_rcbo_curves_and_accessories.md`：微型断路器 / 漏电保护器的脱扣曲线与附件。
-- `references/10_ats_classes_and_controllers.md`：双电源转换开关的类别与控制器。
-- `references/11_power_quality_and_contactors.md`：电能质量装置（SVG / APF）与接触器术语。
-- `references/iec60947_2_terminology_master.json`：统一 IEC 60947-2:2024 (Ed. 6.0) 结构化术语主数据（涵盖 ACB、MCCB、条款 3–9 与附录 A–R），支持程序化检索与双轨英式拼写校验。
+- `SKILL.md`（**`1` 主控路由与出稿门禁**）：纯 IEC 单轨铁律、正泰专属代号规范、值槽防编造规则、双向（ZH↔EN）与双模式（直译 / 审查）SOP 及交付前核验清单。
+- `references/iec_60947_2_standard.md`（**`1` 权威标准底座**）：完整锚定 `IEC 60947-2:2024`（Ed. 6.0）条款 3–9、试验程序 Seq I–VIII、附录 A–R（选择性/后备保护、CBR、相接地、铝导体、EMC、功率损耗、IT 系统、CBI、MRCD、ICB、1 500 V PV DC、CBAR）及 `IEC 60947-1:2020` 通用额定参数。
+- `references/departments/acb.md`（**`N` 框架断路器部门专属模块**）：覆盖 `NXA / NA8 / NA1` 系列脱扣器（M/A/P/H）、24+ 项正泰官方专属附件代号（`SHT / CEM / UVT / UVTR / UVTZ / MOD / AX / AL / SPC / PSID / AUP / DSPL / KL / VBP / SDIL / PDIL / MI / DD / FD / EB / TSC / CDM / RU / PSU / CTN / ECT / RCT`）、单轨原生句式、ERP/旧稿错译黑名单与部门自定义扩展表。
+- `references/departments/mccb.md`（**`N` 塑壳断路器部门专属模块**）：覆盖 `NXM / NXS / NM8 / NM5` 系列热磁/电子/单磁脱扣器、特种派生型（CBR / CBI / ICB / PV DC）、安装接线附件、错译黑名单与部门自定义扩展表。
+- `references/departments/_template.md`（**新产品线扩展模板**）：供后续 MCB、ATS、接触器等独立产品部门按统一五段式结构横向新增，严格保持单任务只加载单一部门模块。
 
 ---
 

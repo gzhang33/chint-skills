@@ -1,213 +1,116 @@
 {
   "skill_name": "chint-translation",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "evals": [
     {
       "id": 0,
-      "name": "acb-accessory-catalog-translation",
-      "prompt": "请把以下框架断路器（ACB）附件样本描述翻译成英文，用于面向海外经销商的 IEC 国际通用样本册（Track 1 样本语体，非产品说明书语体），并附简短术语与数值处理说明：\n\n「分励脱扣器：用于远程分断断路器，工作电压范围 70%~110% 额定控制电源电压，动作时间不大于 50ms。闭合电磁铁与分励脱扣器均属于脉冲通电工作制，必须保证脉冲时间 t1 不小于 200ms，通电间隔 t2 大于 15s。断路器本体钥匙锁：3 把锁 2 把钥匙配置；现场安装需使用开孔器在柜门开孔，孔径 Φ28mm。」",
-      "expected_output": "Track 1 IEC 60947-2:2024 catalogue-register English translation with British hyphenation (circuit-breaker, energization/energized), Track 1 accessory terms (Shunt release, Closing release, ACB Key Lock (KLC), panel hole saw), asymmetric t1/t2 bounds, half-width unit spacing, and explicit non-fabrication of rated control supply voltage.",
+      "name": "acb-chint-accessory-single-track",
+      "prompt": "请把以下框架断路器（ACB）附件说明翻译成英文（严格遵循 IEC 60947-2:2024 纯单轨规范与正泰官方附件代号，不区分样本与说明书两套词），并附简短术语与数值处理说明：\n\n「分励脱扣器：用于远程分断断路器，工作电压范围 70%~110% 额定控制电源电压，动作时间不大于 50ms。闭合电磁铁与分励脱扣器均属于脉冲通电工作制，必须保证脉冲时间 t1 不小于 200ms，通电间隔 t2 大于 15s。合闸准备就绪触点用于指示断路器处于分闸、弹簧已储能且无合闸闭锁状态。断路器本体钥匙锁：3 把锁 2 把钥匙配置；现场安装需使用开孔器在柜门开孔，孔径 Φ28mm；主回路端子间配抽屉式相间隔板。」",
+      "expected_output": "Pure single-track IEC 60947-2:2024 English translation with CHINT exclusive accessory codes — Shunt release (SHT), Closing release (CEM), Ready-to-close contact (SPC), Key lock (KL), Withdrawable interphase barrier (DD) — UK + Oxford -ize orthography (circuit-breaker, pulse-energization duty), panel hole saw, asymmetric t1/t2 bounds, half-width unit spacing, and explicit non-fabrication of Uc.",
       "files": [],
       "assertions": [
         {
           "id": "a1",
-          "text": "主术语用 Shunt release（含大小写变体 Shunt Release），不以北美 Shunt trip 或禁用 shunt opening release / Excitation release 作为主术语"
+          "text": "全部附件采用「IEC 唯一标准词 + 正泰专属代号」：Shunt release (SHT)、Closing release (CEM)、Ready-to-close contact (SPC)、Key lock (KL)、Withdrawable interphase barrier (DD)，严禁出现竞品代号（MX / XF / PF / KLC）或北美 Shunt Trip"
         },
         {
           "id": "a2",
-          "text": "闭合电磁铁用 Track 1 样本语体 Closing release（可括注 closing coil），不用 Track 2 Closed electromagnet 或禁用 Closing electromagnet / Close electromagnet"
+          "text": "严禁输出 ERP/旧说明书错译：无 Closed electromagnet、Closing Preparation Contact、Draw-out Type Interphased Partition、Body key lock、hole opener（开孔工具须译为 panel hole saw）"
         },
         {
           "id": "a3",
-          "text": "钥匙锁用 Track 1 样本语体 ACB Key Lock (KLC)（或 ACB Key Lock / Circuit-breaker key lock），不用 Track 2 Keys and locks (KL) 或直译 Body key lock"
+          "text": "严格遵循 IEC 60947-2:2024 英式与 ISO/IEC -ize 拼写：连字符 circuit-breaker、lock-out，通电工作制采用 pulse-energization duty / pulse-energized（非 belong to the pulse energization working mode 或 energis*）"
         },
         {
           "id": "a4",
-          "text": "开孔工具用样本语体 hole saw / panel hole saw 或 hole punch，不用说明书语体 hole opener"
+          "text": "保留 t1 用不小于/≥（at least 200 ms / not less than 200 ms / ≥ 200 ms）与 t2 用大于/>（exceed 15 s / greater than 15 s / > 15 s）的不对称边界"
         },
         {
           "id": "a5",
-          "text": "遵循 IEC 60947-2:2024 英式拼写与连字符规范：正文统一使用连字符 circuit-breaker（非无连字符 circuit breaker），且通电用词采用 -ize 拼写（pulse-energized / pulse energization，非 energis*）"
-        },
-        {
-          "id": "a6",
-          "text": "保留 t1 用不小于/≥（not less than 200 ms / ≥ 200 ms）与 t2 用大于/>（greater than 15 s / more than 15 s / > 15 s）的不对称边界，未统一为同一个符号"
-        },
-        {
-          "id": "a7",
-          "text": "数字与单位之间严格有单个半角空格（50 ms / 200 ms / 15 s / 28 mm），无粘连写法"
-        },
-        {
-          "id": "a8",
-          "text": "显式说明原文未提供额定控制电源电压的具体电压值，未编造任何电压数值"
+          "text": "数字与单位之间严格保留单个半角空格（50 ms / 200 ms / 15 s / 28 mm），且显式说明原文未提供额定控制电路电源电压 Uc 的具体数值，零编造"
         }
       ]
     },
     {
       "id": 1,
       "name": "mccb-datasheet-audit",
-      "prompt": "请按 IEC 60947-2:2024（海外 IEC 样本册口径）对以下英文塑壳断路器规格书初稿执行 Mode B 翻译与术语审查（仅输出审查报告与修改建议，不代填未提供的参数）。另外同事评审时提出 `Frame size: 250A` 写法有误、必须改成 `Frame current Inm`，请结合 IEC 60947-2:2024 原文一并核实。\n\n待审查初稿：\n\"NXM-250S Molded Case Circuit Breaker (IEC 60947-2).\nFrame size: 250A.\nRated insulation voltage Ui: 800V.\nRated impulse withstand voltage Uimp: 8kV.\nUltimate breaking capacity Icu: 36kA at 415V.\nService breaking capacity Ics: 100% Icu.\nMechanical durability: 20000 times.\nElectrical durability: 8000 times.\nOverload setting Ir: 0.7~1.0In. Short-time pickup Isd: 2~10Ir. Instantaneous pickup Ii: 5~10In.\nThis circuit breaker is suitable for distribution protection.\"",
-      "expected_output": "Mode B audit report validating Frame size: 250 A per IEC 60947-2:2024 Cl. 3.1.1 (while clarifying Inm is GB/T 14048.2), flagging durability -> operational performance / operating cycles / endurance, flagging times -> operating cycles/operations, flagging US spelling Molded Case Circuit Breaker & unhyphenated circuit breaker, flagging kA rms, unscoped 100% Icu, unit spacing, unverified ratings, and missing mandatory fields.",
+      "prompt": "请按 IEC 60947-2:2024 纯单轨规范对以下英文塑壳断路器规格书初稿执行 Mode B 技术与翻译审查（仅输出审查报告与修改建议，不代填未提供的参数）。另外同事评审时提出 `Frame size: 250A` 写法有误、必须改成 `Frame current Inm`，请结合 IEC 60947-2:2024 原文一并核实。\n\n待审查初稿：\n\"NXM-250S Molded Case Circuit Breaker (IEC 60947-2).\nFrame size: 250A.\nRated insulation voltage Ui: 800V.\nRated impulse withstand voltage Uimp: 8kV.\nUltimate breaking capacity Icu: 36kA at 415V.\nService breaking capacity Ics: 100% Icu.\nMechanical durability: 20000 times.\nElectrical durability: 8000 times.\nOverload setting Ir: 0.7~1.0In. Short-time pickup Isd: 2~10Ir. Instantaneous pickup Ii: 5~10In.\nThis circuit breaker is suitable for distribution protection.\"",
+      "expected_output": "Mode B audit report validating Frame size: 250 A per IEC 60947-2:2024 Cl. 3.1.1 (clarifying Inm is GB/T 14048.2), flagging durability -> operational performance / operating cycles / endurance, times -> operating cycles, US Molded Case Circuit Breaker & unhyphenated circuit breaker & pickup, missing kA rms, unscoped 100% Icu, unit spacing, unverified ratings, and missing mandatory fields.",
       "files": [],
       "assertions": [
         {
           "id": "b1",
-          "text": "明确判定 Frame size: 250 A（修正空格后）在 IEC 60947-2:2024（Cl. 3.1.1）中合法有效，不应改为 Inm，并说明 Inm 属 GB/T 14048.2 国内约定符号（IEC 60947-2 中未出现）"
+          "text": "明确判定 Frame size: 250 A（修正空格后）符合 IEC 60947-2:2024 Cl. 3.1.1（Note 1 明文规定以安培表示），不应改为 Inm，并说明 Inm 属 GB/T 14048.2 国内符号（IEC 60947-2 中 0 次出现）"
         },
         {
           "id": "b2",
-          "text": "指出 Mechanical durability / Electrical durability 中的 durability 不属于 IEC 60947-2:2024 术语（0 次出现），应改为 operational performance / operating cycles（Cl. 8.2.4.2 & Table 7）或 endurance（Annex M / R）"
+          "text": "指出 durability 在 IEC 60947-2:2024 中 0 次出现，应改为 operational performance without/with current（Cl. 8.2.4.2 & Table 7）或 endurance（Annex B/M/R），且 times 应改为 operating cycles"
         },
         {
           "id": "b3",
-          "text": "指出 times 为直译错误，应改为 operating cycles / operations / cycles"
+          "text": "拦截美式与无连字符拼写：Molded Case Circuit Breaker → Moulded-case circuit-breaker，circuit breaker → circuit-breaker，pickup → pick-up"
         },
         {
           "id": "b4",
-          "text": "指出 IEC 语境下美式拼写 Molded Case Circuit Breaker 与无连字符 circuit breaker 不合规，应改为英式连字符 moulded-case circuit-breaker 与 circuit-breaker（美式仅限北美 UL 489 语境）"
+          "text": "指出 Icu 单位缺有效值限定（应为 kA rms）、100% Icu 缺试验电压/范围限定（及 % of Icu 规范写法），以及 250A / 800V / 8kV / 36kA / 415V 缺少半角空格"
         },
         {
           "id": "b5",
-          "text": "指出 Icu 单位仅写 kA 缺少有效值限定，应写为 kA rms（并注明交流电压类型或频率）"
-        },
-        {
-          "id": "b6",
-          "text": "指出 100% Icu 缺少范围限定/试验电压核对（及 of Icu 规范写法），需按对应型号数据表核实"
-        },
-        {
-          "id": "b7",
-          "text": "指出数值与单位之间缺半角空格（250A / 800V / 8kV / 36kA / 415V）"
-        },
-        {
-          "id": "b8",
-          "text": "明确声明初稿中所有数值未经产品数据表核实，不代填、不背书"
-        },
-        {
-          "id": "b9",
-          "text": "指出缺失必备字段（如 Ue / In / Icm / Icw / tsd / 选择性类别 A 或 B / 脱扣器类型中的至少两项）"
+          "text": "明确声明初稿中所有数值未经产品数据表核实（不代填、不背书），并指出缺失必备字段（如 Ue / In / Icm / Icw / tsd / 选择性类别 A 或 B）"
         }
       ]
     },
     {
       "id": 2,
-      "name": "ats-manual-translation-track2",
-      "prompt": "请将以下 NZ7 系列双电源自动转换开关（ATS）产品安装与使用说明书节选翻译成英文（企业官方产品说明书语体 Track 2，非对外样本册语体），并附简短术语与数值说明：\n\n「4.3 转换方式\n本产品支持先断后通（BBM）和先通后断（MBB）两种转换方式。闭路转换时，两路电源短时并列时间不超过 100ms。转换动作时间不大于 1.5s，恢复转换延时可在 0~180s 范围内整定。\n\n4.4 机械联锁\n机械联锁机构应保证两路电源不能同时合闸。」",
-      "expected_output": "Track 2 OEM manual register English translation of NZ7 ATS excerpt using Open Transition (BBM), Closed Transition (MBB), shall, return transfer delay, half-width unit spacing, and explicit caveat that timing figures are unverified against a datasheet.",
+      "name": "en-to-zh-datasheet-backtranslation",
+      "prompt": "请将以下 NXM-250S 英文数据表初稿反译为中文，供国内技术部评审，并附术语对照与待确认问题说明：\n\n\"NXM-250S Moulded-Case Circuit-Breaker (IEC 60947-2:2024)\n- Rated insulation voltage Ui: 800 V AC\n- Rated impulse withstand voltage Uimp: 8 kV\n- Rated operational voltage Ue: 415 V AC, 50/60 Hz\n- Frame size: 250 A; Rated current In: 250 A\n- Rated ultimate short-circuit breaking capacity Icu: 36 kA rms at 415 V AC\n- Rated individual pole ultimate short-circuit breaking capacity at phase-to-neutral AC voltage Icu1: 18 kA rms\n- Rated service short-circuit breaking capacity Ics: 36 kA rms at 415 V AC (100% of Icu)\n- Rated short-circuit making capacity Icm: 72 kA peak\n- Selectivity category: A\n- Operational performance without current: 20,000 operating cycles\n- Operational performance with current: 8,000 operating cycles at 415 V AC\n- Overload current setting Ir: 0.7 to 1.0 × In\n- Short-time pick-up current setting Isd: 2 to 10 × Ir\n- Instantaneous short-circuit current setting Ii: 5 to 10 × In\"",
+      "expected_output": "Chinese EN->ZH back-translation landing on canonical GB/T 14048.2 Chinese terms (塑壳断路器, 额定冲击耐受电压, 额定运行短路分断能力, 相-中性线交流电压下的额定单极极限短路分断能力 Icu1, 选择性类别), preserving half-width units (kA rms, kA peak, V AC), flagging Selectivity category A vs Isd contradiction per Cl. 5.4, and not fabricating Icw.",
       "files": [],
       "assertions": [
         {
           "id": "c1",
-          "text": "用 Open Transition (Break-Before-Make, BBM) / Open Transition (BBM) 与 Closed Transition (Make-Before-Break, MBB) / Closed Transition (MBB)，缩写 BBM/MBB 原样保留不译"
+          "text": "交付物正文为中文，Moulded-Case Circuit-Breaker 译为「塑壳断路器」，Rated impulse withstand voltage 译为「额定冲击耐受电压」，service 译为「运行」"
         },
         {
           "id": "c2",
-          "text": "规范性动词「应」译为 shall（如 shall ensure），不用 should 或 must"
+          "text": "Selectivity category 译为「选择性类别」（不误译为使用类别），Icu1 准确译为「相-中性线交流电压下的额定单极极限短路分断能力」（无「相间对中性线」或「极极限」病句）"
         },
         {
           "id": "c3",
-          "text": "「恢复转换延时」译为 return transfer delay（可附 RTD），不用笼统 time delay"
+          "text": "保留半角单位符号 kA rms / kA peak / V AC 与全部原始数值，未改写或换算"
         },
         {
           "id": "c4",
-          "text": "保留 100 ms / 1.5 s / 0 to 180 s（或 0–180 s），但明确标注这些时间参数未经对应型号数据表核实（IEC 60947-6-1 只定类别不定时间）"
-        },
-        {
-          "id": "c5",
-          "text": "保持 Track 2 说明书语体（完整规范性条款句式，未混入 Track 1 样本册营销压缩话术）"
-        },
-        {
-          "id": "c6",
-          "text": "数字与单位之间严格有单个半角空格（100 ms / 1.5 s / 180 s），且正文无残留中文全角标点"
+          "text": "准确指出源文内部技术矛盾：选择性类别 A 与给出短延时起动电流整定值 Isd 冲突（Cl. 5.4 要求 Category B 并声明 Icw），且未擅自编造缺失的 Icw 数值"
         }
       ]
     },
     {
       "id": 3,
-      "name": "en-to-zh-datasheet-backtranslation",
-      "prompt": "请将以下 NXM-250S 英文数据表初稿反译为中文，供国内技术部评审，并附术语对照与待确认问题说明：\n\n\"NXM-250S Moulded-Case Circuit-Breaker (IEC 60947-2:2024)\n- Rated insulation voltage Ui: 800 V AC\n- Rated impulse withstand voltage Uimp: 8 kV\n- Rated operational voltage Ue: 415 V AC, 50/60 Hz\n- Frame size: 250 A; Rated current In: 250 A\n- Rated ultimate short-circuit breaking capacity Icu: 36 kA rms at 415 V AC\n- Rated individual pole ultimate short-circuit breaking capacity at phase-to-neutral AC voltage Icu1: 18 kA rms\n- Rated service short-circuit breaking capacity Ics: 36 kA rms at 415 V AC (100% Icu)\n- Rated short-circuit making capacity Icm: 72 kA peak\n- Selectivity category: A\n- Operational performance without current: 20,000 operating cycles\n- Operational performance with current: 8,000 operating cycles at 415 V AC\n- Overload current setting Ir: 0.7 to 1.0 × In\n- Short-time pick-up current setting Isd: 2 to 10 × Ir\n- Instantaneous short-circuit current setting Ii: 5 to 10 × In\n\nNote: Availability of the short-time pick-up setting (Isd) requires selectivity category B with a declared rated short-time withstand current Icw. Category A circuit-breakers do not provide intentional short-time delay per Cl. 5.3.6.4.\"",
-      "expected_output": "Chinese EN->ZH back-translation with Chinese body/notes, accurate standard Chinese terms (塑壳断路器, 额定冲击耐受电压, 额定运行短路分断能力, 选择性类别, Icu1), verbatim units and ratings, flagging of Selectivity category A vs Isd contradiction and missing Icw without inventing values, and full-width Chinese punctuation with half-width units.",
+      "name": "mccb-iec60947-2-2024-annexes",
+      "prompt": "请把以下塑壳断路器（MCCB）及特种派生系列技术规格说明按纯单轨 IEC 60947-2:2024 规范翻译成英文，为每项核心特性标注准确的 IEC 60947-2:2024（第 6 版）条款号与标准符号，并附简短标准依据说明（未给出的额定值不得编造）：\n\n「本系列塑壳断路器（含抽出式安装型）按 IEC 60947-2:2024 设计，支持连接铝导体接线端子（适用于未经预处理的圆铝导线），可匹配外部继电器构成使用类别为 AC-22 的不满足过电流保护要求的断路器派生型号（CBI）。\n1. 剩余电流保护派生型（CBR）：提供 B 型剩余电流保护，涵盖额定剩余动作电流 IΔn 与额定剩余短路接通和分断能力 IΔm；若带试验装置按钮 T，按钮颜色不得为红色或绿色。\n2. IT 系统适用型：按 IT 系统单极短路试验程序验证，标注符号 I_IT；不适用的电压等级须标示带叉 IT 符号。\n3. 光伏直流派生型：专用于光伏直流回路，最高适用标准上限为 1500V DC，支持正向与反向电流无极性分断，并执行临界直流负载电流试验程序。\n4. 上下级选择性与后备保护配合：提供选择性极限电流 Is 曲线，并与上游短路保护电器配合给出交接电流 IB。」",
+      "expected_output": "Pure single-track IEC 60947-2:2024 English translation covering Annexes A, B, D, H, L, P with UK + Oxford -ize orthography (moulded-case circuit-breaker, withdrawable, aluminium, colour, utilization category AC-22 per L.4.1), verified Ed. 6.0 clause citations only, proper unit spacing (1 500 V DC), and zero invented ratings.",
       "files": [],
       "assertions": [
         {
           "id": "d1",
-          "text": "交付物正文为中文（EN→ZH 方向），英文仅出现在术语对照表源语列或引用原文处，标题/说明/待确认清单均为中文"
+          "text": "严格遵循 IEC 60947-2:2024 拼写规范：moulded-case circuit-breaker、withdrawable、aluminium、colour，且 L.4.1 使用类别拼写为 utilization category AC-22（ISO/IEC Oxford -ize）"
         },
         {
           "id": "d2",
-          "text": "Moulded-Case Circuit-Breaker 译为「塑壳断路器」，未直译为「模制外壳断路器」或「塑料外壳断路器」"
+          "text": "准确输出 Annex B（CBR、Type B、IΔn、IΔm、test device T colour not red or green）与 Annex H（IT systems、I_IT、crossed-out IT symbol IEC 60417-6363）"
         },
         {
           "id": "d3",
-          "text": "Rated impulse withstand voltage 译为「额定冲击耐受电压」（用「冲击」不用「脉冲」）"
+          "text": "准确输出 Annex P（DC circuit-breaker for use in photovoltaic (PV) applications / PV circuit-breaker、1 500 V DC、forward and reverse currents P.7.2、critical DC load current Test Sequence VII / Cl. 9.3.10 / P.8.3.9）"
         },
         {
           "id": "d4",
-          "text": "Rated service short-circuit breaking capacity 中的 service 译为「运行」（额定运行短路分断能力），不译「服务」"
+          "text": "准确输出 Cl. 8.2.8 & Annex A（Coordination、selectivity、selectivity limit current Is、back-up protection、take-over current IB）、Annex D（aluminium conductors / unprepared round aluminium conductors D.8.5）及 Annex L（CBI）"
         },
         {
           "id": "d5",
-          "text": "Selectivity category 译为「选择性类别」（不误译为「使用类别」或「区分/歧视类别」），且准确译出 Icu1（相间对中性线交流电压下极极限短路分断能力 / 单极极限短路分断能力）并保留 Icu1 符号"
-        },
-        {
-          "id": "d6",
-          "text": "单位符号保留原文 kA rms / kA peak / V AC，未改写成「有效值」「峰值」「交流」"
-        },
-        {
-          "id": "d7",
-          "text": "所有数值照抄未换算（800 V、8 kV、250 A、36 kA rms、18 kA rms、72 kA peak、20,000、8,000）"
-        },
-        {
-          "id": "d8",
-          "text": "指出源文内部矛盾：选择性类别 A 与给出 Isd（2～10 × Ir）短延时整定不能同时成立，且未擅自删除或改写参数"
-        },
-        {
-          "id": "d9",
-          "text": "未补造源文缺失的 Icw 数值，并在待确认清单中明确指出 Icw 缺失"
-        },
-        {
-          "id": "d10",
-          "text": "中文正文使用全角标点，参数符号/数值/单位内保持半角且数值与单位之间有单个半角空格"
-        }
-      ]
-    },
-    {
-      "id": 4,
-      "name": "mccb-iec60947-2-2024-annexes-translation",
-      "prompt": "请把以下塑壳断路器（MCCB）及特种派生系列技术规格说明翻译成英文（IEC 60947-2:2024 国际样本册语体 Track 1），并为每项核心技术特性标注对应的 IEC 60947-2:2024（第 6 版）准确条款号及标准符号；同时附简短术语与标准依据说明（未在原文中给出的额定参数不得自行编造）：\n\n「本系列塑壳断路器（含抽出式安装型）按 IEC 60947-2:2024 设计，支持连接铝导体接线端子（适用于未经预处理的圆铝导线），可匹配外部继电器构成使用类别为 AC-22 的无过电流保护派生型号（CBI）。\n1. 剩余电流保护派生型（CBR）：提供 B 型剩余电流保护，涵盖额定剩余动作电流 IΔn 与额定剩余短路接通和分断能力 IΔm；若带测试按钮 T，按钮颜色不得为红色或绿色。\n2. IT 系统适用型：按 IT 系统单极短路试验程序验证，标注 IT 系统单极短路电流符号 I_IT；不适用的电压等级须标示带叉 IT 符号。\n3. 光伏直流派生型：专用于光伏直流回路，最高适用标准上限为 1500V DC，支持正向与反向电流无极性分断，并执行临界直流负载电流试验程序。\n4. 上下级选择性与后备保护配合：提供选择性极限电流 Is 曲线，并与上游熔断器或后备保护电器配合给出交接电流 IB。」",
-      "expected_output": "Track 1 IEC 60947-2:2024 English translation covering Annex B (CBR Type B, IΔn, IΔm, test device T colour), Annex H (IT system I_IT, crossed-out IT), Annex P (PV DC circuit-breaker up to 1 500 V DC, forward/reverse, critical DC load current Seq VII), Annex A (selectivity Is, back-up protection, take-over current IB), Annex D (aluminium conductors), Annex L (CBI, utilisation category AC-22), strict IEC British spelling, verified 2024 Ed. 6.0 clause numbers only, proper unit spacing, and zero invented ratings.",
-      "files": [],
-      "assertions": [
-        {
-          "id": "e1",
-          "text": "严格遵循 IEC 60947-2:2024 拼写与连字符规范：正文全部使用 moulded-case circuit-breaker / circuit-breaker（无未连字符 circuit breaker 或美式 molded）、withdrawable（非 drawer）、aluminium（非 aluminum）、utilization（符合 L.4.1 原文，非强行改成 utilisation）及 colour（非 color）"
-        },
-        {
-          "id": "e2",
-          "text": "准确译出 Annex B（CBR）术语与符号：circuit-breaker incorporating residual current protection (CBR)、Type B、rated residual operating current（IΔn）与 rated residual short-circuit making and breaking capacity（IΔm），未误译为 ELCB / RCCB / leakage breaker"
-        },
-        {
-          "id": "e3",
-          "text": "准确译出 Annex H（IT 系统）术语与符号：引用 Annex H、IT systems、I_IT（或 IIT），并译出不适用电压标示带叉 IT 符号（crossed-out IT）"
-        },
-        {
-          "id": "e4",
-          "text": "准确译出 Annex P（光伏直流）术语与规则：使用 DC circuit-breaker for use in photovoltaic (PV) applications（或 PV circuit-breaker / PV DC circuit-breaker，不用 solar DC breaker），引用 Annex P（含 P.1/P.5/P.7.2/P.8.3.9 等），译出双向（forward and reverse）分断及 critical DC load current（Test Sequence VII / 9.3.10 / P.8.3.9）"
-        },
-        {
-          "id": "e5",
-          "text": "准确译出 Annex A 上下级配合术语与符号：使用 selectivity（禁用 discrimination）、selectivity limit current（Is）、连字符 back-up protection（禁用 backup）与 take-over current（IB，禁用 transfer current / handover current）"
-        },
-        {
-          "id": "e6",
-          "text": "准确译出 Annex D（aluminium conductors / unprepared round aluminium conductors，D.8.5）与 Annex L（CBI / circuit-breaker not fulfilling the requirements for overcurrent protection，utilization category AC-22，L.4.1）"
-        },
-        {
-          "id": "e7",
-          "text": "所引用的 IEC 60947-2:2024 条款号全部为 2024 第 6 版有效条款（如 Cl. 3.5/4.4/8.1.2/8.2.7/8.2.8/9.3.8/9.3.10 及 Annex A/B/D/H/L/P 子条款），未混入作废的 Ed. 5.x 旧编号（如 Cl. 2.x、Cl. 4.3.x、Cl. 7.2.x、Cl. 8.3.x）"
-        },
-        {
-          "id": "e8",
-          "text": "数值与单位之间保留单个半角空格（1 500 V DC 或 1500 V DC，无 1500V 粘连），且未为原文未提供的产品参数（如 IΔn、IΔm、I_IT、Is、IB）编造具体额定数值"
+          "text": "引用的条款号全部属于 IEC 60947-2:2024 第 6 版有效条款（零 Ed. 5.x 旧编号如 Cl. 2.x / 4.3.x / 7.2.x），且未编造任何产品额定值"
         }
       ]
     }
