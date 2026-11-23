@@ -1,8 +1,8 @@
 {
   "_meta": {
-    "schema_version": "2.0.0",
+    "schema_version": "2.0.1",
     "standard_ssot": "IEC 60947-2:2024 (Edition 6.0, 2024-09)",
-    "spelling_policy": "Strict IEC 60947-2:2024 British/IEC spelling and hyphenation across Track 1 (catalog) and Track 2 (OEM manual); US spelling restricted exclusively to ul_us_term and explicit forbidden examples.",
+    "spelling_policy": "Strict IEC 60947-2:2024 British nouns (-our/-ou-/-re/-ll-) + ISO/IEC Oxford -ize verbs/nouns (utilization, utilize, energize, energization) and hyphenation (circuit-breaker, lock-out, back-up, pick-up) across Track 1 (catalogue) and Track 2 (OEM manual); US-only spellings (Molded, Color, Aluminum, unhyphenated Circuit Breaker) restricted exclusively to ul_us_term and explicit forbidden examples.",
     "slot_convention": "All product ratings use {{param_name: unit}} placeholders resolved from product datasheets; zero hardcoded product ratings."
   },
   "terms": [
@@ -44,7 +44,7 @@
       "iec_clause_ref": "IEC 60947-2:2024 Cl. 3.1.1",
       "pdf_printed_page": 20,
       "value_slot_template": "{{frame_size: A}}",
-      "translation_rules_and_donts": "IEC 60947-2:2024 Cl. 3.1.1 明确定义 frame size 为具有共同外部物理尺寸的一组断路器，并以该组最高额定电流的安培值表示（全标准 28 次）。Inm 仅属 GB/T 14048.2 国内符号（IEC 60947-2:2024 出现 0 次，Table 7 注 a 表述为 maximum rated current for a given frame size）。严禁译为 shell rating 或 frame specification。"
+      "translation_rules_and_donts": "IEC 60947-2:2024 首选 withdrawable（18 次），Track 1 与 Track 2 均优先采用 withdrawable circuit-breaker；drawout 为国际商业及北美 UL 合规同义词（非中式英语），Fig. J.1 亦使用 draw-out cradle；严禁译为 Drawer / Drawer type。"
     },
     {
       "term_id": "IEC2-CORE-003",
@@ -228,7 +228,7 @@
       "iec_clause_ref": "IEC 60947-2:2024 Cl. 4.1 & Cl. 5.4",
       "pdf_printed_page": 23,
       "value_slot_template": null,
-      "translation_rules_and_donts": "IEC 60947-2:2024 Cl. 4.1/5.4 使用 selectivity category（40 次，discrimination 0 次）。Cat B 须声明 Icw 与短延时（>= 0.05 s，Cl. 5.3.6.4）；Cat A 不标称 Cl. 5.3.6.4 要求的 Icw。不得与 IEC 60947-3/4-1 的 utilisation category 混为一谈。"
+      "translation_rules_and_donts": "IEC 60947-2:2024 Cl. 4.1/5.4 使用 selectivity category（40 次，discrimination 0 次）。Cat B 须声明 Icw 与短延时（>= 0.05 s，Cl. 5.3.6.4）；Cat A 不标称 Cl. 5.3.6.4 要求的 Icw。不得与 IEC 60947-3/4-1 的 utilization category 混为一谈。"
     },
     {
       "term_id": "IEC2-CORE-012",
@@ -242,14 +242,14 @@
         "AC-3",
         "AC-23A"
       ],
-      "iec_2024_en_term": "utilisation category",
+      "iec_2024_en_term": "utilization category",
       "track2_oem_term": null,
       "ul_us_term": "Utilization category",
       "symbol": "AC-22 / AC-3 / DC-13",
       "iec_clause_ref": "IEC 60947-2:2024 Cl. L.4.1 / IEC 60947-1:2020 Annex A",
       "pdf_printed_page": 197,
       "value_slot_template": null,
-      "translation_rules_and_donts": "IEC 英式拼写一律用 utilisation；美式 utilization 仅限 UL 专栏。用于描述接触器/隔离开关或 Annex L CBI（关联 AC-22）的负载工况，不可将 ACB Cat B 误称为 utilisation category B。"
+      "translation_rules_and_donts": "IEC 英式拼写一律用 utilization；美式 utilization 仅限 UL 专栏。用于描述接触器/隔离开关或 Annex L CBI（关联 AC-22）的负载工况，不可将 ACB Cat B 误称为 utilization category B。"
     },
     {
       "term_id": "IEC2-CORE-013",
@@ -347,7 +347,7 @@
       "iec_clause_ref": "IEC 60947-2:2024 Cl. 8.2.1.1.4 & Cl. 8.2.1.1.5",
       "pdf_printed_page": 35,
       "value_slot_template": null,
-      "translation_rules_and_donts": "动力来源（电操/气动）直接驱动或储能驱动闭合。"
+      "translation_rules_and_donts": "IEC 60947-2:2024 Annex L.4.1 原文使用牛津 -ize 拼写 utilization category AC-22（0 次 utilisation）；美式 UL 专栏亦写 Utilization category。不可将 ACB 选择性类别 Cat B 误称为使用类别。"
     },
     {
       "term_id": "IEC2-CORE-018",
@@ -1293,7 +1293,7 @@
       "iec_clause_ref": "IEC 60947-2:2024 Cl. 3.1 / GB/T 14048.2",
       "pdf_printed_page": 19,
       "value_slot_template": "{{product_series}}",
-      "translation_rules_and_donts": "严禁直译为 Universal Circuit Breaker。IEC Track 1/2 统一使用连字符 air circuit-breaker (ACB)；北美 UL 1066 体系下对应 LVPCB。"
+      "translation_rules_and_donts": "严禁直译为 Universal Circuit Breaker。IEC 60947-2:2024 Cl. 3.1 仅定义统称 circuit-breaker（不按 ACB/MCCB 分类，标准正文 air circuit-breaker = 0 次），ACB 为行业通用品类词，沿用 IEC 连字符拼写 air circuit-breaker (ACB)；北美 UL 1066 体系下对应 LVPCB。"
     },
     {
       "term_id": "IEC2-ACB-002",
@@ -1332,7 +1332,7 @@
       "iec_clause_ref": "IEC 60947-2:2024 Cl. 3.1 / GB/T 14048.2",
       "pdf_printed_page": 19,
       "value_slot_template": "{{product_series}}",
-      "translation_rules_and_donts": "覆盖高电压、大电流的高端工业与新能源特种场合；电压与电流上限按产品数据表取值。"
+      "translation_rules_and_donts": "行业通用产品线分级表达（沿用 Cl. 3.1 连字符 circuit-breaker）；覆盖高电压、大电流的高端工业与新能源特种场合；电压与电流上限按产品数据表取值。"
     },
     {
       "term_id": "IEC2-ACB-004",
@@ -1363,14 +1363,14 @@
       "cn_aliases": [
         "微机保护断路器"
       ],
-      "iec_2024_en_term": "intelligent air circuit-breaker",
-      "track2_oem_term": "Intelligent air circuit-breaker",
+      "iec_2024_en_term": "air circuit-breaker with electronic trip unit",
+      "track2_oem_term": "Air circuit-breaker with electronic trip unit",
       "ul_us_term": "Electronic Trip Power Circuit Breaker",
-      "symbol": "Smart ACB",
+      "symbol": "ACB (ETU)",
       "iec_clause_ref": "IEC 60947-2:2024 Annex F",
       "pdf_printed_page": 144,
       "value_slot_template": "{{product_series}}",
-      "translation_rules_and_donts": "标配微处理器电子脱扣器，具备遥测、遥控、遥信、遥调功能；部件名称中用 Controller / Electronic Trip Unit (ETU)。"
+      "translation_rules_and_donts": "严禁直译为 intelligent air circuit-breaker 或 Smart ACB（对齐 TRM-DON-014）；标配微处理器电子脱扣器（ETU），具备保护、测量与通信功能。"
     },
     {
       "term_id": "IEC2-ACB-006",
@@ -1450,7 +1450,7 @@
       "track2_oem_term": null,
       "ul_us_term": "Safety Clearance",
       "symbol": "Arcing clearance",
-      "iec_clause_ref": "IEC 60947-2:2024 Cl. 8.1.5 (operator safety) / OEM Catalog Taxonomy",
+      "iec_clause_ref": "IEC 60947-2:2024 Cl. 8.1.5 (operator safety) / OEM Catalogue Taxonomy",
       "pdf_printed_page": 33,
       "value_slot_template": "{{arcing_distance: mm}}",
       "translation_rules_and_donts": "灭弧室排气口至柜体接地金属件的最小安全空间距离；IEC 60947-2:2024 Cl. 8.1.5 规范操作人员免受炽热颗粒喷溅防护。"
@@ -1806,7 +1806,7 @@
       "iec_clause_ref": "IEC 60947-2:2024 Cl. 3.19 & Cl. 5.7.1",
       "pdf_printed_page": 22,
       "value_slot_template": "{{cem_operating_range: ×Us}}",
-      "translation_rules_and_donts": "IEC 60947-2:2024 Cl. 3.19 标准功能术语为 closing release（允许同义词 closing coil）；Track 2 OEM 说明书保留 Closed electromagnet (CEM)。严禁误译为动词原形 close electromagnet 或 closing magnet。"
+      "translation_rules_and_donts": "IEC 60947-2:2024 Cl. 3.19 标准功能术语为 closing release（允许同义词 closing coil）；Closed electromagnet (CEM) 仅限既有 OEM 印刷手册 1:1 维护兼容（新编手册优先使用 Track 1）。严禁误译为动词原形 close electromagnet 或 closing magnet。"
     },
     {
       "term_id": "IEC2-ACB-027",
@@ -1944,7 +1944,7 @@
       "cn_aliases": [
         "按钮挂锁罩"
       ],
-      "iec_2024_en_term": "pushbutton padlocking device (VBP) / lockout cover",
+      "iec_2024_en_term": "pushbutton padlocking device (VBP) / lock-out cover",
       "track2_oem_term": "Pushbutton lock (VBP)",
       "ul_us_term": "Pushbutton Lockout Cover",
       "symbol": "VBP",
@@ -2319,7 +2319,7 @@
       "iec_clause_ref": "IEC 60947-2:2024 Cl. 3.5 & Figure J.1",
       "pdf_printed_page": 20,
       "value_slot_template": null,
-      "translation_rules_and_donts": "IEC 术语首选 withdrawable cradle / guide frame；Fig. J.1 (P182) 亦称 draw-out cradle；Track 2 OEM 手册允许 Drawer seat / Cradle。严禁直译为 Drawer box 或 Slide box。"
+      "translation_rules_and_donts": "IEC 术语首选 withdrawable cradle / guide frame；Fig. J.1 (P182) 亦称 draw-out cradle；Drawer seat 仅限既有 OEM 印刷手册 1:1 维护兼容；严禁直译为 Drawer box 或 Slide box。"
     },
     {
       "term_id": "IEC2-ACB-052",
@@ -2458,7 +2458,7 @@
       "iec_clause_ref": "IEC 60947-2:2024 Cl. 9.3.3.3 & Cl. 8.1.6",
       "pdf_printed_page": 55,
       "value_slot_template": "{{product_series}}",
-      "translation_rules_and_donts": "IEC 60947-2:2024 采用英式拼写 moulded（Cl. 9.3.3.3 moulded case、Cl. 8.1.6 moulding）及连字符 circuit-breaker；美式 Molded 与非连字符 Circuit Breaker 仅限 UL 489 专栏。严禁译为 Plastic shell breaker。"
+      "translation_rules_and_donts": "塑壳断路器 (MCCB) 为行业通用品类词（IEC 60947-2:2024 正文未按 MCCB 分类，仅 Cl. 9.3.3.3 出现 moulded case、Cl. 8.1.6 出现 moulding，moulded-case = 0 次）；IEC 交付件沿用英式 moulded 与连字符 circuit-breaker；美式 Molded 与非连字符 Circuit Breaker 仅限北美 UL 489 语境。"
     },
     {
       "term_id": "IEC2-MCCB-002",
@@ -2788,7 +2788,7 @@
       "track2_oem_term": null,
       "ul_us_term": "Product Overview",
       "symbol": "SEC-001",
-      "iec_clause_ref": "Catalog Structure Standard",
+      "iec_clause_ref": "Catalogue Structure Standard",
       "pdf_printed_page": null,
       "value_slot_template": null,
       "translation_rules_and_donts": "样本册第 1 节标准英文栏目标题。"
@@ -2808,7 +2808,7 @@
       "track2_oem_term": null,
       "ul_us_term": "Features & Benefits",
       "symbol": "SEC-002",
-      "iec_clause_ref": "Catalog Structure Standard",
+      "iec_clause_ref": "Catalogue Structure Standard",
       "pdf_printed_page": null,
       "value_slot_template": null,
       "translation_rules_and_donts": "样本册第 2 节标准英文栏目标题。"
@@ -2828,7 +2828,7 @@
       "track2_oem_term": null,
       "ul_us_term": "Technical Specifications",
       "symbol": "SEC-003",
-      "iec_clause_ref": "Catalog Structure Standard",
+      "iec_clause_ref": "Catalogue Structure Standard",
       "pdf_printed_page": null,
       "value_slot_template": null,
       "translation_rules_and_donts": "参数规格页标准标题；表中寿命项使用 operational performance (operating cycles / endurance)，不用 durability。"
@@ -2848,7 +2848,7 @@
       "track2_oem_term": null,
       "ul_us_term": "Ordering Code Logic",
       "symbol": "SEC-004",
-      "iec_clause_ref": "Catalog Structure Standard",
+      "iec_clause_ref": "Catalogue Structure Standard",
       "pdf_printed_page": null,
       "value_slot_template": null,
       "translation_rules_and_donts": "型号解读与选型页标准标题。"
@@ -2868,7 +2868,7 @@
       "track2_oem_term": null,
       "ul_us_term": "Wiring Diagrams",
       "symbol": "SEC-005",
-      "iec_clause_ref": "Catalog Structure Standard",
+      "iec_clause_ref": "Catalogue Structure Standard",
       "pdf_printed_page": null,
       "value_slot_template": null,
       "translation_rules_and_donts": "原理图与电气接线页标准标题。"
@@ -2888,7 +2888,7 @@
       "track2_oem_term": null,
       "ul_us_term": "Rated Service Short-Circuit Interrupting Capacity (ratio per datasheet)",
       "symbol": "CLM-001",
-      "iec_clause_ref": "Catalog Claim Frame Standard",
+      "iec_clause_ref": "Catalogue Claim Frame Standard",
       "pdf_printed_page": null,
       "value_slot_template": "{{Ics_ratio: % of Icu}}",
       "translation_rules_and_donts": "仅当 {{claim_scope}} 所列全部型号在数据表中实测达到该比例时方可发布，严禁跨壳架外推。"
@@ -2907,7 +2907,7 @@
       "track2_oem_term": null,
       "ul_us_term": "Flexible Busbar Connection Options",
       "symbol": "CLM-002",
-      "iec_clause_ref": "Catalog Claim Frame Standard",
+      "iec_clause_ref": "Catalogue Claim Frame Standard",
       "pdf_printed_page": null,
       "value_slot_template": "{{terminal_rotation_deg: °}}",
       "translation_rules_and_donts": "仅限实际具备旋转端子特征的系列使用，不得作为跨系列通用宣称。"
@@ -2927,7 +2927,7 @@
       "track2_oem_term": null,
       "ul_us_term": "Microprocessor Trip Unit Standard",
       "symbol": "CLM-003",
-      "iec_clause_ref": "Catalog Claim Frame Standard",
+      "iec_clause_ref": "Catalogue Claim Frame Standard",
       "pdf_printed_page": null,
       "value_slot_template": null,
       "translation_rules_and_donts": "仅当基础配置确为电子脱扣器时方可使用。"
@@ -3077,7 +3077,7 @@
         "CBR"
       ],
       "module": "11_附录B_剩余电流断路器CBR",
-      "cn_term": "功能与电源电压无关 / 有关之 CBR",
+      "cn_term": "功能与电源电压无关 / 有关的 CBR",
       "cn_aliases": [
         "电磁式漏电断路器",
         "电子式漏电断路器"
@@ -3477,8 +3477,9 @@
         "CBIS"
       ],
       "module": "17_附录L_M_O_P_R特种断路器",
-      "cn_term": "无过电流保护断路器 (CBI)",
+      "cn_term": "不满足过电流保护要求的断路器 (CBI)",
       "cn_aliases": [
+        "无过电流保护断路器",
         "不带过电流保护断路器",
         "隔离型断路器"
       ],
@@ -4180,7 +4181,7 @@
       "track2_oem_term": null,
       "ul_us_term": "Overall and Mounting Dimensions",
       "symbol": "SEC-006",
-      "iec_clause_ref": "Catalog Structure Standard",
+      "iec_clause_ref": "Catalogue Structure Standard",
       "pdf_printed_page": null,
       "value_slot_template": null,
       "translation_rules_and_donts": "样本册第 6 节标准标题；CAD 图纸基准标注用 Datum（严禁用 Base），安装面用 Mounting surface，未注公差用 Unspecified linear tolerance。"
@@ -4199,7 +4200,7 @@
       "track2_oem_term": null,
       "ul_us_term": "Installation, Commissioning and Safety Notes",
       "symbol": "SEC-007",
-      "iec_clause_ref": "Catalog Structure Standard",
+      "iec_clause_ref": "Catalogue Structure Standard",
       "pdf_printed_page": null,
       "value_slot_template": null,
       "translation_rules_and_donts": "样本册第 7 节标准标题；“安装调试”严禁译为 Installation and Debugging，必须用 Installation and Commissioning；“注意事项”用 Operating Precautions / Safety Notes（严禁用 Matters need attention）。"
@@ -4218,7 +4219,7 @@
       "track2_oem_term": null,
       "ul_us_term": "Ordering Information",
       "symbol": "SEC-008",
-      "iec_clause_ref": "Catalog Structure Standard",
+      "iec_clause_ref": "Catalogue Structure Standard",
       "pdf_printed_page": null,
       "value_slot_template": null,
       "translation_rules_and_donts": "样本册第 8 节标准标题；严禁译为 Ordering instruction。"
@@ -4237,7 +4238,7 @@
       "track2_oem_term": null,
       "ul_us_term": "Accuracy unspecified below {{metering_threshold: A}}.",
       "symbol": "CLM-007",
-      "iec_clause_ref": "Catalog Claim Frame Standard",
+      "iec_clause_ref": "Catalogue Claim Frame Standard",
       "pdf_printed_page": null,
       "value_slot_template": "{{metering_threshold: A}}",
       "translation_rules_and_donts": "严禁写成模糊口语 Below X A, the measurement is inaccurate；必须用正式数据表边界声明并带数量槽。"
@@ -4538,7 +4539,7 @@
       "iec_clause_ref": "OEM Accessory Taxonomy",
       "pdf_printed_page": null,
       "value_slot_template": "{{hole_opener_diameter: mm}}",
-      "translation_rules_and_donts": "Track 1 目录标准用 hole saw / punch；Track 2 OEM 说明书保留 hole opener。"
+      "translation_rules_and_donts": "Track 1 样本及新编手册用 hole saw / punch；hole opener 仅限既有 OEM 印刷手册 1:1 维护兼容。"
     },
     {
       "term_id": "IEC2-CORE-081",

@@ -33,7 +33,7 @@ Two hard rules for claim frames:
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **CLM-001** | 分断能力达到 `{{Ics_ratio: % of Icu}}` | **Service breaking capacity reaches `{{Ics_ratio: % of Icu}}` of `Icu` across `{{claim_scope}}`.** | ACB / MCCB Series | `Ics_ratio`, `claim_scope` | The datasheet gives the ratio for **every** model named in `claim_scope`. Otherwise re-scope the claim to the models that do. Never generalize from one frame. |
 | **CLM-002** | 支持水平、垂直与旋转 `{{terminal_rotation_deg: °}}` 接线 | **Supports horizontal, vertical and `{{terminal_rotation_deg: °}}` rotatable busbar connections.** | ACB / MCCB Series | `terminal_rotation_deg`, `claim_scope` | The rotatable-terminal feature is documented for the named models. Features that exist only on another series must not be described as a family feature. |
-| **CLM-003** | 标配微处理器智能脱扣器 | **Equipped with microprocessor-based intelligent trip unit, providing comprehensive protection.** | ACB / MCCB Series | none | The basic configuration actually ships with an electronic trip unit. |
+| **CLM-003** | 标配微处理器智能脱扣器 | **Equipped with a microprocessor-based electronic trip unit (ETU), providing comprehensive protection.** | ACB / MCCB Series | none | The basic configuration actually ships with an electronic trip unit; avoid literal `intelligent trip unit` per `TRM-DON-014`. |
 | **CLM-004** | 宽运行环境温度范围 `{{T_ambient_min: °C}}` 至 `{{T_ambient_max: °C}}` | **Operating temperature range of `{{T_ambient_min: °C}}` to `{{T_ambient_max: °C}}` for `{{claim_scope}}`.** | Low-Voltage Distribution | `T_ambient_min`, `T_ambient_max`, `claim_scope` | The range is quoted together with the controller type it applies to. Do not present a controller-specific range as a circuit-breaker-wide range, and avoid the word "ultra-wide" unless a defined baseline is cited. |
 | **CLM-005** | 飞弧距离 `{{arcing_distance: mm}}` | **`{{arcing_distance: mm}}` arcing distance design reduces the switchboard clear space.** | Air Circuit-Breakers | `arcing_distance` | The datasheet states the value, and the sentence keeps the physical meaning (clear space above the arc chutes) rather than the marketing gloss. |
 | **CLM-006** | 延时欠电压脱扣保护 | **The time-delay undervoltage release delays circuit-breaker tripping for short-term line low-voltage conditions or power loss.** | ACB / MCCB Series | none | The device actually offers a time-delay variant. |
@@ -43,9 +43,9 @@ Two hard rules for claim frames:
 
 ## 3. Standard Technical Parameter Table Column Headers (参数表头标准表述)
 
-| Standard Table Parameter | Chinese Column Header | Standard Catalog / Benchmark English Header | Notes |
+| Standard Table Parameter | Chinese Column Header | Standard Catalogue / Benchmark English Header | Notes |
 | :--- | :--- | :--- | :--- |
-| **Ultimate Breaking Capacity** | 额定极限短路分断能力 | **Ultimate breaking capacity Vac 50/60 Hz** *(or Rated ultimate short-circuit breaking capacity Icu)* | Standard column header across the major international catalogs. |
+| **Ultimate Breaking Capacity** | 额定极限短路分断能力 | **Ultimate breaking capacity Vac 50/60 Hz** *(or Rated ultimate short-circuit breaking capacity Icu)* | Standard column header across the major international catalogues. |
 | **Service Breaking Capacity** | 额定运行短路分断能力 | **Service breaking capacity Vac 50/60 Hz** *(or Rated service short-circuit breaking capacity Ics)* | Standard column header for service breaking capability. |
 | **Frame Size / Frame Current** | 壳架电流 / 壳架等级 | **Frame size (A) / Frame current Inm (A)** | IEC 60947-2:2024 Cl. 3.1.1 defines **frame size** as expressed in amperes corresponding to the highest current rating of the group; `Inm` is a **GB/T 14048.2** domestic symbol (not in IEC 60947-2). |
 | **Breaking Capacity Type** | 分断能力型号 | **Breaking capacity type** *(e.g. Type N, Type S, Type H)* | Never translate as "breaking capacity levels". |

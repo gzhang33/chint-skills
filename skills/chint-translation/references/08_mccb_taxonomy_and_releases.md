@@ -8,16 +8,16 @@
 ## 0. Value-Slot & Orthography Convention
 
 1. **Value-Slot Invariant**: Every product rating below is a template slot: `{{param_name: unit}}`. Slots resolve strictly from the datasheet for the exact product model in scope; **zero hardcoded product ratings** live in this file. Numeric values cited below (e.g. `Table 1`, `Table 2`, `Table 5`, `Table 6`, `Table 7`, `Table P.1`, `30 mA`, `6 mA`, `1 500 V DC`) are **standard-fixed normative thresholds or test conditions** in `IEC 60947-2:2024`, never product datasheet claims.
-2. **IEC 60947-2:2024 Single-Track British + `-ize` Orthography (Track 1 & Track 2)**:
+2. **IEC 60947-2:2024 Single-Track Oxford/British + `-ize` Orthography (Track 1 & Track 2)**:
    - Outside the explicit `North American (UL 489)` and `❌ Forbidden` columns, every deliverable under `IEC 60947-2:2024` uses verified standard spelling and hyphenation:
-     - `circuit-breaker` (hyphenated), `moulded case` / `moulded-case circuit-breaker` (`IEC 60947-2:2024` uses `circuit-breaker` 667× and `moulded case` 1× in `Cl. 9.3.3.3`; no separate `moulded-case` classification exists in `IEC 60947-2`)
-     - `withdrawable` (18×; `draw-out` appears 1× only for the cradle in `Fig. J.1`, P182)
-     - `utilisation`, `colour` (8×), `aluminium` (45×)
+     - `circuit-breaker` (hyphenated), `moulded case` / `moulded-case circuit-breaker` (`IEC 60947-2:2024` defines `circuit-breaker` 667× without classifying ACB/MCCB, using `moulded case` 1× in `Cl. 9.3.3.3`; `moulded-case circuit-breaker` is an industry category term harmonized to IEC spelling)
+     - `withdrawable` (18×; `draw-out` appears 1× only for the cradle in `Fig. J.1`, P182; commercial `drawout` is an accepted international/UL synonym, not Chinglish)
+     - `utilization` (`L.4.1`, Oxford `-ize`), `catalogue` (`Table 4`), `colour` (8×), `aluminium` (45×)
      - `undervoltage` (36× vs 4× `under-voltage`), `shunt release` (25×; 0× `shunt opening release`), `closing release` (13×; `closing coil` 1× as admitted synonym in `Cl. 3.19`)
      - `energized` / `energizing` / `energization` (`energiz*` 37×; 0× `energis*`)
      - `selectivity` (40×; 0× `discrimination`), `back-up` (4×), `let-through` (21×), `cut-off` (9×)
      - `operational performance capability` (`operational performance` 40×), `operating cycles` (23×), `endurance` (9×, used in Annexes B, M, R — `M.8.11`, `R.8.5`); **0 occurrences of `durability`** in `IEC 60947-2:2024`
-   - North American spellings (`Molded-Case Circuit Breaker`, `Molded Case`, `Drawout`, `Shunt Trip`, `Undervoltage Trip`, `Color`, `Aluminum`, `Utilization`, `Discrimination`) are permitted **only** inside the `North American (UL 489)` column or the `❌ Forbidden` column.
+   - North American spellings (`Molded-Case Circuit Breaker`, `Molded Case`, `Shunt Trip`, `Undervoltage Trip`, `Color`, `Aluminum`, `Discrimination`) are permitted **only** inside the `North American (UL 489)` column or the `❌ Forbidden` column.
 
 ---
 
@@ -241,7 +241,7 @@
   - **Class W**: Derived from selectivity Category B equivalent CB; used with external protection relays + sensors; marked $I_{\text{cu}} = I_{\text{cw}}$ (`L.4.3`). Isolation symbol: `S00287+S00220` (`Table L.1`, P198).
   - **Class X**: Integral non-adjustable instantaneous short-circuit releases for self-protection (no overload release); rated conditional short-circuit current **$I_{\text{cc}}$** (`L.4.2`, P197). Isolation symbol: `S00288`.
   - **Class Y**: No integral overcurrent releases; rated **$I_{\text{cc}}$** (`L.4.2`). Isolation symbol: `S00288`. (*Note*: `IEC 60947-2:2024` `L.4.2` & `Table K.1` designate rated conditional short-circuit current as **$I_{\text{cc}}$**, equivalent to $I_q$ in `IEC 60947-1`/`60947-4-1`.)
-- **Product Information (`L.5`, `Table L.1`, P198)**: Visible marking `CBI-W`, `CBI-X`, `CBI-Y`, `CBI-X/W`, or `CBI-Y/W` (with $I_i$ where applicable); $I_n$ may be correlated to **utilisation category** `AC-22` (`L.4.1` Note, P197).
+- **Product Information (`L.5`, `Table L.1`, P198)**: Visible marking `CBI-W`, `CBI-X`, `CBI-Y`, `CBI-X/W`, or `CBI-Y/W` (with $I_i$ where applicable); $I_n$ may be correlated to **utilization category** `AC-22` (`L.4.1` Note, P197).
 
 ### 5.10 Annex M — MRCDs (`P203–249`)
 
@@ -307,9 +307,9 @@
 | **Coordination** | 选择性配合 / 后备保护 | *Discrimination*, *Backup* (unhyphenated), *Area select* | **Selectivity** (`5.4`, `A.5`); **Back-up protection** (`A.6`) | `discrimination` = 0 occurrences in `IEC 60947-2:2024`; `back-up` is hyphenated. |
 | **Releases** | 分励 / 欠压 / 闭合脱扣器 | *Shunt opening release*, *Under-voltage*, *Lack voltage*, *Closing magnet* | **Shunt release**; **Undervoltage release**; **Closing release** (`5.7.1`, `3.19`) | `term_audit.json`: `shunt release` (25× vs 0), `undervoltage` (36× vs 4), `closing release` (13×). |
 | **Arc Chamber** | 灭弧室 / 双断点 | *Arc room*, *Interrupter*, *Double breaking point* | **Arc extinction device** (`8.1.6`); **Rotary double-break contact system** | `arc chute` and `arc-extinguishing` = 0 in `IEC 60947-2:2024`; `Cl. 8.1.6` uses `arc extinction device`. |
-| **Withdrawable** | 抽出式 / 插入式 | *Drawer type*, *Insert type*, *Drawout* (in IEC copy) | **Withdrawable circuit-breaker** (`3.5`); **Plug-in circuit-breaker** (`3.4`) | `withdrawable` (18×) is the IEC 60947-2 term; reserve *Drawout* for `UL 489` / cradle context. |
+| **Withdrawable** | 抽出式 / 插入式 | *Drawer type*, *Insert type* | **Withdrawable circuit-breaker** (`3.5`); **Plug-in circuit-breaker** (`3.4`) | `withdrawable` (18×) is the IEC 60947-2 preferred term; *Drawout* is an accepted international commercial / `UL 489` synonym (never *Drawer type*). |
 | **CBR / Leakage** | 漏电塑壳 / F型 / B+型 | *Leakage plastic shell*, claiming *Type F / Type B+* under IEC 60947-2 | **Circuit-breaker incorporating residual current protection (CBR)** (`Annex B`: **Type AC / A / B** only) | `Annex B` (`B.3.4`) covers Type AC, A, B only; cite `IEC 62423` / `VDE 0664-400` if Type F/B+ applies. |
 | **Aluminium Terminals** | 未预处理圆铝导线 | *Untreated round aluminum wire* | **Unprepared round aluminium conductors** (`D.8.5`); **Aluminium conductors** (`Annex D`) | British spelling `aluminium` (`D.1–D.8`); exact `D.8.5` test wording. |
 | **PV DC Polarity** | 光伏直流无极性 / 临界电流 | *Non-polar PV breaker*, *Critical small DC current* | **Non-polarized PV circuit-breaker** (interrupts forward and reverse currents, `P.7.2`); **Critical DC load current** (`9.3.10`, `P.8.3.9`) | Cite `IEC 60947-2:2024, Annex P` (`P.5`) and Sequence VII (`9.3.10`). |
 | **CBAR Reclosing** | 自动重合闸型漏电断路器 | *Auto-reset leakage breaker* | **CBAR (CBR with automatic reclosing functions)** — **Type M** (earth leakage monitoring) / **Type TD** (time-delay) (`Annex R`) | Distinguish automatic reclosing (`R.2.1`) from manual reset (`R.2.5` blocked state). |
-| **IEC Spelling & Units** | 通用拼写与单位 | *Utilization*, *Color*, *Energised*, `℃`, `400A` (no space) | **Utilisation**, **Colour**, **Energized** (`37×` vs `0×` *-is-*); `{{T: °C}}`, `{{value: A}}` | Enforce `IEC 60947-2:2024` UK nouns + `-ize` verbs and single half-width space before units. |
+| **IEC Spelling & Units** | 通用拼写与单位 | *Color*, *Aluminum*, *Energised*, *Utilised*, `℃`, `400A` (no space) | **Utilization** (`L.4.1`), **Colour**, **Energized** (`37×` vs `0×` *-is-*); `{{T: °C}}`, `{{value: A}}` | Enforce `IEC 60947-2:2024` UK nouns + ISO/IEC Oxford `-ize` verbs/nouns (`utilization`, `energize`) and single half-width space before units. |

@@ -179,7 +179,7 @@
       "assertions": [
         {
           "id": "e1",
-          "text": "严格遵循 IEC 60947-2:2024 英式拼写与连字符规范：正文全部使用 moulded-case circuit-breaker / circuit-breaker（无未连字符 circuit breaker 或美式 molded）、withdrawable（非 drawout/drawer）、aluminium（非 aluminum）、utilisation（非 utilization）及 colour（非 color）"
+          "text": "严格遵循 IEC 60947-2:2024 拼写与连字符规范：正文全部使用 moulded-case circuit-breaker / circuit-breaker（无未连字符 circuit breaker 或美式 molded）、withdrawable（非 drawer）、aluminium（非 aluminum）、utilization（符合 L.4.1 原文，非强行改成 utilisation）及 colour（非 color）"
         },
         {
           "id": "e2",
@@ -199,7 +199,7 @@
         },
         {
           "id": "e6",
-          "text": "准确译出 Annex D（aluminium conductors / unprepared round aluminium conductors，D.8.5）与 Annex L（CBI / circuit-breaker not fulfilling the requirements for overcurrent protection，utilisation category AC-22，L.4.1）"
+          "text": "准确译出 Annex D（aluminium conductors / unprepared round aluminium conductors，D.8.5）与 Annex L（CBI / circuit-breaker not fulfilling the requirements for overcurrent protection，utilization category AC-22，L.4.1）"
         },
         {
           "id": "e7",

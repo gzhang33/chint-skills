@@ -1,10 +1,10 @@
 # ACB Internal & External Accessories Taxonomy & Syntactic Style Guide (IEC 60947-2:2024, Ed. 6.0)
 
-Dual-track standard harmonized to **IEC 60947-2:2024 (Edition 6.0)** single-track British spelling and hyphenation across BOTH registers (`circuit-breaker`, `withdrawable`, `undervoltage`, `shunt release`, `closing release`, `energization`, `colour`, `utilisation`, `signalling`):
+Dual-track standard harmonized to **IEC 60947-2:2024 (Edition 6.0)** single-track Oxford/British spelling and hyphenation across BOTH registers (`circuit-breaker`, `withdrawable`, `undervoltage`, `shunt release`, `closing release`, `energization`, `utilization`, `catalogue`, `colour`, `signalling`):
 1. **Track 1 (IEC Global Standard)**: the international catalogue register (ABB / Schneider / Siemens / Eaton class), using exact IEC 60947-2:2024 terms and clauses.
-2. **Track 2 (OEM Manual SSOT)**: the OEM English operation and maintenance manual register. Keeps distinct CHINT OEM structural/accessory phrasing (`Closed electromagnet (CEM)`, `Door Frame and Pad`, `Steel Cable Interlock`, `Keys and locks (KL)`, `Drawer seat`) while harmonizing spelling and hyphenation to IEC 60947-2:2024 British English (`circuit-breaker`, `Undervoltage Instantaneous Trip`).
+2. **Track 2 (OEM Manual SSOT — Legacy 1:1 Compatibility)**: the OEM English operation and maintenance manual register. Keeps legacy published-manual structural/accessory phrasing **only for 1:1 maintenance of existing manuals** (`Closed electromagnet (CEM)`, `Door Frame and Pad`, `Steel Cable Interlock`, `Keys and locks (KL)`, `Drawer seat`, `hole opener`) while harmonizing surrounding spelling and hyphenation to IEC 60947-2:2024 (`circuit-breaker`, `Undervoltage Instantaneous Trip`). Newly authored manuals should adopt Track 1 phrasing.
 
-The two tracks are intentionally parallel. Where both are listed, the Track 2 wording is the one that goes into service documents; Track 1 wording is used only when quoting an international catalogue style. North American / UL / ANSI terms (`Shunt Trip`, `LVPCB`, `Molded`) are allowed ONLY in explicitly labelled UL / ANSI annotations.
+The two tracks are intentionally parallel. Where both are listed, Track 2 wins only when maintaining 1:1 parity with previously published OEM manuals; Track 1 wins for all catalogues and newly authored manuals. North American / UL / ANSI terms (`Shunt Trip`, `LVPCB`, `Molded`) are allowed ONLY in explicitly labelled UL / ANSI annotations.
 
 ## 0. Value Slot Convention
 
@@ -79,26 +79,29 @@ Where an accessory's characteristics live in a table in the source manual, cite 
 
 ## 5. Linguistic Style Abstractions & Syntactic Archetypes
 
-When authoring, translating, or auditing technical documents across both registers, apply these six abstract sentence patterns. Every occurrence of `circuit-breaker` is hyphenated, and British IEC 60947-2:2024 spelling applies consistently across Track 1 and Track 2. Placeholders follow the slot convention in §0.
+When authoring, translating, or auditing technical documents across both registers, apply these six abstract sentence patterns. Every occurrence of `circuit-breaker` is hyphenated, and IEC 60947-2:2024 Oxford/British spelling applies consistently across Track 1 and Track 2. Use **Track 1 (Native Engineering)** for all catalogues and new manuals; use **Track 2 (Legacy OEM Compatibility)** ONLY for 1:1 maintenance of existing published OEM manuals. Placeholders follow the slot convention in §0.
 
 ### Archetype 1: Modal Permission & Prohibition (门联锁与安全闭锁)
-- **Grammar Structure**:
-  `The [Enclosure Door / Guard] is forbidden to open when [Component] is [State A], and is allowed to open when [Component] is [State B].`
-- **Application**:
-  - *Status Interlock (SDIL)*: "The cabinet door is forbidden to open when the circuit-breaker is closed and is allowed to open when the circuit-breaker is disconnected."
-  - *Position Interlock (PDIL)*: "The cabinet door is forbidden to open when the circuit-breaker is in the connected and test positions and is allowed to open when the circuit-breaker is in the disconnected position." *(OEM manual legacy: "connection" / "separation position".)*
+- **Track 1 (Native Engineering)**:
+  `The [Enclosure Door / Guard] is prevented from opening / cannot be opened when [Component] is [State A], and can only be opened when [Component] is [State B].`
+  - *Status Interlock (SDIL)*: "The cabinet door cannot be opened when the circuit-breaker is closed and can only be opened when the circuit-breaker is disconnected."
+  - *Position Interlock (PDIL)*: "The cabinet door cannot be opened when the circuit-breaker is in the connected or test position and can only be opened when the circuit-breaker is in the disconnected position."
+- **Track 2 (Legacy OEM Manual 1:1 Compatibility Only)**:
+  `The [Enclosure Door / Guard] is forbidden to open when [Component] is [State A], and is allowed to open when [Component] is [State B].` *(Legacy position terms: "connection" / "separation position".)*
 
-### Archetype 2: Protective Ride-Through & Non-Tripping Refusal (保护拒动与穿越延时)
-- **Grammar Structure**:
-  `When [Monitored Parameter] returns to [Normal Operating State] within [Fraction] [Delay Time], the [Apparatus] refuses to open / will not trip.`
-- **Application**:
-  - *UVTR / UVTZ*: "When the voltage returns to normal within `{{uvtr_ride_through_fraction}}` of the delay time, the circuit-breaker refuses to open."
+### Archetype 2: Protective Ride-Through & Non-Tripping (保护拒动与穿越延时)
+- **Track 1 (Native Engineering)**:
+  `When [Monitored Parameter] returns to [Normal Operating State] within [Fraction] of [Delay Time], the [Apparatus] does not trip / will not open.`
+  - *UVTR / UVTZ*: "When the voltage returns to normal within `{{uvtr_ride_through_fraction}}` of the delay time, the circuit-breaker does not trip."
+- **Track 2 (Legacy OEM Manual 1:1 Compatibility Only)**:
+  `... within [Fraction] [Delay Time], the [Apparatus] refuses to open.`
 
 ### Archetype 3: Rating Independence & Signal Topology (参数独立性与采样拓扑)
-- **Grammar Structure**:
+- **Track 1 (Native Engineering)**:
+  `The [Fault Protection Value] is expressed directly in [Physical Unit], independent of [Nominal Apparatus Rating]. The signal is acquired via [Sampling Mode], requiring an [External Sensor Component].`
+  - *Residual Current (RCT)*: "The residual tripping value $I_{\Delta n}$ is expressed directly in amperes, independent of the circuit-breaker rated current. The signal is acquired via zero-sequence sampling, requiring an external residual current transformer."
+- **Track 2 (Legacy OEM Manual 1:1 Compatibility Only)**:
   `The [Fault Protection Value] is directly expressed in [Physical Unit], irrelevant to [Nominal Apparatus Rating]. The signal is taken in a [Sampling Mode], requiring an [External Sensor Component].`
-- **Application**:
-  - *Residual Current (RCT)*: "The leakage trip value $I_{\Delta n}$ is directly expressed in amperes, irrelevant to the rated current of the circuit-breaker. The signal is taken in a zero-sequence sampling mode, requiring an external leakage transformer."
 
 ### Archetype 4: Dual Threshold Terminology Mapping (动作阈值配对词法)
 - **Release Thresholds**:
@@ -117,11 +120,12 @@ When authoring, translating, or auditing technical documents across both registe
   - "Two locks and one key: Two circuit-breakers are equipped with two identical locks and one key."
   - "Three locks and two keys: Three circuit-breakers are equipped with three identical locks and two identical keys."
 - **Installation Tool Idiom**:
-  - Official Manual SSOT: `hole opener` (e.g., "opened with a hole opener with diameter of `{{hole_opener_diameter: mm}}`").
-  - Catalogue Standard: `hole saw / punch` (e.g., "panel hole saw").
+  - Track 1 (Catalogue & newly authored manuals): `hole saw / punch` (e.g., "panel hole saw").
+  - Track 2 (Legacy published-manual 1:1 compatibility only): `hole opener` (e.g., "opened with a hole opener with diameter of `{{hole_opener_diameter: mm}}`").
 
 ### Archetype 6: Pulse Energization Duty Constraint Archetype (脉冲通电工作制)
-- **Grammar Structure**:
-  `The [Release A] and [Release B] belong to the pulse energization working mode, and it is necessary to ensure that the pulse time t1 is not less than [T1] and the energization interval t2 is greater than [T2].` *(IEC 60947-2:2024 uses `-ize` / `energization`.)*
-- **Application**:
-  - "The Shunt Release and Closing Release (OEM: Closed Electromagnet) belong to the pulse energization working mode, and it is necessary to ensure that the pulse time t1 is not less than `{{pulse_time_t1: ms}}` and the energization interval t2 is greater than `{{pulse_interval_t2: s}}`."
+- **Track 1 (Native Engineering)**:
+  `The [Release A] and [Release B] operate on a pulse-energization duty; the pulse duration t1 shall be at least [T1] and the energization interval t2 shall exceed [T2].` *(IEC 60947-2:2024 uses `-ize` / `energization`.)*
+  - "The Shunt Release and Closing Release operate on a pulse-energization duty; the pulse duration t1 shall be at least `{{pulse_time_t1: ms}}` and the energization interval t2 shall exceed `{{pulse_interval_t2: s}}`."
+- **Track 2 (Legacy OEM Manual 1:1 Compatibility Only)**:
+  `The [Release A] and [Release B] belong to the pulse energization working mode, and it is necessary to ensure that the pulse time t1 is not less than [T1] and the energization interval t2 is greater than [T2].` *(Legacy CEM label: Closed Electromagnet.)*

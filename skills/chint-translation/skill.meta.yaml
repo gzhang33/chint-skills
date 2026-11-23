@@ -1,5 +1,5 @@
 name: chint-translation
-version: 2.0.0
+version: 2.0.1
 description: Bidirectional (ZH↔EN) B2B industrial translation, localization, and technical-audit standard for CHINT low-voltage power distribution and industrial control apparatus — ACB, MCCB, CBR, MRCD, CBI, ICB, PV DC, CBAR, MCB/RCBO, contactors and starters, ATS, power quality (SVG/APF), sensors and electrical accessories, across datasheets, technical specifications, catalogues, and product manuals. Enforces IEC 60947-2:2024 (Edition 6.0, Clauses 3–9 & Annexes A–R) British spelling and hyphenation across both Track 1 (IEC catalogue) and Track 2 (OEM manual), isolates North American UL 489 / UL 1066 / UL 1008 terms to UL columns, and enforces an anti-Chinglish dictionary and a value-slot convention that forbids inventing or inheriting any product rating. Use this skill whenever the user asks to translate, localize, review, or audit electrical-apparatus content between Chinese and English — including English-to-Chinese back-translation and bilingual bid review — or asks why a term or number in a deliverable looks wrong, even if they do not name the skill or mention a standard.
 author: CHINT Overseas PM Team
 tags:
@@ -17,4 +17,4 @@ tags:
   - cbar
   - ats
   - power-quality
-  - catalog
+  - catalogue

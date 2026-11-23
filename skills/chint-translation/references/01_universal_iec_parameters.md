@@ -1,6 +1,6 @@
 # Universal Electrical Parameter & Rating Taxonomy (Global Industry Standard)
 
-Aligned with the catalog conventions of the major low-voltage manufacturers (ABB / Schneider / Siemens / LS class).
+Aligned with the catalogue conventions of the major low-voltage manufacturers (ABB / Schneider / Siemens / LS class).
 
 ## 0. Value Slot Convention (read first)
 
@@ -34,9 +34,9 @@ Rules:
 | **Frame size** / **$I_{nm}$** | 壳架等级 / 壳架电流 | **Frame size** *(IEC 60947-2:2024 term; expressed in amperes corresponding to the highest current rating of the group; construction variations within a frame size are a "construction break", Cl. 3.1.2)* / **Frame current ($I_{nm}$)** *(GB/T 14048.2 domestic symbol; not an IEC 60947-2 symbol, where Table 7 fn. a uses "maximum rated current for a given frame size")* | IEC 60947-2:2024 Cl. 3.1.1 & Cl. 3.1.2; $I_{nm}$: GB/T 14048.2 only | `{{Inm: A}}` |
 | **Rated Duty** | 额定工作制 | **Rated duty (eight-hour duty / uninterrupted duty)** | IEC 60947-2:2024 Cl. 5.3.5 | `{{rated_duty}}` |
 | **Breaking Capacity Type** | 分断能力型号 | **Breaking capacity type** *(Never "breaking capacity levels")* | Product Selection | Type N (Standard), Type S (Higher), Type H (High) |
-| **$I_{cu}$** | 额定极限短路分断能力 | **Rated ultimate short-circuit breaking capacity** *(Catalog table header: Ultimate breaking capacity Vac 50/60 Hz)* | IEC 60947-2:2024 Cl. 5.3.6.2.2 | `{{Icu: kA rms}}` |
+| **$I_{cu}$** | 额定极限短路分断能力 | **Rated ultimate short-circuit breaking capacity** *(Catalogue table header: Ultimate breaking capacity Vac 50/60 Hz)* | IEC 60947-2:2024 Cl. 5.3.6.2.2 | `{{Icu: kA rms}}` |
 | **$I_{cu1}$** | 额定相间对中性线交流电压下极极限短路分断能力 | **Rated individual pole ultimate short-circuit breaking capacity at phase-to-neutral AC voltage** | IEC 60947-2:2024 Cl. 5.3.6.2.3 & Cl. 9.3.11 | `{{Icu1: kA rms}}` |
-| **$I_{cs}$** | 额定运行短路分断能力 | **Rated service short-circuit breaking capacity** *(Catalog table header: Service breaking capacity Vac 50/60 Hz; must be $\ge 25\%$ of $I_{cu}$)* | IEC 60947-2:2024 Cl. 5.3.6.2.4 | `{{Ics: kA rms}}` (= `{{Ics_ratio: % of Icu}}` × `Icu`) |
+| **$I_{cs}$** | 额定运行短路分断能力 | **Rated service short-circuit breaking capacity** *(Catalogue table header: Service breaking capacity Vac 50/60 Hz; must be $\ge 25\%$ of $I_{cu}$)* | IEC 60947-2:2024 Cl. 5.3.6.2.4 | `{{Ics: kA rms}}` (= `{{Ics_ratio: % of Icu}}` × `Icu`) |
 | **$I_{cw}$** | 额定短时耐受电流 | **Rated short-time withstand current** *(preferred delays 0.05 s–1 s, Table 2)* | IEC 60947-2:2024 Cl. 5.3.6.4 & Table 2 | `{{Icw: kA rms}}` for `{{Icw_duration: s}}` |
 | **$I_{cm}$** | 额定短路接通能力 | **Rated short-circuit making capacity** *(AC $\ge n \times I_{cu}$ per Table 1; DC $\ge I_{cu}$)* | IEC 60947-2:2024 Cl. 5.3.6.1 & Cl. 5.3.6.3 | Peak value: `{{Icm: kA peak}}` = `{{n_factor}}` × `Icu` |
 | **$I_{cn}$** | 额定短路能力 (家用微断) | **Rated short-circuit capacity** | IEC 60898-1 | `{{Icn: kA}}` |
@@ -50,9 +50,9 @@ Rules:
 | **Operational Performance (No Current) / Mechanical Endurance** | 机械寿命 / 无载操作循环次数 | **Operational performance without current / Number of operating cycles without current** *(main standard: Cl. 8.2.4.2 & Table 7)*; **Mechanical endurance** *(Annex M Cl. M.7.2.3 / M.8.11, Annex R Cl. R.8.5; NEVER attribute "durability" to IEC 60947-2 — 0 occurrences)* | Total operating cycles without current in the main circuit: `{{mech_ops: cycles}}` |
 | **Operational Performance (With Current) / Electrical Endurance** | 电寿命 / 带载操作循环次数 | **Operational performance with current / Number of operating cycles with current** *(main standard: Cl. 8.2.4.2 & Table 7)*; **Electrical endurance** *(Annex M Cl. M.7.2.3 / M.8.11; NEVER attribute "durability" to IEC 60947-2)* | Operating cycles with current in the main circuit: `{{elec_ops: cycles}}` |
 | **Power Loss** | 功率损耗 / 功耗 | **Power loss** *(IEC 60947-2:2024 Cl. 6.1 & Annex G; stated in watts per frame size or per pole)* | Thermal power loss at rated current: `{{power_loss: W/pole}}` |
-| **Arcing Distance** | 飞弧距离 (零飞弧) | **Arcing distance / Zero arcing distance** | Required clear space above the arc extinction device (`Cl. 8.1.6`) / arc-extinguishing chamber / arc chutes *(catalog/OEM term; IEC 60947-2:2024 Cl. 8.1.5 addresses operator safety against discharged incandescent particles)*: `{{arcing_distance: mm}}` |
+| **Arcing Distance** | 飞弧距离 (零飞弧) | **Arcing distance / Zero arcing distance** | Required clear space above the arc extinction device (`Cl. 8.1.6`) / arc-extinguishing chamber / arc chutes *(catalogue/OEM term; IEC 60947-2:2024 Cl. 8.1.5 addresses operator safety against discharged incandescent particles)*: `{{arcing_distance: mm}}` |
 | **Selectivity Category** | 选择性类别 (A类/B类) | **Selectivity category (Category A / Category B)** *(IEC 60947-2:2024 Cl. 4.1 & Cl. 5.4; coordination in Cl. 8.2.8 & Annex A; never "discrimination")* | Cat A: non-selective or no assigned $I_{cw}$ per Cl. 5.3.6.4; Cat B: with assigned $I_{cw}$ and intentional short-time delay per Cl. 5.3.6.4 (min 0.05 s). |
-| **Utilisation Category** | 使用类别 (AC-1 / AC-3 / AC-22 / AC-23A / DC-13 等) | **Utilisation category (AC-1 / AC-3 / AC-4 / AC-22 / AC-23A / DC-13 …)** *(IEC 60947-3 / IEC 60947-4-1; referenced for CBI in IEC 60947-2:2024 Annex L.4.1)* | Switchgear/contactor duty class; do NOT conflate with IEC 60947-2 selectivity category A/B. |
+| **Utilization Category** | 使用类别 (AC-1 / AC-3 / AC-22 / AC-23A / DC-13 等) | **Utilization category (AC-1 / AC-3 / AC-4 / AC-22 / AC-23A / DC-13 …)** *(IEC 60947-2:2024 Annex L.4.1 uses ISO/IEC Oxford `-ize`: `utilization category` / `utilize`; European `-ise` variant `utilisation` is acceptable outside strict IEC 60947-2 citations)* | Switchgear/contactor duty class; do NOT conflate with IEC 60947-2 selectivity category A/B. |
 
 ---
 

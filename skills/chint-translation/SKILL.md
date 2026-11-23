@@ -1,6 +1,6 @@
 ---
 name: chint-translation
-description: Bidirectional (ZH↔EN) B2B industrial translation, localization, and technical-audit standard for CHINT low-voltage power distribution and industrial control apparatus — ACB, MCCB, MCB/RCBO, contactors and starters, ATS, power quality (SVG/APF), sensors and electrical accessories, across datasheets, technical specifications, catalogs, and product manuals. Enforces IEC 60947 / 60898 / 61000 and UL 489 / 1066 / 1008 terminology, dual-track register selection (IEC catalog vs OEM manual), an anti-Chinglish forbidden-term dictionary used in both directions, and a value-slot convention that forbids inventing or inheriting any product rating. Use this skill whenever the user asks to translate, localize, review, or audit electrical-apparatus content between Chinese and English — including English-to-Chinese back-translation and bilingual bid review — or asks why a term or number in a deliverable looks wrong, even if they do not name the skill or mention a standard.
+description: Bidirectional (ZH↔EN) B2B industrial translation, localization, and technical-audit standard for CHINT low-voltage power distribution and industrial control apparatus — ACB, MCCB, MCB/RCBO, contactors and starters, ATS, power quality (SVG/APF), sensors and electrical accessories, across datasheets, technical specifications, catalogues, and product manuals. Enforces IEC 60947 / 60898 / 61000 and UL 489 / 1066 / 1008 terminology, dual-track register selection (IEC catalogue vs OEM manual), an anti-Chinglish forbidden-term dictionary used in both directions, and a value-slot convention that forbids inventing or inheriting any product rating. Use this skill whenever the user asks to translate, localize, review, or audit electrical-apparatus content between Chinese and English — including English-to-Chinese back-translation and bilingual bid review — or asks why a term or number in a deliverable looks wrong, even if they do not name the skill or mention a standard.
 ---
 
 # CHINT Low-Voltage & Industrial Translation Skill (`chint-translation`)
@@ -36,7 +36,7 @@ The `references/` dictionary is a **translation configuration, not a data sheet*
 A slot is a promise, not a value. Follow these rules in every deliverable:
 
 1. **Resolve from a datasheet or drop it.** Fill a slot only from the product datasheet for the exact model in scope. If the source text carries no number, keep the sentence qualitative and leave the slot unfilled.
-2. **Never inherit a number.** A rating from a comparable model, a competitor catalog, an earlier generation, or your own recollection is a fabrication. This is the single most common failure mode in this domain.
+2. **Never inherit a number.** A rating from a comparable model, a competitor catalogue, an earlier generation, or your own recollection is a fabrication. This is the single most common failure mode in this domain.
 3. **Never ship an unresolved slot.** A deliverable containing `{{...}}` is a broken deliverable, not a draft. Resolve it or rewrite the sentence without the quantity.
 4. **Unit inside the slot is template.** Copy it exactly (`kA rms`, `V`, `°C`, `N·m`, `mm²`) so downstream rendering stays stable.
 5. **Terminology is not data.** Standard identifiers (`IEC 60947-2`), clause numbers, category designations (`AC-3`, `Curve C`, `Class PC`, `Cat B`, `ANSI 51N`), pole notations (`1P+N`), and series codes used for routing (e.g. NXA, NXM, NZ7) are vocabulary — write them literally.
@@ -72,12 +72,12 @@ When the standard fixes a value or a band, cite the standard; when the product f
 
 ### 3.1 Dual-Track Linguistic Register System (双轨制术语与语体系统)
 
-Select the register by delivery objective. Both tracks enforce **strict IEC 60947-2:2024 single-track British spelling and hyphenation** (`circuit-breaker`, `moulded-case`, `withdrawable`, `undervoltage`, `shunt release`, `closing release`, `utilisation`, `colour`, `aluminium`, `energization`, `selectivity`, `back-up`, `operational performance / operating cycles`). North American spellings (`Molded-Case`, `Drawout`, `Shunt Trip`, `Color`, `Aluminum`, `Utilization`, unhyphenated `Circuit Breaker`) are restricted **exclusively** to explicit North American UL 489 / UL 1066 mapping columns or annotations.
+Select the register by delivery objective. Both tracks enforce **strict IEC 60947-2:2024 single-track British + ISO/IEC Oxford `-ize` orthography and hyphenation** (`circuit-breaker`, `moulded-case`, `withdrawable`, `undervoltage`, `shunt release`, `closing release`, `utilization` [per `Annex L.4.1`], `catalogue`, `colour`, `aluminium`, `energize`/`energization`, `selectivity`, `back-up`, `operational performance / operating cycles`). Note: IEC 60947-2:2024 defines the unified noun `circuit-breaker` (`Cl. 3.1`) without naming ACB or MCCB (`air circuit-breaker` = 0×, hyphenated `moulded-case` = 0×, `moulded case` = 1× at `Cl. 9.3.3.3`); `air circuit-breaker (ACB)` and `moulded-case circuit-breaker (MCCB)` are global industry category terms harmonized to IEC 60947-2:2024 orthography. North American spellings (`Molded-Case`, `Drawout`, `Shunt Trip`, `Color`, `Aluminum`, unhyphenated `Circuit Breaker`) are restricted **exclusively** to explicit North American UL 489 / UL 1066 mapping columns or annotations.
 
 | Linguistic Register | Target Delivery Context | Canonical Style Characteristics | Benchmark SSOT |
 | :--- | :--- | :--- | :--- |
-| **Track 1: IEC Global Catalogue Register (国际 IEC 标准 / 海外通用样本册语体)** | Overseas marketing catalogues, EPC tender brochures, international distributor sales sheets. | Concise, active international electrotechnical phrasing (aligned with Schneider Masterpact / ABB Emax2 / Siemens class) using strict IEC 60947-2:2024 functional nomenclature and British spelling (`Closing release`, `Shunt release`, `Undervoltage release`, `Door escutcheon`, `Withdrawable circuit-breaker`). | `IEC 60947-2:2024`, `IEC 60947-1:2020`, international catalogue benchmarks. |
-| **Track 2: OEM Manual Register (企业官方产品说明书 / 运维规程语体)** | Factory instruction manuals, user guides, O&M procedures, installation booklets, compliance filings. | Strict 1:1 terminological alignment with the OEM's own published English manuals, harmonized to IEC 60947-2:2024 British spelling and hyphenation. Retains corporate canonical structural/accessory phrasing (`Closed electromagnet (CEM)`, `Undervoltage Instantaneous Trip (UVT)`, `Keys and locks (KL)`, `Steel Cable Interlock`, `Door Frame and Pad`, `Drawer seat`). | The OEM English operation & maintenance manual for the product in scope — read it from the project's own reference store; this skill deliberately does not bundle or hard-code its path. |
+| **Track 1: IEC Global Catalogue Register (国际 IEC 标准 / 海外通用样本册语体)** | Overseas marketing catalogues, EPC tender brochures, international distributor sales sheets. | Concise, active international electrotechnical phrasing (aligned with Schneider Masterpact / ABB Emax2 / Siemens class) using strict IEC 60947-2:2024 functional nomenclature and Oxford/British spelling (`Closing release`, `Shunt release`, `Undervoltage release`, `Door escutcheon`, `Withdrawable circuit-breaker`). | `IEC 60947-2:2024`, `IEC 60947-1:2020`, international catalogue benchmarks. |
+| **Track 2: OEM Manual Register (企业官方产品说明书 / 运维规程语体)** | Factory instruction manuals, user guides, O&M procedures, installation booklets, compliance filings. | Strict 1:1 terminological alignment with the OEM's own published English manuals, harmonized to IEC 60947-2:2024 orthography. Retains legacy published-manual structural/accessory phrasing **for 1:1 maintenance of existing manuals only** (`Closed electromagnet (CEM)`, `Undervoltage Instantaneous Trip (UVT)`, `Keys and locks (KL)`, `Steel Cable Interlock`, `Door Frame and Pad`, `Drawer seat`); newly authored manuals should adopt Track 1 engineering phrasing. | The OEM English operation & maintenance manual for the product in scope — read it from the project's own reference store; this skill deliberately does not bundle or hard-code its path. |
 
 The two tracks are intentionally parallel. When both appear in a reference table, Track 2 wins for service documents and Track 1 wins for catalogue copy — never mix tracks inside one deliverable, and never introduce US spellings into either IEC track.
 
@@ -144,7 +144,7 @@ Map every parameter name onto its standard symbol. The value stays a slot; only 
 | 壳架等级 / 壳架电流 | `Frame size` (`Cl. 3.1.1`) / `Frame current` ($I_{nm}$, `GB/T 14048.2` only) | `IEC 60947-2:2024 Cl. 3.1.1` defines `frame size` in amperes (28×); `Inm` has 0 occurrences in IEC 60947-2 |
 | 额定极限 / 单极极限 / 运行 / 短时耐受 / 接通 / 短路能力 | `Rated ultimate` ($I_{cu}$, `Cl. 5.3.6.2.2`) / `individual pole ultimate at phase-to-neutral AC voltage` ($I_{cu1}$, `Cl. 5.3.6.2.3 & 9.3.11`) / `service` ($I_{cs}$, `Cl. 5.3.6.2.4`) / `short-time withstand` ($I_{cw}$, `Cl. 5.3.6.4`) / `making` ($I_{cm}$, `Cl. 5.3.6.1`) / `short-circuit capacity` ($I_{cn}$, `IEC 60898-1`) | Catalogue table header: `Ultimate breaking capacity Vac 50/60 Hz` |
 | 分断能力型号 | `Breaking capacity type` | e.g. Type N / S / H; never "breaking capacity levels" |
-| 选择性类别 / 使用类别 | `Selectivity category` (`Category A / B`, `Cl. 4.1 & 5.4`) / `Utilisation category` (`AC-15`, `DC-13`, `AC-3`, `AC-22` per `Annex L.4.1`) | Never "discrimination"; never conflate Selectivity Cat B with Utilisation category |
+| 选择性类别 / 使用类别 | `Selectivity category` (`Category A / B`, `Cl. 4.1 & 5.4`) / `Utilization category` (`AC-15`, `DC-13`, `AC-3`, `AC-22` per `Annex L.4.1`) | Never "discrimination"; never conflate Selectivity Cat B with Utilization category (`IEC 60947-2:2024 L.4.1` uses `-ize`: `utilization category`) |
 | 机械 / 电寿命 | `Operational performance without / with current` / `Number of operating cycles` (`Cl. 8.2.4.2 & Table 7`); `Mechanical / Electrical endurance` (`Annex M M.8.11`, `Annex R R.8.5`) | `durability` = 0 occurrences in IEC 60947-2:2024; convert 万-based figures into a plain integer (`{{ops: cycles}}`) |
 
 **Unit and number formatting:**
@@ -155,27 +155,31 @@ Map every parameter name onto its standard symbol. The value stays a slot; only 
 
 ### Step 4: Linguistic Style Abstraction & Syntactic Archetypes (语言风格抽象化与句式文法原型)
 
-Translate technical functions by instantiating these six abstract archetypes. Bracketed items are slots or free text, never invented values. Every occurrence of `circuit-breaker` is hyphenated and uses IEC 60947-2:2024 British spelling across both Track 1 and Track 2.
+Translate technical functions by instantiating these six abstract archetypes. Bracketed items are slots or free text, never invented values. Every occurrence of `circuit-breaker` is hyphenated and uses IEC 60947-2:2024 Oxford/British spelling across both Track 1 and Track 2. Use **Track 1 (Native Engineering)** for all catalogues and newly authored manuals; use **Track 2 (Legacy OEM Compatibility)** ONLY when maintaining 1:1 parity with previously published OEM manuals.
 
 1. **Permission / Prohibition Modals (权限与闭锁模态句型)**
-   - *Abstract*: `[Enclosure/Component] is forbidden to [Action] when [Condition A] and is allowed to [Action] when [Condition B].`
-   - *Sample (SDIL/PDIL)*: "The cabinet door is forbidden to open when the circuit-breaker is closed and is allowed to open when the circuit-breaker is disconnected."
-2. **Protective Ride-Through / Operational Refusal (保护拒动与穿越句型)**
-   - *Abstract*: `When [Parameter] returns to [Nominal State] within [Fraction] [Delay Time], the [Apparatus] refuses to open / will not trip.`
-   - *Sample (UVTR/UVTZ)*: "When the voltage returns to normal within `{{uvtr_ride_through_fraction}}` of the delay time, the circuit-breaker refuses to open."
+   - *Track 1 (Native Engineering)*: `[Enclosure/Component] is prevented from opening / cannot be opened when [Condition A], and can only be opened when [Condition B].`
+     - *Sample (SDIL/PDIL)*: "The cabinet door cannot be opened when the circuit-breaker is closed and can only be opened when the circuit-breaker is disconnected."
+   - *Track 2 (Legacy OEM Compatibility Only)*: `[Enclosure/Component] is forbidden to [Action] when [Condition A] and is allowed to [Action] when [Condition B].` *(e.g. "The cabinet door is forbidden to open when the circuit-breaker is closed and is allowed to open when the circuit-breaker is disconnected.")*
+2. **Protective Ride-Through / Non-Tripping Refusal (保护拒动与穿越句型)**
+   - *Track 1 (Native Engineering)*: `When [Parameter] returns to [Nominal State] within [Fraction] of [Delay Time], the [Apparatus] does not trip / will not open.`
+     - *Sample (UVTR/UVTZ)*: "When the voltage returns to normal within `{{uvtr_ride_through_fraction}}` of the delay time, the circuit-breaker does not trip."
+   - *Track 2 (Legacy OEM Compatibility Only)*: `... the [Apparatus] refuses to open.`
 3. **Rating Independence & Signal Sampling (定值独立性与采样拓扑句型)**
-   - *Abstract*: `The [Tripping Value] is directly expressed in [Physical Unit], irrelevant to [Apparatus Rating]. The signal is taken in [Sampling Mode], requiring [External Component].`
-   - *Sample (RCT)*: "The leakage trip value IΔn is directly expressed in amperes, irrelevant to the rated current of the circuit-breaker. The signal is taken in a zero-sequence sampling mode, requiring an external leakage transformer."
+   - *Track 1 (Native Engineering)*: `The [Tripping Value] is expressed directly in [Physical Unit], independent of [Apparatus Rating]. The signal is acquired in [Sampling Mode], requiring [External Component].`
+     - *Sample (RCT)*: "The residual tripping value IΔn is expressed directly in amperes, independent of the circuit-breaker rated current. The signal is acquired via zero-sequence sampling, requiring an external residual current transformer."
+   - *Track 2 (Legacy OEM Compatibility Only)*: `The [Tripping Value] is directly expressed in [Physical Unit], irrelevant to [Apparatus Rating]. The signal is taken in [Sampling Mode], requiring [External Component].`
 4. **Action Threshold Dichotomy (动作阈值配对词法原型)**
    - *Release Actions*: `Trip` (脱扣/分断) ⟷ `Pull-in` (吸合/接通) ⟷ `Holding` (保持).
    - *Mechanism States (`Cl. 3.5`, `8.1.2`)*: `Disconnected position` *(IEC 60947-2:2024 standard; OEM manual legacy: Separation position)* ⟷ `Test position` ⟷ `Connected position` *(IEC standard; OEM manual legacy: Connection position)*.
 5. **Lock-and-Key Combinatorial (锁匙组合句式原型)**
    - *Abstract*: `[N] locks and [M] keys: [X] circuit-breakers are equipped with [N] [identical/separate] locks and [M] [identical/separate] keys.`
    - *Sample (KL)*: "Two locks and one key: Two circuit-breakers are equipped with two identical locks and one key."
-   - *Tool Idiom*: `hole opener` (Manual SSOT) or `hole punch / hole saw` (Catalogue standard).
+   - *Tool Idiom*: `hole punch / hole saw` (Track 1 Catalogue & new manuals) or `hole opener` (Track 2 Legacy Manual 1:1 compatibility only).
 6. **Pulse Duty Cycle Constraint (脉冲通电工作制约束句型)**
-   - *Abstract*: `The [Accessory A] and [Accessory B] belong to the pulse energization working mode, and it is necessary to ensure that the pulse time t1 is not less than [T1] and the energization interval t2 is greater than [T2].` *(IEC 60947-2:2024 uses `-ize` / `energization`.)*
-   - *Sample (SHT/CEM)*: "The Shunt Release and Closing Release (OEM: Closed Electromagnet) belong to the pulse energization working mode, and it is necessary to ensure that the pulse time t1 is not less than `{{pulse_time_t1: ms}}` and the energization interval t2 is greater than `{{pulse_interval_t2: s}}`."
+   - *Track 1 (Native Engineering)*: `The [Accessory A] and [Accessory B] operate on a pulse-energization duty; the pulse duration t1 shall be at least [T1] and the energization interval t2 shall exceed [T2].`
+     - *Sample (SHT/CEM)*: "The Shunt Release and Closing Release operate on a pulse-energization duty; the pulse duration t1 shall be at least `{{pulse_time_t1: ms}}` and the energization interval t2 shall exceed `{{pulse_interval_t2: s}}`."
+   - *Track 2 (Legacy OEM Compatibility Only)*: `The [Accessory A] and [Accessory B] belong to the pulse energization working mode, and it is necessary to ensure that the pulse time t1 is not less than [T1] and the energization interval t2 is greater than [T2].` *(OEM CEM label: Closed Electromagnet.)*
 
 ### Step 5: Quality Audit & Final Verification
 
@@ -201,8 +205,8 @@ Read the table by direction (§3.2): ZH→EN takes the ✅ column as the require
 | **漏电断路器** | Leakage breaker | **Residual Current Circuit-Breaker (RCBO / RCCB)** / **Circuit-Breaker Incorporating Residual Current Protection (CBR, Annex B)** |
 | **双电源自动转换开关** | Dual power auto switch | **Automatic Transfer Switch (ATS / TSE)** |
 | **交流接触器** | AC connector / AC switcher | **AC Contactor** |
-| **抽屉式 / 抽屉座** | Drawer / Drawer type / Drawer box | **Withdrawable / Withdrawable circuit-breaker** (`Cl. 3.5, 4.4`); **Cradle / Withdrawable chassis** *(IEC)* / **Drawer seat** *(OEM manual)* / **Drawout / Drawout chassis** *(North America / UL)* |
-| **闭合电磁铁** | Close electromagnet (verb form) / Closing magnet | **Closing release (closing coil) (CC / CEM)** *(IEC 60947-2:2024 Cl. 3.19)* / **Closed electromagnet (CEM)** *(OEM manual Track 2)* |
+| **抽屉式 / 抽屉座** | Drawer / Drawer type / Drawer box | **Withdrawable / Withdrawable circuit-breaker** (`Cl. 3.5, 4.4`); **Cradle / Withdrawable chassis** *(IEC)* / **Drawer seat** *(OEM manual legacy)* / **Drawout / Drawout chassis** *(international commercial / UL synonym)* |
+| **闭合电磁铁** | Close electromagnet (verb form) / Closing magnet | **Closing release (closing coil) (CC / CEM)** *(IEC 60947-2:2024 Cl. 3.19)* / **Closed electromagnet (CEM)** *(OEM manual Track 2 legacy 1:1 compatibility only)* |
 | **分励脱扣器** | Excitation release / Shunting release / Shunt opening release | **Shunt release (SHT / MX / YO)** *(IEC 60947-2:2024 Cl. 5.7.1)* / **Shunt Trip (ST)** *(North America / UL)* |
 | **欠电压脱扣器** | Lack voltage trip / Less voltage trip / Under-voltage | **Undervoltage release (UVR / MN)** *(IEC 60947-2:2024 Cl. 5.7.1)* / **Undervoltage trip (UVT / UVTR)** *(OEM manual Track 2)* |
 | **灭弧室** | Interrupter / Arc room | **Arc extinction device** (`Cl. 8.1.6`) / **Arc-extinguishing chamber / Arc chute** *(catalogue / OEM)* |
@@ -255,7 +259,7 @@ Load only the modules the routing table selects, plus `01` and `07`. Every modul
 2. **[ ] Direction honoured.** The deliverable is in the target language required by §3.2, and the other language appears only in the two permitted positions (mapping-table source column, quoted source text).
 3. **[ ] Category routing confirmed.** Product category identified and the matching modules loaded, including the mandatory universal parameter module.
 4. **[ ] Zero literal machine translation.** ZH→EN: all terms checked against the dictionary in `07` and `iec60947_2_terminology_master.json`, plus the category-specific forbidden lists. EN→ZH: every term landed on the ✅ Chinese form, with no invented equivalent.
-5. **[ ] Register & IEC orthography consistent.** The whole deliverable is Track 1 or Track 2 — not a mixture — uses strict IEC 60947-2:2024 British spelling and hyphenation (`circuit-breaker`, `moulded-case`, `withdrawable`, `undervoltage`, `utilisation`, `colour`, `aluminium`, `energization`), and isolates US spellings strictly to UL / North American columns.
+5. **[ ] Register & IEC orthography consistent.** The whole deliverable is Track 1 or Track 2 — not a mixture — uses strict IEC 60947-2:2024 Oxford/British spelling and hyphenation (`circuit-breaker`, `moulded-case`, `withdrawable`, `undervoltage`, `utilization`, `catalogue`, `colour`, `aluminium`, `energize`/`energization`), and isolates North American spellings (`Molded`, `Color`, `Aluminum`, unhyphenated `Circuit Breaker`) strictly to UL / North American columns.
 6. **[ ] Exact standards compliance.** Parameters, curves, and ratings mapped to the correct IEC (`60947-2:2024`, `60898-1`, `60947-4-1`, `60947-6-1`) or UL (`489`, `1066`, `1008`) reference, with the standard cited rather than paraphrased.
 7. **[ ] Contact logic symmetrical.** Every changeover / SPDT / secondary-circuit instruction states contact state and operating sequence explicitly.
 8. **[ ] Claims scoped.** Every marketing claim names its model scope and survives re-scoping; superlatives removed where they do not.
