@@ -23,12 +23,12 @@ description: Extract structured text and visual-page maps from .pdf/.docx/.xlsx 
 
 ## Step 3 — Non-Destructive PDF Annotation (`annotate_pdf.py`)
 
-1. Consume a `chint-office-annotate/v1` JSON list or `{"annotations": [...]}` (`page`, `search`, `comment`, optional `author`).
-2. Run: `python3 scripts/annotate_pdf.py <input.pdf> --annotations <errata.json_or_-> [--output <out.pdf>]`
-   - Writes strictly to a new file (`<stem>_annotated.pdf` by default), keeping `<input.pdf>` untouched.
-   - Places a Highlight on matched phrases and falls back cleanly to staggered margin Sticky Notes preserving `[query] comment` when split text runs block rects (`sticky_fallback_count` tracked).
-3. *Done when*: New annotated PDF copy written, source PDF untouched, and `highlight_count + sticky_fallback_count == total`.
+1. Consume a `chint-office-annotate/v1` JSON list or `{"annotations": [...]}` (`page`, `search` or `searches`, `comment`, optional `match_mode`: `all` | `merged` | `first`, optional `author`). Pipe JSON directly via `--annotations -` to avoid extra files on disk.
+2. Run: `python3 scripts/annotate_pdf.py <input.pdf> --annotations - [--output <out.pdf>] [--author <name>]`
+   - Writes strictly to a single new PDF copy (`<stem>_annotated.pdf` by default), preserving `<input.pdf>` untouched and keeping all pre-existing annotations.
+   - Applies unified yellow `Highlight` (`all` marks every occurrence on the page; `merged` binds multiple hits into one linked sidebar annotation) and falls back to staggered yellow margin `Sticky Note` preserving `[label] comment` (`sticky_fallback_count` & `fallback_items` tracked).
+3. *Done when*: New annotated PDF copy written, source PDF untouched, and `matched_items + sticky_fallback_count == total`.
 
 ## Step 4 — Completion Gate
 
-- Original file untouched; any `low_text_pages` explicitly surfaced; `chint-office-extract/v1` / `chint-office-annotate/v1` schemas preserved verbatim.
+- Original file untouched; zero stray sidecar files created when piped; any `low_text_pages` and `fallback_items` explicitly surfaced; `chint-office-extract/v1` / `chint-office-annotate/v1` schemas preserved verbatim.

@@ -9,6 +9,36 @@ import tempfile
 from pathlib import Path
 
 SCHEMA_ID = "chint-office-annotate/v1"
+YELLOW = (1.0, 0.92, 0.23)
+
+
+def _collect_terms(item: dict) -> list[str]:
+    raw: list[str] = []
+    if item.get("search"):
+        raw.append(str(item["search"]).strip())
+    for s in item.get("searches") or []:
+        st = str(s).strip()
+        if st:
+            raw.append(st)
+    seen: set[str] = set()
+    terms: list[str] = []
+    for t in raw:
+        if t and t not in seen:
+            seen.add(t)
+            terms.append(t)
+    return terms
+
+
+def _find_distinct_rects(page, terms: list[str]) -> list:
+    seen: set[tuple[float, float, float, float]] = set()
+    rects = []
+    for t in terms:
+        for r in page.search_for(t):
+            key = (round(r.x0, 1), round(r.y0, 1), round(r.x1, 1), round(r.y1, 1))
+            if key not in seen:
+                seen.add(key)
+                rects.append(r)
+    return rects
 
 
 def annotate_pdf(input_pdf: Path, items: list[dict], output_pdf: Path, default_author: str = "CHINT PM") -> dict:
@@ -18,36 +48,72 @@ def annotate_pdf(input_pdf: Path, items: list[dict], output_pdf: Path, default_a
         raise ValueError("Refusing to overwrite input PDF; choose a distinct output path.")
 
     doc = fitz.open(str(input_pdf))
-    highlights, stickies = 0, 0
+    matched_items, highlights, rect_count, stickies = 0, 0, 0, 0
     page_stickies: dict[int, int] = {}
+    fallback_items: list[dict] = []
     for idx, item in enumerate(items, 1):
         pno = int(item["page"])
         if pno < 1 or pno > len(doc):
             raise ValueError(f"Annotation #{idx} page {pno} out of range 1..{len(doc)}")
         page = doc[pno - 1]
-        query = str(item.get("search", "")).strip()
+        terms = _collect_terms(item)
         comment = str(item.get("comment", "")).strip()
         author = str(item.get("author") or default_author)
-        rects = page.search_for(query) if query else []
-        if rects:
-            annot = page.add_highlight_annot(rects[0])
-            note_body = comment
-            highlights += 1
+        mode = str(item.get("match_mode") or "all").lower()
+        if mode not in {"all", "merged", "first"}:
+            raise ValueError(f"Annotation #{idx} invalid match_mode: {mode}")
+
+        matched_rects = _find_distinct_rects(page, terms)
+        if matched_rects:
+            matched_items += 1
+            if mode == "merged":
+                annot = page.add_highlight_annot(matched_rects)
+                annot.set_colors(stroke=YELLOW)
+                annot.set_info(title=author, content=comment)
+                annot.update()
+                highlights += 1
+                rect_count += len(matched_rects)
+            else:
+                targets = [matched_rects[0]] if mode == "first" else matched_rects
+                for rect in targets:
+                    annot = page.add_highlight_annot(rect)
+                    annot.set_colors(stroke=YELLOW)
+                    annot.set_info(title=author, content=comment)
+                    annot.update()
+                    highlights += 1
+                    rect_count += 1
         else:
             idx_on_page = page_stickies.get(pno, 0)
             page_stickies[pno] = idx_on_page + 1
             x = 24 + (idx_on_page // 10) * 28
             y = 24 + (idx_on_page % 10) * 22
-            note_body = f"[{query}] {comment}" if query else comment
+            label = ""
+            if len(terms) == 1:
+                label = terms[0]
+            elif terms:
+                label = ", ".join(terms[:3]) + (" 等" if len(terms) > 3 else "")
+            note_body = f"[{label}] {comment}" if label else comment
             annot = page.add_text_annot(fitz.Point(x, y), note_body)
+            annot.set_colors(stroke=YELLOW)
+            annot.set_info(title=author, content=note_body)
+            annot.update()
             stickies += 1
-        annot.set_info(title=author, content=note_body)
-        annot.update()
+            fallback_items.append({"page": pno, "label": label, "comment": comment})
 
     output_pdf.parent.mkdir(parents=True, exist_ok=True)
     doc.save(str(output_pdf))
     doc.close()
-    return {"schema": SCHEMA_ID, "input": str(input_pdf), "output": str(output_pdf), "total": len(items), "highlight_count": highlights, "sticky_fallback_count": stickies}
+    return {
+        "schema": SCHEMA_ID,
+        "input": str(input_pdf),
+        "output": str(output_pdf),
+        "total": len(items),
+        "matched_items": matched_items,
+        "highlight_annotations": highlights,
+        "highlighted_rects": rect_count,
+        "sticky_fallback_count": stickies,
+        "fallback_items": fallback_items,
+    }
 
 
 def run_self_test() -> int:
@@ -58,22 +124,31 @@ def run_self_test() -> int:
         src, dst = td / "orig.pdf", td / "orig_annotated.pdf"
         d = fitz.open()
         p = d.new_page()
-        p.insert_text((72, 100), "Closed electromagnet XF")
+        pre = p.add_rect_annot(fitz.Rect(20, 20, 60, 40))
+        pre.set_info(title="Legacy Reviewer", content="Pre-existing square")
+        pre.update()
+        p.insert_text((72, 100), "Closed electromagnet XF; Closed electromagnet")
+        p.insert_text((72, 140), "Frame 1000A, 1600A and 2000A")
         d.save(str(src))
         d.close()
 
         items = [
-            {"page": 1, "search": "Closed electromagnet", "comment": "Replace with Closing release (CEM)"},
-            {"page": 1, "search": "UNMATCHED_SPLIT_RUN", "comment": "Fallback sticky note"},
+            {"page": 1, "search": "Closed electromagnet", "match_mode": "all", "comment": "替换为：Closing release (CEM)"},
+            {"page": 1, "searches": ["1000A", "1600A", "2000A"], "match_mode": "merged", "comment": "替换为：数字与单位间加半角空格（本页 3 处）"},
+            {"page": 1, "search": "UNMATCHED_SPLIT_RUN", "comment": "替换为：兜底便签"},
         ]
-        summary = annotate_pdf(src, items, dst)
-        assert summary["highlight_count"] == 1 and summary["sticky_fallback_count"] == 1, summary
+        summary = annotate_pdf(src, items, dst, default_author="CHINT Translation")
+        assert summary["matched_items"] == 2 and summary["highlight_annotations"] == 3 and summary["highlighted_rects"] == 5 and summary["sticky_fallback_count"] == 1, summary
+        assert len(summary["fallback_items"]) == 1 and summary["fallback_items"][0]["label"] == "UNMATCHED_SPLIT_RUN", summary
         with fitz.open(str(src)) as sdoc, fitz.open(str(dst)) as ddoc:
-            assert len(list(sdoc[0].annots())) == 0, "Original PDF was modified!"
-            annots = list(ddoc[0].annots())
-            assert len(annots) == 2, "Annotated PDF missing annotations!"
-            assert "[UNMATCHED_SPLIT_RUN]" in (annots[1].info.get("content") or ""), annots[1].info
-    print("SELF-TEST PASS: annotate_pdf.py verified (highlight + sticky fallback + content intact, original untouched).")
+            assert len(list(sdoc[0].annots())) == 1, "Original PDF was modified!"
+            annots = [(a.type[1], tuple(round(v, 1) for v in a.rect), len(a.vertices or []), a.colors.get("stroke"), a.info.get("title"), a.info.get("content")) for a in ddoc[0].annots()]
+            assert len(annots) == 5, f"Expected 1 legacy + 4 new annots, got {len(annots)}: {annots}"
+            assert annots[0][4] == "Legacy Reviewer", annots[0]
+            assert annots[1][0] == "Highlight" and annots[2][0] == "Highlight" and annots[1][1] != annots[2][1], annots[1:3]
+            assert annots[3][0] == "Highlight" and annots[3][2] == 12, annots[3]
+            assert annots[4][0] == "Text" and "[UNMATCHED_SPLIT_RUN]" in (annots[4][5] or ""), annots[4]
+    print("SELF-TEST PASS: annotate_pdf.py verified (legacy preserved, yellow all+merged highlights, sticky fallback, source untouched).")
     return 0
 
 

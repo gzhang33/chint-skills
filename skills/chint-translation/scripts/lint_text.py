@@ -267,26 +267,114 @@ def format_report_md(loaded: dict, findings: list[dict]) -> str:
     return "\n".join(lines)
 
 
-def emit_annotate_payload(findings: list[dict], out_path: Path) -> int:
-    seen: set[tuple[int, str]] = set()
+CLAUSE_PAREN_RE = re.compile(r"\s*\((?:IEC|GB/T|Cl\.|Annex|ISO/IEC|unhyphenated|explicit)[^)]*\)\s*$", re.IGNORECASE)
+UNIT_SPACING_FIX = "Insert single half-width space between number and unit"
+ASCII_PUNCT_FIX = "Use half-width ASCII punctuation in English prose"
+
+
+def _strip_clause_notes(text: str) -> str:
+    cur = text.strip()
+    while True:
+        nxt = CLAUSE_PAREN_RE.sub("", cur).strip()
+        if nxt == cur:
+            return cur
+        cur = nxt
+
+
+def _format_unit_gap(tok: str) -> str:
+    return re.sub(r"^(\d+(?:\.\d+)?)(.+)$", r"\1 \2", tok)
+
+
+def clean_pdf_replacement(match: str, category: str, fix: str) -> str:
+    if category == "TECH_CONTRADICTION":
+        return "Selectivity category B（含 Isd/Icw 时须声明为 B 类）"
+    if category == "UNIT_SPACING_PUNCT":
+        if fix == UNIT_SPACING_FIX:
+            return _format_unit_gap(match)
+        if fix == ASCII_PUNCT_FIX:
+            return "半角英文标点"
+        if "℃" in fix:
+            return " °C"
+        if fix.startswith("100% of Icu"):
+            return "100% of Icu"
+        if "kA rms" in fix:
+            return f"{match} rms"
+        if "kA peak" in fix:
+            return f"{match} peak"
+    if category == "ORTHOGRAPHY_US_HYPHEN":
+        if "energiz*" in fix:
+            return re.sub(r"(?i)energis", lambda m: "Energiz" if m.group(0)[0].isupper() else "energiz", match)
+        base = _strip_clause_notes(fix)
+        if "(s)" in base:
+            base = base.replace("(s)", "s" if match.lower().endswith("s") else "")
+        if match[:1].isupper() and base[:1].islower():
+            base = base[0].upper() + base[1:]
+        return base
+    return _strip_clause_notes(fix)
+
+
+def build_annotate_payload(findings: list[dict], author: str = "CHINT Translation") -> dict:
+    high_seen: set[tuple[int, str, str]] = set()
+    med_groups: dict[tuple[int, str, str], list[dict]] = {}
     items: list[dict] = []
+
     for f in findings:
         m = re.match(r"^P(\d+):", f["location"])
         if not m:
             continue
         pno = int(m.group(1))
-        key = (pno, f["match"])
-        if key in seen:
-            continue
-        seen.add(key)
-        items.append({
-            "page": pno,
-            "search": f["match"],
-            "comment": f"[{f['severity']}/{f['category']}] {f['fix']}",
-        })
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    out_path.write_text(json.dumps({"schema": "chint-office-annotate/v1", "annotations": items}, ensure_ascii=False, indent=2), encoding="utf-8")
-    return len(items)
+        if f["severity"] == "HIGH":
+            search_str = f["match"].split(" + ")[0] if f["category"] == "TECH_CONTRADICTION" else f["match"]
+            key = (pno, search_str, f["fix"])
+            if key in high_seen:
+                continue
+            high_seen.add(key)
+            rep = clean_pdf_replacement(search_str, f["category"], f["fix"])
+            items.append({
+                "page": pno,
+                "search": search_str,
+                "match_mode": "all",
+                "comment": f"替换为：{rep}",
+                "author": author,
+            })
+        else:
+            gkey = (pno, f["category"], f["fix"])
+            med_groups.setdefault(gkey, []).append(f)
+
+    for (pno, cat, fix), grp in med_groups.items():
+        unique_matches = list(dict.fromkeys(f["match"] for f in grp))
+        count = len(grp)
+        if cat == "UNIT_SPACING_PUNCT" and fix == UNIT_SPACING_FIX:
+            ex_tokens = [_format_unit_gap(tok) for tok in unique_matches[:3]]
+            ex_str = "、".join(ex_tokens) + (" 等" if len(unique_matches) > 3 else "")
+            comment = f"替换为：数字与单位间加半角空格（本页 {count} 处，如 {ex_str}）"
+        elif cat == "UNIT_SPACING_PUNCT" and fix == ASCII_PUNCT_FIX:
+            comment = f"替换为：半角英文标点（本页 {count} 处）"
+        else:
+            rep = clean_pdf_replacement(unique_matches[0], cat, fix)
+            comment = f"替换为：{rep}" if count == 1 else f"替换为：{rep}（本页共 {count} 处）"
+        entry: dict = {"page": pno, "match_mode": "merged", "comment": comment, "author": author}
+        if len(unique_matches) == 1:
+            entry["search"] = unique_matches[0]
+        else:
+            entry["searches"] = unique_matches
+        items.append(entry)
+
+    items.sort(key=lambda x: (x["page"], 0 if x["match_mode"] == "all" else 1))
+    return {"schema": "chint-office-annotate/v1", "annotations": items}
+
+
+def emit_annotate_payload(findings: list[dict], out_target: str | Path, author: str = "CHINT Translation") -> int:
+    payload = build_annotate_payload(findings, author=author)
+    text = json.dumps(payload, ensure_ascii=False, indent=2)
+    if str(out_target) == "-":
+        sys.stdout.write(text + "\n")
+        sys.stdout.flush()
+    else:
+        p = Path(out_target)
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(text, encoding="utf-8")
+    return len(payload["annotations"])
 
 
 def run_self_test() -> int:
@@ -343,6 +431,15 @@ def run_self_test() -> int:
         assert written == 2
         ann_obj = json.loads(ann_json.read_text(encoding="utf-8"))
         assert ann_obj["schema"] == "chint-office-annotate/v1" and len(ann_obj["annotations"]) == 2
+        high_ann = [a for a in ann_obj["annotations"] if a["match_mode"] == "all"]
+        med_ann = [a for a in ann_obj["annotations"] if a["match_mode"] == "merged"]
+        assert len(high_ann) == 1 and high_ann[0]["comment"] == "替换为：Shunt release (SHT)", high_ann
+        assert len(med_ann) == 1 and med_ann[0]["search"] == "250A" and med_ann[0]["comment"].startswith("替换为："), med_ann
+        merged_check = build_annotate_payload([
+            {"location": "P1:L1", "severity": "MEDIUM", "category": "UNIT_SPACING_PUNCT", "match": "250A", "fix": UNIT_SPACING_FIX, "excerpt": ""},
+            {"location": "P1:L2", "severity": "MEDIUM", "category": "UNIT_SPACING_PUNCT", "match": "400V", "fix": UNIT_SPACING_FIX, "excerpt": ""},
+        ])["annotations"]
+        assert len(merged_check) == 1 and merged_check[0]["searches"] == ["250A", "400V"] and "250 A、400 V" in merged_check[0]["comment"], merged_check
         chunks = build_chunks(loaded["units"], 1)
         assert len(chunks) == 2
 
@@ -357,7 +454,8 @@ def main() -> int:
     parser.add_argument("--mode", choices=["en", "zh"], default="en")
     parser.add_argument("--json", action="store_true", help="Output structured JSON")
     parser.add_argument("--report-md", action="store_true", help="Output deduplicated context-safe Markdown report")
-    parser.add_argument("--emit-annotate", help="Write deduplicated chint-office-annotate/v1 JSON to file")
+    parser.add_argument("--emit-annotate", help="Write chint-office-annotate/v1 JSON to '-' (stdout pipe, zero disk file) or file path")
+    parser.add_argument("--author", default="CHINT Translation", help="Annotation author when emitting chint-office-annotate/v1")
     parser.add_argument("--chunk-size", type=int, default=0, help="Split units into chunks of N non-empty lines")
     parser.add_argument("--chunk-index", type=int, default=0, help="Inspect 1-based chunk K only")
     parser.add_argument("--chunks-info", action="store_true", help="Print chunk manifest with per-chunk hit counts")
@@ -414,7 +512,9 @@ def main() -> int:
 
     findings = scan_units(active_units, args.dept, args.mode)
     if args.emit_annotate:
-        emit_annotate_payload(findings, Path(args.emit_annotate))
+        emit_annotate_payload(findings, args.emit_annotate, author=args.author)
+        if args.emit_annotate == "-":
+            return 0
 
     report = {
         "source": loaded["source"],
