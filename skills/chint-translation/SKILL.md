@@ -5,7 +5,7 @@ description: "Translate CHINT ACB/MCCB specs (ZH→EN IEC 60947-2:2024, EN→ZH 
 
 # CHINT Circuit-Breaker Translation & Audit Standard
 
-Resolve `<SKILL_DIR>` from the directory containing this `SKILL.md` and run scripts via `python3 "<SKILL_DIR>/scripts/..."`.
+Resolve `<SKILL_DIR>` from the directory containing this `SKILL.md` and run scripts via `python3 "<SKILL_DIR>/scripts/..."` on macOS/Linux (or `python` / `py -3` on Windows).
 
 - **Dual-Standard Statutory Anchors**: `ZH→EN` outputs one canonical **`IEC 60947-2:2024`** (Ed. 6.0) English term and clause; `EN→ZH` outputs one statutory **`GB/T 14048.2—2020`** Chinese term and clause, noting IEC 2024-only additions ($I_{cu1}$, `CBI Class W`).
 - **CHINT Accessory Ordering Codes**: Format accessories as **`Canonical IEC Term (CHINT Code)`** (e.g. `Closing release (CEM)`, `Shunt release (SHT)`, `Ready-to-close contact (SPC)`).
@@ -19,7 +19,7 @@ Resolve `<SKILL_DIR>` from the directory containing this `SKILL.md` and run scri
    - **Single Department**: [acb.md](references/departments/acb.md) (`NXA`, `NA8`, `NA1`) OR [mccb.md](references/departments/mccb.md) (`NXM`, `NXS`, `NM8`, `NM5`).
    - **Audit Blacklist (`Branch B` or `EN→ZH` legacy decoding only)**: [audit_blacklist.md](references/audit_blacklist.md).
    - **Regional Override (Isolated)**: Load concrete `references/regions/<country>.md` only when targeting another jurisdiction.
-   - **Office Handoff**: Delegate `.pdf`, `.docx`, and `.xlsx` extraction and PDF annotation to `chint-office-suite`. Stream extracted `chint-office-extract/v1` JSON via stdin or an OS `/tmp` file deleted on completion (zero sidecars in the user's directory).
+   - **Office Handoff**: Delegate `.pdf`, `.docx`, and `.xlsx` extraction and PDF annotation to `chint-office-suite`. If `chint-office-suite` is not installed in the active environment, stop PDF/Word/Excel processing immediately and ask the user to install both `chint-office-suite` and `chint-translation` together. Stream extracted `chint-office-extract/v1` JSON via stdin or an OS temp file (`/tmp` on macOS/Linux, `%TEMP%` on Windows) deleted on completion (zero sidecars in the user's directory).
 3. *Done when*: Scope is locked and plain text or `chint-office-extract/v1` JSON is staged.
 
 ## Step 2 — Deterministic Script Pass (Branch-Specific)

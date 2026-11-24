@@ -8,6 +8,17 @@ import re
 import sys
 from pathlib import Path
 
+
+def _ensure_utf8_stdio() -> None:
+    """Force UTF-8 on stdio streams so piped JSON/text works on Windows cp936 consoles."""
+    for stream in (sys.stdin, sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            try:
+                stream.reconfigure(encoding="utf-8")
+            except (AttributeError, OSError, ValueError):
+                pass
+
+
 ORTHO_RULES = [
     (r"\bmolded\b", "moulded (IEC UK spelling)"),
     (r"\bcolors?\b", "colour(s) (IEC UK spelling)"),
@@ -23,6 +34,7 @@ ORTHO_RULES = [
     (r"\bearth-fault\b", "ground-fault (G-stage) / earth fault (Annex B)"),
     (r"\bdurability\b", "operational performance / operating cycles / endurance (Cl. 8.2.4.2)"),
     (r"\bdiscrimination\b", "selectivity (Annex A / Cl. 5.4)"),
+    (r"\bdraw-out\b", "withdrawable (IEC Cl. 3.5)"),
 ]
 
 BLACKLIST_COMMON = [
@@ -42,7 +54,6 @@ BLACKLIST_COMMON = [
     (r"\buse class(?:es)?\b", "selectivity category / utilization category"),
     (r"(?<![A-Za-z])\d[\d,]*\s+times\b", "operating cycles"),
     (r"\bdrawer(?:\s+(?:type|box|seat|cradle|base))?\b", "Withdrawable / Withdrawable cradle (IEC Cl. 3.5)"),
-    (r"\bdraw-out\b", "withdrawable (IEC Cl. 3.5)"),
 ]
 
 COMPETITOR_RULES_COMMON = [
@@ -625,11 +636,17 @@ def run_self_test() -> int:
         chunks = build_chunks(loaded["units"], 1)
         assert len(chunks) == 2
 
-    print("SELF-TEST PASS: 11/11 suites passed (EN/ZH/multi-model/long-line/FP-guard/ENERGISED/report-md/compound-annotate/chunking).")
+    drawout_res = scan_units([("P1:L5", "Draw-out circuit-breaker type.")], "acb", "en")
+    assert any(f["match"].lower() == "draw-out" and f["severity"] == "MEDIUM" for f in drawout_res), drawout_res
+    assert build_annotate_payload(drawout_res, min_severity="high")["annotations"] == [], drawout_res
+    assert len(build_annotate_payload(drawout_res, min_severity="all")["annotations"]) >= 1, drawout_res
+
+    print("SELF-TEST PASS: 11/11 suites passed (EN/ZH/multi-model/long-line/FP-guard/ENERGISED/draw-out-MEDIUM/report-md/compound-annotate/chunking).")
     return 0
 
 
 def main() -> int:
+    _ensure_utf8_stdio()
     parser = argparse.ArgumentParser(description="Pure-stdlib text linter for chint-translation")
     parser.add_argument("source", nargs="?", help="Text file, chint-office-extract/v1 JSON, or '-' for stdin")
     parser.add_argument("--dept", choices=["acb", "mccb", "all"], default="all")

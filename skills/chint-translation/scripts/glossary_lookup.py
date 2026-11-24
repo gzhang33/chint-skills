@@ -13,6 +13,16 @@ STD_FILE = SKILL_ROOT / "references" / "iec_60947_2_standard.md"
 ANNEX_FILE = SKILL_ROOT / "references" / "iec_annexes.md"
 DEPT_DIR = SKILL_ROOT / "references" / "departments"
 
+
+def _ensure_utf8_stdio() -> None:
+    """Force UTF-8 on stdio streams so piped JSON/text works on Windows cp936 consoles."""
+    for stream in (sys.stdin, sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            try:
+                stream.reconfigure(encoding="utf-8")
+            except (AttributeError, OSError, ValueError):
+                pass
+
 GENERIC_EN_STOP = {
     "base", "fixed", "type", "class", "status", "tests", "mode", "unit",
     "duty", "items", "aux", "releases", "environment", "type tests",
@@ -532,6 +542,7 @@ def run_self_test() -> int:
 
 
 def main() -> int:
+    _ensure_utf8_stdio()
     parser = argparse.ArgumentParser(description="SSOT Markdown glossary lookup for chint-translation")
     parser.add_argument("source", nargs="?", help="Text file, chint-office-extract/v1 JSON, or '-'")
     parser.add_argument("--dir", choices=["zh2en", "en2zh"], default="zh2en")

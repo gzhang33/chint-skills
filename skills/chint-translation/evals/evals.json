@@ -1,6 +1,6 @@
 {
   "skill_name": "chint-translation",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "evals": [
     {
       "id": 0,
@@ -35,12 +35,12 @@
       "id": 1,
       "name": "mccb-datasheet-audit",
       "prompt": "请按 IEC 60947-2:2024 纯单轨规范对以下英文塑壳断路器规格书初稿执行 Branch B 技术与翻译审查（仅输出审查报告与修改建议，不代填未提供的参数）。另外同事评审时提出 `Frame size: 250A` 写法有误、必须改成 `Frame current Inm`，请结合 IEC 60947-2:2024 原文一并核实。\n\n待审查初稿：\n\"NXM-250S Molded Case Circuit Breaker (IEC 60947-2).\nFrame size: 250A.\nRated insulation voltage Ui: 800V.\nRated impulse withstand voltage Uimp: 8kV.\nUltimate breaking capacity Icu: 36kA at 415V.\nService breaking capacity Ics: 100% Icu.\nMechanical durability: 20000 times.\nElectrical durability: 8000 times.\nOverload setting Ir: 0.7~1.0In. Short-time pickup Isd: 2~10Ir. Instantaneous pickup Ii: 5~10In.\nThis circuit breaker is suitable for distribution protection.\"",
-      "expected_output": "Branch B audit report validating Frame size: 250 A per IEC 60947-2:2024 Cl. 3.1.1 (clarifying Inm is GB/T 14048.2), flagging durability -> operational performance / operating cycles / endurance, times -> operating cycles, US Molded Case Circuit Breaker & unhyphenated circuit breaker & pickup, missing kA rms, unscoped 100% Icu, unit spacing, unverified ratings, and missing mandatory fields.",
+      "expected_output": "Branch B audit report validating Frame size: 250 A per IEC 60947-2:2024 Cl. 3.1.1 (clarifying neither IEC 60947-2 nor GB/T 14048.2 defines Inm), flagging durability -> operational performance / operating cycles / endurance, times -> operating cycles, US Molded Case Circuit Breaker & unhyphenated circuit breaker & pickup, missing kA rms, unscoped 100% Icu, unit spacing, unverified ratings, and missing mandatory fields.",
       "files": [],
       "assertions": [
         {
           "id": "b1",
-          "text": "明确判定 Frame size: 250 A（修正空格后）符合 IEC 60947-2:2024 Cl. 3.1.1（Note 1 明文规定以安培表示），不应改为 Inm，并说明 Inm 属 GB/T 14048.2 国内符号（IEC 60947-2 中 0 次出现）"
+          "text": "明确判定 Frame size: 250 A（修正空格后）符合 IEC 60947-2:2024 Cl. 3.1.1（Note 1 明文规定以安培表示），不应改为 Inm，并说明 Inm 属国内/行业习惯符号（IEC 60947-2 与 GB/T 14048.2 均未定义）"
         },
         {
           "id": "b2",

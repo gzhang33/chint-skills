@@ -3,7 +3,10 @@
 from __future__ import annotations
 
 import argparse
+import importlib.metadata
+import importlib.util
 import json
+import platform
 import re
 import sys
 import tempfile
@@ -13,6 +16,52 @@ from pathlib import Path
 
 SCHEMA_ID = "chint-office-extract/v1"
 LOW_TEXT_THRESHOLD = 50
+
+
+def _ensure_utf8_stdio() -> None:
+    """Force UTF-8 on stdio streams so piped JSON/text works on Windows cp936 consoles."""
+    for stream in (sys.stdin, sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            try:
+                stream.reconfigure(encoding="utf-8")
+            except (AttributeError, OSError, ValueError):
+                pass
+
+
+def _probe_module(mod_name: str, dist_name: str) -> dict[str, object]:
+    """Check whether a third-party module is importable and report its version."""
+    if importlib.util.find_spec(mod_name) is None:
+        return {"available": False, "version": None}
+    try:
+        mod = __import__(mod_name)
+        ver = getattr(mod, "__version__", None)
+        if mod_name == "fitz" and hasattr(mod, "VersionBind"):
+            ver = str(mod.VersionBind)
+        elif not isinstance(ver, str) or len(ver) > 40:
+            ver = None
+        if not ver:
+            try:
+                ver = importlib.metadata.version(dist_name)
+            except importlib.metadata.PackageNotFoundError:
+                ver = None
+        return {"available": True, "version": str(ver) if ver else None}
+    except Exception:
+        return {"available": False, "version": None}
+
+
+def check_env() -> dict[str, object]:
+    """Return runtime Python and optional office dependency availability."""
+    deps = {
+        "pymupdf": _probe_module("fitz", "pymupdf"),
+        "openpyxl": _probe_module("openpyxl", "openpyxl"),
+    }
+    return {
+        "python_version": platform.python_version(),
+        "python_executable": sys.executable,
+        "platform": sys.platform,
+        "dependencies": deps,
+        "ready": all(bool(v["available"]) for v in deps.values()),
+    }
 
 
 def _import_fitz():
@@ -274,24 +323,35 @@ def run_self_test() -> int:
         assert res_xlsx["units"][0] == {"location": "Specs!A1", "text": "Parameter A"}, res_xlsx
         assert res_xlsx["uncached_formula_cells"] == ["Specs!B1"], res_xlsx
 
-    print("SELF-TEST PASS: extract_doc.py verified (.pdf + strict --pages + low_text_pages, .docx separators/txbx, .xlsx uncached formulas).")
+    env_info = check_env()
+    assert isinstance(env_info.get("python_version"), str) and env_info["python_version"], env_info
+    assert set(env_info.get("dependencies", {})) == {"pymupdf", "openpyxl"}, env_info
+    assert env_info["ready"] is True, env_info
+
+    print("SELF-TEST PASS: extract_doc.py verified (.pdf + strict --pages + low_text_pages, .docx separators/txbx, .xlsx uncached formulas, --check-env).")
     return 0
 
 
 def main() -> int:
+    _ensure_utf8_stdio()
     parser = argparse.ArgumentParser(description="Generic CHINT office document extractor")
     parser.add_argument("source", nargs="?", help="Input (.pdf/.docx/.xlsx/.md/.txt) or '-'")
     parser.add_argument("--pages", help="PDF page range, e.g. 1-20 or 1,3,5")
     parser.add_argument("--json", action="store_true", help="Emit chint-office-extract/v1 JSON")
     parser.add_argument("--summary", action="store_true", help="Emit compact metadata, low_text_pages, and recommended batches without raw text")
+    parser.add_argument("--check-env", action="store_true", help="Check Python and pymupdf/openpyxl runtime availability as JSON")
     parser.add_argument("--self-test", action="store_true", help="Run built-in verification suite")
     args = parser.parse_args()
 
     try:
         if args.self_test:
             return run_self_test()
+        if args.check_env:
+            info = check_env()
+            print(json.dumps(info, ensure_ascii=False, indent=2))
+            return 0 if info["ready"] else 1
         if not args.source:
-            parser.error("source is required unless --self-test is set")
+            parser.error("source is required unless --self-test or --check-env is set")
 
         result = extract_document(args.source, parse_page_spec(args.pages))
         if args.summary:

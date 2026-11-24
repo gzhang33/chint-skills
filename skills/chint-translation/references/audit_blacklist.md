@@ -1,6 +1,6 @@
 # Branch B & Legacy Decoding Blacklist (`audit_blacklist.md`)
 
-> **Conditional Disclosure**: Load **only** during `Branch B` errata audits or `EN→ZH` legacy decoding. Programmatically mirrored by [lint_text.py](../scripts/lint_text.py). Do not load during `Branch A` `ZH→EN` generation.
+> **Conditional Disclosure**: Load **only** during `Branch B` errata audits or `EN→ZH` legacy decoding. Programmatically mirrored by [lint_text.py](../scripts/lint_text.py).
 
 ## 1. Universal IEC & Anti-Chinglish Blacklist
 

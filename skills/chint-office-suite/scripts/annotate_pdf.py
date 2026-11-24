@@ -13,6 +13,16 @@ SCHEMA_ID = "chint-office-annotate/v1"
 YELLOW = (1.0, 0.92, 0.23)
 
 
+def _ensure_utf8_stdio() -> None:
+    """Force UTF-8 on stdio streams so piped JSON/text works on Windows cp936 consoles."""
+    for stream in (sys.stdin, sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            try:
+                stream.reconfigure(encoding="utf-8")
+            except (AttributeError, OSError, ValueError):
+                pass
+
+
 def _import_fitz():
     try:
         import fitz
@@ -322,6 +332,7 @@ def run_self_test() -> int:
 
 
 def main() -> int:
+    _ensure_utf8_stdio()
     parser = argparse.ArgumentParser(description="Non-destructive PDF annotator")
     parser.add_argument("input_pdf", nargs="?", help="Source PDF (never modified)")
     parser.add_argument("--annotations", help="JSON file or '-' matching chint-office-annotate/v1")

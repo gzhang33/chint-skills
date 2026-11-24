@@ -11,10 +11,10 @@
 | 技能名称 | 目录路径 | 业务适用场景与核心能力 | 权威标准 / 业务系统依据 |
 |:---|:---|:---|:---|
 | **`chint-pptx`** | `skills/chint-pptx/` | **正泰企业级 PPTX 智能演示文稿生成**<br>按 2026 VI 规范生成可编辑的产品演示文稿。内容页收敛为表格契约（`ARCH_TABLE`）加三张原生图表（趋势 / 占比 / 雷达），封面与章节页继承模板版式保持原生可编辑。内置结构合规门禁、开源 OpenXML 校验、源页保真校验与渲染预览链路。 | CHINT 2026 VI 视觉规范指导手册<br>2026 年正泰 PPT 通用基础模板 |
-| **`chint-translation`** | `skills/chint-translation/` | **B2B 工业品纯双标翻译与术语审核标准（v0.0.1 · 纯文本 + `1 + 1 + N` 隔离架构）**<br>英文严格锚定 `IEC 60947-2:2024`（Ed. 6.0），中文严格锚定 `GB/T 14048.2—2020` 法定词与国标条款号（零俗称括号），覆盖 ACB / MCCB 及附录 A–R（CBR / MRCD / CBI / ICB / 1 500 V PV DC / CBAR），支持正泰专属附件代号（`SHT` / `CEM` / `SPC` / `MOD` / `KL` / `DD` 等），内置确定性词表锁定（`glossary_lookup.py`）、分段体检与零磁盘管道导出（`lint_text.py` 默认仅向 PDF 输送 `HIGH` 实质错译，正文写可复制 `替换为：...`，依据留会话）与区域政策 `regions/` 扩展槽；Office 文件读写与 PDF 批注通过解耦的 `chint-office-suite` 契约两步确认衔接。 | IEC 60947-2:2024 (Ed. 6.0)<br>IEC 60947-1:2020<br>GB/T 14048.2—2020 |
-| **`chint-office-suite`** | `skills/chint-office-suite/` | **正泰通用 Office 文档处理与 PDF 非破坏批注底座（v0.0.1 · 与业务技能完全解耦）**<br>面向 `.pdf` / `.docx` / `.xlsx` 样本与技术文档，提供大文档摘要与页码批建议（`--summary`）、统一结构化文本提取（`extract_doc.py` 自动标记低文本量纯视觉 PDF 页）、以及管道直入的统一黄色高亮与全量追加批注（`annotate_pdf.py` 支持逐处精标 `all` 与同页联动合并 `merged`，保留历史批注并仅另存唯一新 PDF 副本，零覆盖原件），并按文件类型路由协同官方 `pdf` / `docx` / `xlsx` 通用技能与 OCR 技能。 | chint-office-extract/v1<br>chint-office-annotate/v1<br>PyMuPDF / OpenXML / openpyxl |
+| **`chint-translation`** | `skills/chint-translation/` | **B2B 工业品纯双标翻译与术语审核标准（v1.0.0 · 纯文本 + `1 + 1 + N` 隔离架构）**<br>英文严格锚定 `IEC 60947-2:2024`（Ed. 6.0），中文严格锚定 `GB/T 14048.2—2020` 法定词与国标条款号（零俗称括号），覆盖 ACB / MCCB 及附录 A–R（CBR / MRCD / CBI / ICB / 1 500 V PV DC / CBAR），支持正泰专属附件代号（`SHT` / `CEM` / `SPC` / `MOD` / `KL` / `DD` 等），内置确定性词表锁定（`glossary_lookup.py`）、分段体检与零磁盘管道导出（`lint_text.py` 默认仅向 PDF 输送 `HIGH` 实质错译，正文写可复制 `替换为：...`，依据留会话；`draw-out` 默认归为会话 `MEDIUM` 提示）与区域政策 `regions/` 扩展槽；Office 文件读写与 PDF 批注通过解耦的 `chint-office-suite` 契约两步确认衔接，兼容 macOS 与 Windows。 | IEC 60947-2:2024 (Ed. 6.0)<br>IEC 60947-1:2020<br>GB/T 14048.2—2020 |
+| **`chint-office-suite`** | `skills/chint-office-suite/` | **正泰通用 Office 文档处理与 PDF 非破坏批注底座（v1.0.0 · 与业务技能完全解耦）**<br>面向 `.pdf` / `.docx` / `.xlsx` 样本与技术文档，提供 `--check-env` 运行时自检、大文档摘要与页码批建议（`--summary`）、统一结构化文本提取（`extract_doc.py` 自动标记低文本量纯视觉 PDF 页）、以及管道直入的统一黄色高亮与全量追加批注（`annotate_pdf.py` 支持逐处精标 `all` 与同页联动合并 `merged`，保留历史批注并仅另存唯一新 PDF 副本，零覆盖原件），内置 UTF-8 跨平台管道硬化与中国大陆镜像（清华源 / 阿里云源）依赖指引，并按文件类型路由协同官方 `pdf` / `docx` / `xlsx` 通用技能与 OCR 技能。 | chint-office-extract/v1<br>chint-office-annotate/v1<br>PyMuPDF / OpenXML / openpyxl |
 | **`chint-pm-copywriter`** | `skills/chint-pm-copywriter/` | **B2B 工业品 PM 文案与汇报语法引擎**<br>向上汇报、QBR 复盘、PRD 价值主张与产品样本提炼。内置极简量化三要素、三段式负向建设性语法、黑白名单词典与出稿门禁，杜绝浮夸黑话与战役化暗喻。 | 正泰高管汇报标准<br>B2B 工业品 PM 务实文案规范 |
-| **`chint-pm-fabe`** | `skills/chint-pm-fabe/` | **产品卖点 FABE 提炼**<br>把工程参数写成一句式卖点（特征 + 量化优势 + 客户利益）。A 段支持对比型（较上一代提升 55%）与后果型（铜排用量减少 5%）两种写法；B 段收敛为成本、工时、停机、用量/占地、风险/资格五类客户指标。内置单位与术语自查、证据分场景强度（内部评审精确到源 / 对外投标文书级 / 口播给区间）。 | ACB / MCCB / ATS 技术参数表<br>IEC 60947 术语与单位规范 |
+| **`chint-pm-fabe`** | `skills/chint-pm-fabe/` | **产品卖点 FABE 提炼**<br>把工程参数或结构设计写成**价值主张卡片式**（4字短标 + 技术特点 + 产品优势 + 客户价值）、**一句式卖点**（特征 + 量化优势 + 客户利益）或 **FABE 四段表**。A 段支持对比型（较上一代提升 55%）与后果型（铜排用量减少 5%）两种写法；B 段收敛为成本、工时、停机、用量/占地、风险/资格五类客户指标。内置单位与术语自查、证据分场景强度（内部评审精确到源 / 对外投标文书级 / 口播给区间）。 | ACB / MCCB / ATS 技术参数表<br>IEC 60947 术语与单位规范 |
 | **`chint-brand-design`** | `skills/chint-brand-design/` | **正泰品牌资产与视觉规范系统**<br>为 PPTX、Web 前端、数据图表、HTML/PDF 报告提供自包含的品牌资产治理。内置正泰拓新体全套字体、2026 VI 配色矩阵与 Token 导出工具。具体 PPTX 生成请走 `chint-pptx`。 | CHINT 官方 2026 VI |
 | **`chint-data-analysis`** | `skills/chint-data-analysis/` | **主配电销售数据分析**<br>销售透视、漏斗分析、产品线增长与自动化汇报生成，内置 DuckDB 本地数据仓库。 | 主配电产品线营销数据 |
 | **`chint-data-review`** | `skills/chint-data-review/` | **市场数据稽核**<br>跨 Excel、白皮书与竞品数据集核对低压配电 / ACB 市场数字，每个引用数字须可回溯到源页。 | 带源页可追溯性的稽核清单 |
@@ -49,6 +49,24 @@ cp -r skills/chint-translation ~/.gemini/config/skills/
 
 > 也可以用 `skills-manager-cli skills deploy` 统一部署，它会维护来源元数据、预设归属与跨 agent 的部署状态，比手工复制更可靠。
 
+### 3. 团队新机双平台快速部署（macOS + Windows · `chint-translation` + `chint-office-suite`）
+
+1. **同步安装双技能**（处理 PDF / Word / Excel 样本时须同时具备）：
+   ```bash
+   skills-manager-cli skills install https://github.com/gzhang33/chint-skills --skills chint-translation chint-office-suite --agent antigravity
+   ```
+2. **运行时自检**（macOS/Linux 用 `python3`，Windows 用 `python` 或 `py -3`）：
+   ```bash
+   python3 skills/chint-office-suite/scripts/extract_doc.py --check-env
+   ```
+3. **中国大陆 PyPI 镜像补装依赖**（缺失 `pymupdf` 或 `openpyxl` 时优先清华源，失败切阿里云源）：
+   ```bash
+   # 清华源（首选）
+   python3 -m pip install --user --timeout 30 -r skills/chint-office-suite/requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+   # 阿里云源（备选，Windows 将 python3 替换为 python 或 py -3）
+   python3 -m pip install --user --timeout 30 -r skills/chint-office-suite/requirements.txt -i https://mirrors.aliyun.com/pypi/simple/
+   ```
+
 ---
 
 ## 📌 知识库架构说明 (`chint-pptx`)
@@ -76,21 +94,21 @@ cp -r skills/chint-translation ~/.gemini/config/skills/
 
 ---
 
-## 📌 知识库架构说明 (`chint-translation` · v0.0.1 纯文本双标 `1 + 1 + N` 架构)
+## 📌 知识库架构说明 (`chint-translation` · v1.0.0 纯文本双标 `1 + 1 + N` 架构)
 
 - `SKILL.md`（**主控三步清单 + 按需披露 Step 4 交接**）：双标法定词铁律（`IEC 60947-2:2024` ⟷ `GB/T 14048.2—2020`，零俗称括号）、相对技能根目录路径解析与解耦交接契约，严格隔离 `Branch A`（快速翻译）与 `Branch B`（长文本与样本两步确认审校，清单确认后方加载 `pdf_annotation_handoff.md`）。
-- `scripts/glossary_lookup.py`（**纯标准库 SSOT 词表与换算锁定器**）：反引号感知切表并排除备注列误识，支持分块（`--chunk-size`/`--chunk-index`）、短词子集抑制与 `万次` 区间/去重换算。
-- `scripts/lint_text.py`（**纯标准库分段检查与零磁盘批注管道器**）：支持严重度分级、紧邻窗口 `TECH_CONTRADICTION` 检测、长行复合词合并、`--exit-zero` 分块巡检及 `--emit-annotate -` 管道直出（默认 `--annotate-severity high`，`替换为：...` 净洗文案并按大小写归一化去重）。
+- `scripts/glossary_lookup.py`（**纯标准库 SSOT 词表与换算锁定器**）：反引号感知切表并排除备注列误识，支持分块（`--chunk-size`/`--chunk-index`）、短词子集抑制与 `万次` 区间/去重换算（强制 UTF-8 管道兼容 Windows 中文控制台）。
+- `scripts/lint_text.py`（**纯标准库分段检查与零磁盘批注管道器**）：支持严重度分级、紧邻窗口 `TECH_CONTRADICTION` 检测、长行复合词合并、`--exit-zero` 分块巡检及 `--emit-annotate -` 管道直出（默认 `--annotate-severity high`，`替换为：...` 净洗文案并按大小写归一化去重；`draw-out` 归入 `MEDIUM` 提示）。
 - `references/iec_60947_2_standard.md` + `iec_annexes.md` + `audit_blacklist.md` + `pdf_annotation_handoff.md`（**渐进披露参考层**）：主表与附录 A–R、审校黑名单、Step 4 PDF 批注流程按分支按需加载，避免 `Branch A` 上下文污染。
 - `references/departments/acb.md` / `mccb.md` / `_template.md`（**`N` 部门隔离词库**）：专责 ACB / MCCB 术语与正泰专属附件代号，零硬编码私人本地路径。
 - `references/regions/_region_template.md`（**国家/区域合规隔离模板**）：预留独立 `regions/` 扩展位，仅加载具体国家覆写文件。
 
 ---
 
-## 📌 知识库架构说明 (`chint-office-suite` · v0.0.1 通用 Office 底座)
+## 📌 知识库架构说明 (`chint-office-suite` · v1.0.0 通用 Office 底座)
 
-- `SKILL.md`：`.pdf` / `.docx` / `.xlsx` 路由门禁（Step 1）与独立提取（Branch A）/ 非破坏 PDF 批注（Branch B）分支，声明技能根目录路径解析与依赖前提。
-- `scripts/extract_doc.py`：支持 `--summary`、严格 `--pages` 校验、`.pdf` `<50` 字符视觉页识别、`.docx` 制表符/换行保真与文本框去重，以及 `.xlsx` 未缓存公式格警告（`uncached_formula_cells`）。
+- `SKILL.md` & `requirements.txt`：`.pdf` / `.docx` / `.xlsx` 路由门禁（Step 1）、独立提取（Branch A）/ 非破坏 PDF 批注（Branch B）分支、macOS/Windows 执行命令与清华/阿里云 PyPI 镜像补装指引。
+- `scripts/extract_doc.py`：支持 `--check-env` 运行时自检、`--summary`、严格 `--pages` 校验、`.pdf` `<50` 字符视觉页识别、`.docx` 制表符/换行保真与文本框去重，以及 `.xlsx` 未缓存公式格警告（`uncached_formula_cells`）。
 - `scripts/annotate_pdf.py`：通过 `--annotations -` 零磁盘管道消费 `chint-office-annotate/v1` JSON，采用词边界与短代号大小写保护、跨行词组多框归并及页边距便签限位，保留历史批注并仅另存唯一新 PDF 副本。
 
 ---
