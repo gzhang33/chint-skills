@@ -78,20 +78,20 @@ cp -r skills/chint-translation ~/.gemini/config/skills/
 
 ## 📌 知识库架构说明 (`chint-translation` · v0.0.1 纯文本双标 `1 + 1 + N` 架构)
 
-- `SKILL.md`（**主控四步门禁**）：双标法定词铁律（`IEC 60947-2:2024` ⟷ `GB/T 14048.2—2020`，零俗称括号）、与 `chint-office-suite` 的解耦交接契约，严格按 `Branch A`（快速翻译）/ `Branch B`（长文本与样本两步确认审校，确认后零磁盘管道直写唯一批注 PDF）分支隔离执行。
-- `scripts/glossary_lookup.py`（**纯标准库 SSOT 词表与换算锁定器**）：直接解析参考表并执行中/英词条锁定与 `N 万次 → N0,000 operating cycles` 换算，降低对模型记忆的依赖。
-- `scripts/lint_text.py`（**纯标准库分段检查与零磁盘批注管道器**）：消费纯文本或 `chint-office-extract/v1` JSON，支持严重度分级、类 A + `Isd`/`Icw` 技术矛盾检测、`--report-md` 去重聚合、`--chunk-size`/`--chunks-info` 长文本分段及 `--emit-annotate -` 管道直出（默认 `--annotate-severity high` 仅输出 `HIGH` 实质错译 + `替换为：...` 净洗文案并按大小写归一化去重；加 `--annotate-severity all` 时附带同页 `merged` 格式项）。
-- `references/iec_60947_2_standard.md`（**`1` 双标权威底座**）：精准对齐 `IEC 60947-2:2024`（Ed. 6.0 条款 3–9、附录 A–R）与 `GB/T 14048.2—2020` 法定中文及条款对照。
-- `references/departments/acb.md` / `mccb.md` / `_template.md`（**`N` 部门隔离词库**）：分别专责空气断路器与塑料外壳式断路器正泰专属附件代号、原生句式与黑名单，支持后续部门独立扩充。
-- `references/regions/_region_template.md`（**国家/区域合规隔离模板**）：预留独立 `regions/` 扩展位，仅在目标国别明确指定时按需单载。
+- `SKILL.md`（**主控三步清单 + 按需披露 Step 4 交接**）：双标法定词铁律（`IEC 60947-2:2024` ⟷ `GB/T 14048.2—2020`，零俗称括号）、相对技能根目录路径解析与解耦交接契约，严格隔离 `Branch A`（快速翻译）与 `Branch B`（长文本与样本两步确认审校，清单确认后方加载 `pdf_annotation_handoff.md`）。
+- `scripts/glossary_lookup.py`（**纯标准库 SSOT 词表与换算锁定器**）：反引号感知切表并排除备注列误识，支持分块（`--chunk-size`/`--chunk-index`）、短词子集抑制与 `万次` 区间/去重换算。
+- `scripts/lint_text.py`（**纯标准库分段检查与零磁盘批注管道器**）：支持严重度分级、紧邻窗口 `TECH_CONTRADICTION` 检测、长行复合词合并、`--exit-zero` 分块巡检及 `--emit-annotate -` 管道直出（默认 `--annotate-severity high`，`替换为：...` 净洗文案并按大小写归一化去重）。
+- `references/iec_60947_2_standard.md` + `iec_annexes.md` + `audit_blacklist.md` + `pdf_annotation_handoff.md`（**渐进披露参考层**）：主表与附录 A–R、审校黑名单、Step 4 PDF 批注流程按分支按需加载，避免 `Branch A` 上下文污染。
+- `references/departments/acb.md` / `mccb.md` / `_template.md`（**`N` 部门隔离词库**）：专责 ACB / MCCB 术语与正泰专属附件代号，零硬编码私人本地路径。
+- `references/regions/_region_template.md`（**国家/区域合规隔离模板**）：预留独立 `regions/` 扩展位，仅加载具体国家覆写文件。
 
 ---
 
 ## 📌 知识库架构说明 (`chint-office-suite` · v0.0.1 通用 Office 底座)
 
-- `SKILL.md`：`.pdf` / `.docx` / `.xlsx` 路由门禁（Step 1）、结构化提取（Branch A）与非破坏 PDF 批注（Branch B）。
-- `scripts/extract_doc.py`：支持 `--summary` 大文档页数与分批探测，统一提取 PDF / Word / Excel / 文本并输出 `chint-office-extract/v1` JSON，自动标记 `<50` 字符低文本纯视觉 PDF 页。
-- `scripts/annotate_pdf.py`：通过 `--annotations -` 零磁盘管道消费 `chint-office-annotate/v1` JSON，完整保留原 PDF 历史批注并全量追加统一黄色高亮（支持逐处精标 `all` 与同页多坐标单条联动 `merged`），不可定位项降级为左上角错位黄色便签并汇总 `fallback_items`，仅另存唯一新 PDF 副本。
+- `SKILL.md`：`.pdf` / `.docx` / `.xlsx` 路由门禁（Step 1）与独立提取（Branch A）/ 非破坏 PDF 批注（Branch B）分支，声明技能根目录路径解析与依赖前提。
+- `scripts/extract_doc.py`：支持 `--summary`、严格 `--pages` 校验、`.pdf` `<50` 字符视觉页识别、`.docx` 制表符/换行保真与文本框去重，以及 `.xlsx` 未缓存公式格警告（`uncached_formula_cells`）。
+- `scripts/annotate_pdf.py`：通过 `--annotations -` 零磁盘管道消费 `chint-office-annotate/v1` JSON，采用词边界与短代号大小写保护、跨行词组多框归并及页边距便签限位，保留历史批注并仅另存唯一新 PDF 副本。
 
 ---
 
