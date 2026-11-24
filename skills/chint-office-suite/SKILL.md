@@ -5,7 +5,7 @@ description: "Extract structured text and visual-page maps from .pdf/.docx/.xlsx
 
 # CHINT Office Suite
 
-Resolve `<OFFICE_SKILL_DIR>` from the directory containing this `SKILL.md` and run scripts via `python3 "<OFFICE_SKILL_DIR>/scripts/..."` on macOS/Linux or `python` / `py -3` on Windows (never assume workspace CWD matches the skill directory).
+Resolve `<OFFICE_SKILL_DIR>` from the directory containing this `SKILL.md` and run scripts via `python3 "<OFFICE_SKILL_DIR>/scripts/..."` on macOS/Linux or `python` / `py -3` on Windows.
 - **Dependencies & Auto-Install (`pymupdf` for `.pdf`, `openpyxl` for `.xlsx`)**: When a dependency is missing, run `python3 "<OFFICE_SKILL_DIR>/scripts/extract_doc.py" --check-env` first, then install via China mainland mirrors using the active interpreter (`python3 -m pip install --user --timeout 30 -r "<OFFICE_SKILL_DIR>/requirements.txt" -i https://pypi.tuna.tsinghua.edu.cn/simple`, or `python -m pip` / `py -3 -m pip` on Windows, falling back once to `-i https://mirrors.aliyun.com/pypi/simple/`). If offline or permission-denied, stop cleanly and print the exact manual `pip` command.
 
 ## Step 1 — Format Gate & Routing

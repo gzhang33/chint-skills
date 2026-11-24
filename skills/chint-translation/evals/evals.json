@@ -1,6 +1,6 @@
 {
   "skill_name": "chint-translation",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "evals": [
     {
       "id": 0,
@@ -27,7 +27,7 @@
       "id": 1,
       "name": "mccb-substantive-standard-check",
       "prompt": "请按 IEC 60947-2:2024 核查以下英文塑壳断路器规格书初稿中的实质标准问题，并解释 `Frame size: 250 A` 是否应改为 `Inm`：\n\n\"NXM-250S Plastic case breaker (IEC 60947-2, Cl. 4.3.5). Frame size: 250A. Selectivity category: A. Short-time pick-up Isd: 2~10Ir. Mechanical durability: 20000 times. Shunt Trip (MX).\"",
-      "expected_output": "Substantive IEC 60947-2:2024 check validating Frame size per Cl. 3.1.1 (noting Inm is not defined in IEC/GB), flagging Plastic case breaker, obsolete Ed. 5 Cl. 4.3.5, Category A + Isd contradiction, and competitor Shunt Trip (MX) -> Shunt release (SHT).",
+      "expected_output": "Substantive IEC 60947-2:2024 check validating Frame size per Cl. 3.1.1 (noting Inm is not defined in IEC/GB), flagging Plastic case breaker, obsolete Ed. 5 Cl. 4.3.5, Category A + Isd without declared Icw contradiction (IEC 5.4), and competitor Shunt Trip (MX) -> Shunt release (SHT).",
       "files": [],
       "assertions": [
         {
@@ -36,7 +36,7 @@
         },
         {
           "id": "b2",
-          "text": "指出实质标准与术语错误：Plastic case breaker -> Moulded-case circuit-breaker (MCCB)、Cl. 4.3.5 属第 5 版旧条款、Category A 与 Isd 矛盾、Shunt Trip (MX) -> Shunt release (SHT)"
+          "text": "指出实质标准与术语错误：Plastic case breaker -> Moulded-case circuit-breaker (MCCB)、Cl. 4.3.5 属第 5 版旧条款、Category A 配 Isd 但未声明 Icw 的矛盾（IEC 5.4）、Shunt Trip (MX) -> Shunt release (SHT)"
         }
       ]
     },

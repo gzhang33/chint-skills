@@ -114,11 +114,10 @@ BUILTIN_SSOT_FALLBACK: dict[str, object] = {
         (r"\bexcitation release\b", "Shunt release (SHT)"),
         (r"\bshunt trip\b", "Shunt release (SHT)"),
         (r"\black voltage\b", "Undervoltage release (UVT)"),
-        (r"\bclosing magnet\b", "Closing release (CEM)"),
         (r"\bten thousand times\b", "plain integer operating cycles"),
         (r"\binstallation and debugging\b", "installation and commissioning"),
         (r"\bmatters need attention\b", "operating precautions"),
-        (r"\bordering instruction\b", "ordering information"),
+        (r"\bordering instructions?\b", "ordering information"),
         (r"\bwrong action\b", "false tripping"),
         (r"\berror work\b", "false tripping"),
         (r"\bno tolerance specified\b", "unspecified linear tolerance"),
@@ -129,6 +128,7 @@ BUILTIN_SSOT_FALLBACK: dict[str, object] = {
         (r"\bclosed electromagnet\b", "Closing release (CEM)"),
         (r"\bclose electromagnet\b", "Closing release (CEM)"),
         (r"\bclosing electromagnet\b", "Closing release (CEM)"),
+        (r"\bclosing magnet\b", "Closing release (CEM)"),
         (r"\bearch current transformer\b", "Earth current transformer (ECT)"),
         (r"\binterphased\b", "interphase barrier (DD / FD)"),
         (r"\binter phased\b", "interphase barrier (DD / FD)"),
@@ -136,7 +136,7 @@ BUILTIN_SSOT_FALLBACK: dict[str, object] = {
         (r"\bunder voltage delay release-zero\b", "Loss-of-voltage time-delay release (UVTZ)"),
         (r"\bclosing preparation contact\b", "Ready-to-close contact (SPC)"),
         (r"\bseparation position\b", "Disconnected position (Cl. 8.1.2)"),
-        (r"\bconnection position\b", "Connected position (Cl. 8.1.2)"),
+        (r"\bconnection position\b", "Connected position"),
         (r"\bhole opener\b", "panel hole saw"),
         (r"\bface mask\b", "Door escutcheon"),
         (r"\bstorage hole\b", "Racking handle storage slot"),
@@ -163,6 +163,7 @@ BUILTIN_SSOT_FALLBACK: dict[str, object] = {
         (r"\brotate handle\b", "Rotary handle"),
         (r"\bwire cover\b", "Terminal shield"),
         (r"\bmotor hand\b", "Motor-operator (MOD)"),
+        (r"\bclosing magnet\b", "Closing release"),
     ],
     "COMPETITOR_RULES_COMMON": [
         (r"(?<![A-Za-z0-9\-])MX(?![A-Za-z0-9\-])", "SHT (Shunt release)"),
@@ -181,7 +182,7 @@ BUILTIN_SSOT_FALLBACK: dict[str, object] = {
         (r"相间对中性线", "相-中性线 (IEC 60947-2:2024 Cl. 5.3.6.2.3)"),
         (r"(?<![单两二三四多])极极限", "单极极限"),
         (r"隔离开关断路器", "隔离开关 (IEC 60947-3 / GB/T 14048.3)"),
-        (r"使用类别\s*[AB]", "选择性类别 A / B (GB/T 14048.2—2020 Cl. 3.1 / 4.4)"),
+        (r"使用类别\s*[AB](?![A-Za-z0-9\-])", "选择性类别 A / B (GB/T 14048.2—2020 Cl. 3.1 / 4.4)"),
         (r"抽出式断路器", "抽屉式断路器 (GB/T 14048.2—2020 Cl. 2.5 / 3.7)"),
         (r"结构差异", "结构段 (GB/T 14048.2—2020 Cl. 2.1.2 / 7.1.6)"),
         (r"合闸涌流脱扣器", "接通电流脱扣器 (GB/T 14048.2—2020 Cl. 2.10)"),
@@ -191,15 +192,16 @@ BUILTIN_SSOT_FALLBACK: dict[str, object] = {
         (r"万能式断路器", "空气断路器（分类：万能式） (GB/T 14048.2—2020 Cl. 2.7 / 3.3)"),
         (r"(?<!塑料外壳式)塑壳断路器", "塑料外壳式断路器 (GB/T 14048.2—2020 Cl. 2.6 / 3.3)"),
         (r"功率损耗", "功耗 (GB/T 14048.2—2020 附录 G)"),
-        (r"(?<![\"“])分离位置|“分离”\s*位置", "隔离位置 (GB/T 14048.2—2020 Cl. 7.1.2)"),
+        (r"(?<![\"“])分离位置|“分离”\s*位置", "隔离位置 (GB/T 14048.2—2020 Cl. 7.1.2；Cl. 2.5 称抽出位置)"),
         (r"\bInm\b", "壳架等级（GB/T 14048.2—2020 Cl. 2.1.1 / IEC 3.1.1 未定义 Inm 符号）"),
-        (r"漏电保护|漏电互感器", "剩余电流保护 / 剩余电流互感器 (GB/T 14048.2—2020 附录 B/M)"),
+        (r"漏电保护", "剩余电流保护 (GB/T 14048.2—2020 附录 B/R)"),
+        (r"漏电互感器", "电流传感器（GB/T 14048.2—2020 附录 B/M；产品扩展可用「剩余电流互感器」）"),
     ],
     "ED5_CLAUSE_RE": re.compile(
-        r"(?:Cl\.|Clause)\s*(?:2\.1(?:\.\d+)?|4\.3\.[1-6](?:\.\d+)?|7\.2\.[1-8](?:\.\d+)?|8\.3\.[1-9](?:\.\d+)?)\b",
+        r"(?:Cl\.|Clause)\s*(?:2\.(?:[1-9]|1\d|2[0-3])(?:\.\d+)?|4\.3\.[1-6](?:\.\d+)?|4\.[6-8](?:\.\d+)?|7\.[12](?:\.\d+)?|8\.3\.[1-9](?:\.\d+)?|8\.[45](?:\.\d+)?)\b",
         re.IGNORECASE,
     ),
-    "ED5_GUARD_TAGS": ("60947-1", "60947-3", "14048.2", "GB/T"),
+    "ED5_GUARD_TAGS": ("60947-1", "60947-3", "14048.2", "GB/T", "GB "),
 }
 
 
@@ -275,6 +277,8 @@ def parse_page_spec(spec: str | None) -> set[int] | None:
             if not re.fullmatch(r"\d+", part) or int(part) < 1:
                 raise ValueError(f"Invalid page number '{part}' in --pages '{spec}'; expected integer >= 1.")
             pages.add(int(part))
+    if not pages:
+        raise ValueError(f"Empty page selection from --pages '{spec}'.")
     return pages
 
 
@@ -330,7 +334,10 @@ def _extract_office_builtin(source: str, pages_filter: set[int] | None = None) -
 
     if ext == ".pdf":
         fitz = _import_fitz()
-        doc = fitz.open(str(p))
+        try:
+            doc = fitz.open(str(p))
+        except Exception as exc:
+            raise RuntimeError(f"Failed to open PDF '{source}': {exc}") from exc
         try:
             if doc.is_encrypted:
                 raise ValueError(f"PDF '{source}' is encrypted/password-protected; decrypt before extraction.")
@@ -514,6 +521,142 @@ def _collect_terms(item: dict) -> list[str]:
     return out
 
 
+def _page_lines_chars(page) -> list[tuple[tuple[float, float, float, float], list[tuple[str, tuple[float, float, float, float]]]]]:
+    lines: list[tuple[tuple[float, float, float, float], list[tuple[str, tuple[float, float, float, float]]]]] = []
+    raw = page.get_text("rawdict")
+    for blk in raw.get("blocks", []):
+        if blk.get("type") != 0:
+            continue
+        for ln in blk.get("lines", []):
+            chars: list[tuple[str, tuple[float, float, float, float]]] = []
+            for sp in ln.get("spans", []):
+                for ch in sp.get("chars", []):
+                    c = ch.get("c", "")
+                    bbox = ch.get("bbox")
+                    if c and bbox:
+                        chars.append((c, tuple(bbox)))
+            if chars:
+                lines.append((tuple(ln["bbox"]), chars))
+    return lines
+
+
+def _chars_in_rect(line_chars, rect) -> list[tuple[int, str, tuple[float, float, float, float]]]:
+    hits = []
+    for idx, (c, bbox) in enumerate(line_chars):
+        cx = (bbox[0] + bbox[2]) * 0.5
+        cy = (bbox[1] + bbox[3]) * 0.5
+        if (rect.x0 - 1.2) <= cx <= (rect.x1 + 1.2) and (rect.y0 - 1.5) <= cy <= (rect.y1 + 1.5):
+            hits.append((idx, c, bbox))
+    return hits
+
+
+def _matching_line(lines, rect):
+    ry = (rect.y0 + rect.y1) * 0.5
+    best = None
+    best_dist = 1e9
+    for lb, chars in lines:
+        if (lb[0] - 2.0) <= rect.x1 and rect.x0 <= (lb[2] + 2.0) and (lb[1] - 2.0) <= ry <= (lb[3] + 2.0):
+            dist = abs((lb[1] + lb[3]) * 0.5 - ry)
+            if dist < best_dist:
+                best = chars
+                best_dist = dist
+    return best
+
+
+def _extract_group_text(lines, group_rects: list) -> tuple[str, bool]:
+    """Return text inside rects plus word-boundary pass flag."""
+    text_parts: list[str] = []
+    first_left_bad = False
+    last_right_bad = False
+    for g_idx, rect in enumerate(group_rects):
+        lchars = _matching_line(lines, rect)
+        if not lchars:
+            continue
+        hits = _chars_in_rect(lchars, rect)
+        if not hits:
+            continue
+        non_ws = [h for h in hits if not h[1].isspace()]
+        if not non_ws:
+            continue
+        text_parts.append("".join(h[1] for h in hits))
+        if g_idx == 0:
+            first_i, _, first_bb = non_ws[0]
+            if first_i > 0:
+                prev_c, prev_bb = lchars[first_i - 1]
+                if not prev_c.isspace() and prev_c.isascii() and prev_c.isalnum() and (first_bb[0] - prev_bb[2]) < 3.5:
+                    first_left_bad = True
+        if g_idx == len(group_rects) - 1:
+            last_i, _, last_bb = non_ws[-1]
+            if last_i + 1 < len(lchars):
+                next_c, next_bb = lchars[last_i + 1]
+                if not next_c.isspace() and next_c.isascii() and next_c.isalnum() and (next_bb[0] - last_bb[2]) < 3.5:
+                    last_right_bad = True
+    return "".join(text_parts), (first_left_bad or last_right_bad)
+
+
+def _group_multiline_rects(raw_rects: list, lines, term: str) -> list[list]:
+    """Group PyMuPDF rects belonging to one wrapped phrase into single occurrences."""
+    target_norm = re.sub(r"\s+", "", term)
+    if not raw_rects:
+        return []
+    groups: list[list] = []
+    acc_rects: list = []
+    acc_norm_len = 0
+    for r in raw_rects:
+        lchars = _matching_line(lines, r)
+        seg = "".join(h[1] for h in _chars_in_rect(lchars, r)) if lchars else ""
+        seg_norm_len = len(re.sub(r"\s+", "", seg))
+        acc_rects.append(r)
+        acc_norm_len += seg_norm_len if seg_norm_len > 0 else len(target_norm)
+        if acc_norm_len >= len(target_norm):
+            groups.append(acc_rects)
+            acc_rects = []
+            acc_norm_len = 0
+    if acc_rects:
+        groups.append(acc_rects)
+    return groups
+
+
+def _find_occurrence_groups(page, lines, terms: list[str], whole_word: bool | None, case_sensitive: bool | None) -> list[list]:
+    seen: set[tuple[tuple[float, float, float, float], ...]] = set()
+    accepted: list[list] = []
+    for t in terms:
+        ww = whole_word if whole_word is not None else bool(t and ((t[0].isascii() and t[0].isalnum()) or (t[-1].isascii() and t[-1].isalnum())))
+        cs = case_sensitive if case_sensitive is not None else (len(t) <= 4 and any(c.isupper() for c in t) and t == t.upper())
+        raw_rects = page.search_for(t)
+        for grp in _group_multiline_rects(raw_rects, lines, t):
+            g_text, _ = _extract_group_text(lines, grp)
+            if g_text:
+                if cs:
+                    t_compact = re.sub(r"\s+", "", t)
+                    g_compact = re.sub(r"\s+", "", g_text)
+                    if t_compact not in g_compact:
+                        continue
+                if ww:
+                    lchars_0 = _matching_line(lines, grp[0])
+                    lchars_n = _matching_line(lines, grp[-1])
+                    bad_edge = False
+                    if t[0].isascii() and t[0].isalnum() and lchars_0:
+                        hits0 = [h for h in _chars_in_rect(lchars_0, grp[0]) if not h[1].isspace()]
+                        if hits0 and hits0[0][0] > 0:
+                            pc, pbb = lchars_0[hits0[0][0] - 1]
+                            if pc.isascii() and pc.isalnum() and (hits0[0][2][0] - pbb[2]) < 3.5:
+                                bad_edge = True
+                    if t[-1].isascii() and t[-1].isalnum() and lchars_n:
+                        hitsn = [h for h in _chars_in_rect(lchars_n, grp[-1]) if not h[1].isspace()]
+                        if hitsn and hitsn[-1][0] + 1 < len(lchars_n):
+                            nc, nbb = lchars_n[hitsn[-1][0] + 1]
+                            if nc.isascii() and nc.isalnum() and (nbb[0] - hitsn[-1][2][2]) < 3.5:
+                                bad_edge = True
+                    if bad_edge:
+                        continue
+            sig = tuple((round(r.x0, 1), round(r.y0, 1), round(r.x1, 1), round(r.y1, 1)) for r in grp)
+            if sig not in seen:
+                seen.add(sig)
+                accepted.append(grp)
+    return accepted
+
+
 def _annotate_pdf_builtin(input_pdf: Path, items: list[dict], output_pdf: Path, default_author: str = "CHINT Catalog Edit") -> dict:
     fitz = _import_fitz()
     if not input_pdf.exists():
@@ -527,45 +670,47 @@ def _annotate_pdf_builtin(input_pdf: Path, items: list[dict], output_pdf: Path, 
             raise ValueError(f"PDF '{input_pdf}' is encrypted/password-protected; decrypt before annotation.")
         matched_items, highlights, rect_count, stickies = 0, 0, 0, 0
         page_stickies: dict[int, int] = {}
+        page_line_cache: dict[int, list] = {}
         fallback_items: list[dict] = []
 
         for idx, item in enumerate(items, 1):
+            if not isinstance(item, dict) or "page" not in item:
+                raise ValueError(f"Annotation #{idx} missing required 'page' field.")
             pno = int(item["page"])
             if pno < 1 or pno > len(doc):
                 raise ValueError(f"Annotation #{idx} page {pno} out of range 1..{len(doc)}")
             page = doc[pno - 1]
+            if pno not in page_line_cache:
+                page_line_cache[pno] = _page_lines_chars(page)
             terms = _collect_terms(item)
             comment = str(item.get("comment", "")).strip()
             author = str(item.get("author") or default_author)
             mode = str(item.get("match_mode") or "all").lower()
+            if mode not in {"all", "merged", "first"}:
+                raise ValueError(f"Annotation #{idx} invalid match_mode: {mode}")
+            ww = item.get("whole_word")
+            cs = item.get("case_sensitive")
 
-            all_rects: list = []
-            seen_sig: set[tuple[float, float, float, float]] = set()
-            for t in terms:
-                for r in page.search_for(t):
-                    sig = (round(r.x0, 1), round(r.y0, 1), round(r.x1, 1), round(r.y1, 1))
-                    if sig not in seen_sig:
-                        seen_sig.add(sig)
-                        all_rects.append(r)
-
-            if all_rects:
+            occ_groups = _find_occurrence_groups(page, page_line_cache[pno], terms, ww, cs)
+            if occ_groups:
                 matched_items += 1
                 if mode == "merged":
-                    annot = page.add_highlight_annot(all_rects)
+                    flat_rects = [r for grp in occ_groups for r in grp]
+                    annot = page.add_highlight_annot(flat_rects)
                     annot.set_colors(stroke=YELLOW)
                     annot.set_info(title=author, content=comment)
                     annot.update()
                     highlights += 1
-                    rect_count += len(all_rects)
+                    rect_count += len(flat_rects)
                 else:
-                    targets = [all_rects[0]] if mode == "first" else all_rects
-                    for r in targets:
-                        annot = page.add_highlight_annot([r])
+                    targets = [occ_groups[0]] if mode == "first" else occ_groups
+                    for grp in targets:
+                        annot = page.add_highlight_annot(grp)
                         annot.set_colors(stroke=YELLOW)
                         annot.set_info(title=author, content=comment)
                         annot.update()
                         highlights += 1
-                        rect_count += 1
+                        rect_count += len(grp)
             else:
                 idx_on_page = page_stickies.get(pno, 0)
                 page_stickies[pno] = idx_on_page + 1
@@ -742,7 +887,8 @@ def scan_units(
     cat_a_re = re.compile(r"(?:Selectivity[ \t]+category[ \t]*[:：]?[ \t]*A\b|选择性类别[ \t]*[:：]?[ \t]*A\b)(?![ \t]*[/、,])", re.IGNORECASE)
     cat_b_re = re.compile(r"(?:Selectivity[ \t]+category[ \t]*[:：]?[ \t]*B\b|选择性类别[ \t]*[:：]?[ \t]*B\b|\bCategory[ \t]+B\b)", re.IGNORECASE)
     model_hdr_re = re.compile(r"^\s*(?:NX[AMF]\d|NM\d|NA\d|DW\d)")
-    st_or_icw_re = re.compile(r"\b(?:Isd|Icw)\b")
+    st_re = re.compile(r"\bIsd\b")
+    icw_re = re.compile(r"\bIcw\b")
     type_fb_re = re.compile(r"\bType[ \t]+(?:F|B\+)\b", re.IGNORECASE)
     fig_caption_re = re.compile(r"^(图\s*\d+(?:-\d+)?)\s*$")
 
@@ -780,11 +926,17 @@ def scan_units(
             add(loc, "UNRESOLVED_SLOT", m.group(0), "补填数据表核实值或改为定性描述", line)
 
         if mode == "en":
-            bl = list(ssot.get("BLACKLIST_COMMON", []))
+            raw_bl = list(ssot.get("BLACKLIST_COMMON", []))
             if dept in {"acb", "all"}:
-                bl.extend(ssot.get("BLACKLIST_ACB", []))
+                raw_bl.extend(ssot.get("BLACKLIST_ACB", []))
             if dept in {"mccb", "all"}:
-                bl.extend(ssot.get("BLACKLIST_MCCB", []))
+                raw_bl.extend(ssot.get("BLACKLIST_MCCB", []))
+            bl: list[tuple[str, str]] = []
+            seen_bl_pats: set[str] = set()
+            for pat, fix in raw_bl:
+                if pat not in seen_bl_pats:
+                    seen_bl_pats.add(pat)
+                    bl.append((pat, fix))
             for pat, fix in bl:
                 for m in re.finditer(pat, line, re.IGNORECASE):
                     add(loc, "EN_SEVERE_ERROR", m.group(0), fix, line)
@@ -803,16 +955,17 @@ def scan_units(
                     add(loc, "SYMBOL_CASE_NOTATION", m.group(0), fix, line)
 
         if run_iec_concept:
-            for pat, fix in ssot.get("STD_CONCEPT_ZH", []):
-                for m in re.finditer(pat, line):
-                    add(loc, "STD_CONCEPT_ERROR", m.group(0), fix, line)
+            if mode == "zh":
+                for pat, fix in ssot.get("STD_CONCEPT_ZH", []):
+                    for m in re.finditer(pat, line):
+                        add(loc, "STD_CONCEPT_ERROR", m.group(0), fix, line)
             if mode == "en" and ed5_re is not None:
                 for m in ed5_re.finditer(line):
-                    window = line[max(0, m.start() - 35):min(len(line), m.end() + 35)]
+                    window = line[max(0, m.start() - 80):min(len(line), m.end() + 40)]
                     if not any(tag in window for tag in ed5_guards):
                         add(loc, "OBSOLETE_CLAUSE_ED5", m.group(0), "按 IEC 60947-2:2024 第 6 版核改条款号", line)
 
-        if run_iec_statutory:
+        if run_iec_statutory and mode == "zh":
             for pat, fix in ssot.get("STD_STATUTORY_ZH", []):
                 for m in re.finditer(pat, line):
                     add(loc, "STD_STATUTORY_ZH", m.group(0), fix, line)
@@ -851,9 +1004,16 @@ def scan_units(
                     if cat_b_re.search(ntxt) or model_hdr_re.search(ntxt):
                         break
                     win_lines.append(ntxt)
-                m_st = st_or_icw_re.search("\n".join(win_lines))
-                if m_st:
-                    add(loc, "TECH_HARD_ERROR", f"{m_a.group(0)} + {m_st.group(0)}", "选择性类别 A 禁止配 Isd/Icw（须改 B 类并声明 Icw）", txt)
+                win_blob = "\n".join(win_lines)
+                m_st = st_re.search(win_blob)
+                if m_st and not icw_re.search(win_blob):
+                    add(
+                        loc,
+                        "TECH_HARD_ERROR",
+                        f"{m_a.group(0)} + {m_st.group(0)}",
+                        "选择性类别 A 配人为短延时（Isd）须声明经试验程序 IV 验证的 Icw（或改选选择性类别 B 并按 IEC 表 2 / GB 表 3 声明 Icw，IEC 5.4 / GB 4.4）",
+                        txt,
+                    )
 
             m_fb = type_fb_re.search(txt)
             if m_fb:
@@ -1171,6 +1331,28 @@ def run_self_test() -> int:
             assert len(list(sdoc[1].annots())) == 0, "Source PDF must remain untouched!"
             assert len(list(ddoc[1].annots())) >= 2, "Output PDF missing highlight annotations!"
 
+        # Built-in word-boundary & wrapped-phrase PDF parity test
+        wb_pdf = tdir / "wb_wrap.pdf"
+        wb_doc = fitz.open()
+        wb_p1 = wb_doc.new_page()
+        wb_p1.insert_text((72, 100), "Column MN Omni autumn")
+        wb_p1.insert_text((72, 125), "Rating 250A and 1250A")
+        wb_p1.insert_text((72, 150), "Split line")
+        wb_p1.insert_text((72, 165), "phrase")
+        wb_doc.save(str(wb_pdf))
+        wb_doc.close()
+        wb_out = tdir / "wb_wrap_annotated.pdf"
+        wb_items = [
+            {"page": 1, "search": "MN", "match_mode": "all", "comment": "Code"},
+            {"page": 1, "search": "250A", "match_mode": "all", "comment": "Exact token"},
+            {"page": 1, "search": "Split line phrase", "match_mode": "all", "comment": "Wrapped"},
+        ]
+        wb_sum = write_annotated_pdf(wb_pdf, wb_items, wb_out, office_dir=None)
+        assert wb_sum["office_engine"] == "builtin-standalone" and wb_sum["matched_items"] == 3 and wb_sum["highlight_annotations"] == 3, wb_sum
+        with fitz.open(str(wb_out)) as wddoc:
+            w_annots = [(a.type[1], len(a.vertices or [])) for a in wddoc[0].annots()]
+            assert w_annots == [("Highlight", 4), ("Highlight", 4), ("Highlight", 8)], w_annots
+
         # Built-in DOCX extraction in solo mode
         docx_p = tdir / "solo_sample.docx"
         with zipfile.ZipFile(str(docx_p), "w") as zf:
@@ -1207,6 +1389,27 @@ def run_self_test() -> int:
     res_iec = scan_units(iec_units, profile="L1", mode="zh", with_iec=True, dept="acb", ssot=ssot_solo)
     assert {"STD_CONCEPT_ERROR", "STD_STATUTORY_ZH"} <= {f["category"] for f in res_iec}
     assert not any("2000m" in f["match"] or "℃" in f["match"] for f in res_iec)
+
+    # Category A + Isd (without vs with Icw), dept-aware closing magnet, and GB clause guard
+    cat_a_no_icw = scan_units([("P10:L1", "Selectivity category: A"), ("P10:L2", "Short-time pick-up Isd = 6 Ir")], profile="L1", mode="en", dept="mccb", ssot=ssot_solo)
+    cat_a_with_icw = scan_units([("P10:L1", "Selectivity category: A"), ("P10:L2", "Short-time pick-up Isd = 6 Ir; Icw = 5 kA")], profile="L1", mode="en", dept="mccb", ssot=ssot_solo)
+    assert any(f["category"] == "TECH_HARD_ERROR" for f in cat_a_no_icw), cat_a_no_icw
+    assert not any(f["category"] == "TECH_HARD_ERROR" for f in cat_a_with_icw), cat_a_with_icw
+
+    cm_mccb = scan_units([("P11:L1", "Equipped with closing magnet.")], profile="L1", mode="en", dept="mccb", ssot=ssot_solo)
+    cm_all = scan_units([("P11:L2", "Equipped with closing magnet.")], profile="L1", mode="en", dept="all", ssot=ssot_solo)
+    assert len(cm_mccb) == 1 and cm_mccb[0]["fix"] == "Closing release", cm_mccb
+    assert len(cm_all) == 1 and cm_all[0]["fix"] == "Closing release (CEM)", cm_all
+
+    gb_guard_hits = scan_units([("P12:L1", "GB Cl. 4.3.6.2 applies.")], profile="L1", mode="en", with_iec=True, dept="all", ssot=ssot_solo)
+    assert not any(f["category"] == "OBSOLETE_CLAUSE_ED5" for f in gb_guard_hits), gb_guard_hits
+
+    ac22_hits = scan_units([("P13:L1", "使用类别 AC-22 额定电流；漏电互感器。")], profile="L1", mode="zh", with_iec=True, dept="all", ssot=ssot_solo)
+    assert not any(f["category"] == "STD_CONCEPT_ERROR" for f in ac22_hits), ac22_hits
+    assert any(f["match"] == "漏电互感器" and "电流传感器" in f["fix"] for f in ac22_hits), ac22_hits
+
+    en_inm_hits = scan_units([("P14:L1", "Inm=250A")], profile="L1", mode="en", with_iec=True, dept="all", ssot=ssot_solo)
+    assert not any(f["category"] == "STD_STATUTORY_ZH" for f in en_inm_hits), en_inm_hits
 
     print("SELF-TEST PASS: 6/6 suites passed (anti-drift/solo-PDF-write/solo-DOCX/L1-strict/L2-drift/L1+IEC).")
     return 0

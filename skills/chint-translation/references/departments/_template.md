@@ -1,6 +1,6 @@
 # `<Department / Product Line Name>` Translation & Terminology Extension (`<dept_id>.md`)
 
-> **Isolation Rule (`1 + 1 + N`)**: Create one file per independent product department under `references/departments/`. Copy to `references/departments/<dept_code>.md`, register the department option in `SKILL.md` Step 1.2, and keep this template file excluded from runtime runs.
+> **Isolation Rule (`1 + 1 + N`)**: Create one file per independent product department under `references/departments/`. Copy to `references/departments/<dept_code>.md`, register the department option in `SKILL.md` Step 1, add `<dept_code>` to `--dept` `choices` in `scripts/lint_text.py` and `scripts/glossary_lookup.py`, and keep this template file excluded from runtime runs.
 
 ## 0. Value-Slot & Single-Track Rule
 
@@ -12,14 +12,14 @@
 ## 1. Applicable Series & Session Datasheet References
 
 - **Applicable CHINT Series** (routing only): `{{series_codes}}`
-- **Primary IEC Standard**: `IEC {{standard_number}}` (`GB/T {{gbt_number}}`)
+- **Primary IEC Standard**: `IEC {{standard_number}}:{{year}}` (`GB/T {{gbt_number}}—{{year}}`)
 - **Session Datasheets**: Resolve exact SKU codes, wiring labels, and ratings exclusively from user-supplied datasheets in the active session.
 
 ---
 
 ## 2. Core Taxonomy, Protection & Parameter Terms (一词一译主表)
 
-| Chinese Term (✅ EN→ZH Anchor) | ✅ Unique Canonical IEC English (ZH→EN Output) | Symbol / Slot | IEC Clause / Note |
+| Statutory Chinese (`GB/T ...`) | ✅ Unique Canonical IEC English (`IEC ...`) | Symbol / Slot | Clause & Usage Note |
 | :--- | :--- | :--- | :--- |
 | `示例中文术语` | **`Canonical IEC English term`** | `{{slot: unit}}` | `IEC ... Cl. x.y` |
 
@@ -27,6 +27,6 @@
 
 ## 3. CHINT Exclusive Accessories, Mounting & Sentence Frames (正泰专属附件与句式)
 
-| CHINT Code | Chinese Term | ✅ Unique Canonical IEC English (with CHINT Code) | Function & Value Slots |
+| CHINT Code | Chinese Term | ✅ Unique Canonical IEC English (with CHINT Code) | Function, Clause & Value Slots |
 | :--- | :--- | :--- | :--- |
 | `CODE` | `附件中文名` | **`Canonical name (CODE)`** | Functional description with `{{param: unit}}`. |

@@ -1,5 +1,5 @@
 name: chint-catalog-edit
-version: 1.0.0
+version: 1.1.0
 description: "Audit and proofread CHINT low-voltage product catalogues (ZH/EN PDF, Word, Excel, or text) for hard errors, typos, numbering defects, and PDF review annotations, with threshold profiles and optional IEC/GB checks."
 author: CHINT PM Team
 tags:

@@ -17,8 +17,9 @@ Resolve `<SKILL_DIR>` from the directory containing this `SKILL.md` and run scri
 2. Load only files matching the active task:
    - **Core Base**: [iec_60947_2_standard.md](references/iec_60947_2_standard.md).
    - **Annexes (`CBR`/`MRCD`/`CBI`/`ICB`/`PV`/`CBAR`/`IT`/`Al`/EMC only)**: [iec_annexes.md](references/iec_annexes.md).
-   - **Single Department**: [acb.md](references/departments/acb.md) (`NXA`, `NA8`, `NA1`) OR [mccb.md](references/departments/mccb.md) (`NXM`, `NXS`, `NM8`, `NM5`).
-   - **Legacy Decoding (`EN→ZH` legacy source decoding only)**: [audit_blacklist.md](references/audit_blacklist.md).
+   - **Single Department**: [acb.md](references/departments/acb.md) (`NXA`, `NA8`, `NA1`) OR [mccb.md](references/departments/mccb.md) (`NXM`, `NXS`, `NM8`, `NM8N`, `NM5`).
+   - **Legacy Decoding & Redlines (`EN` audit / legacy decoding / `EN→ZH` statutory redlines)**: [audit_blacklist.md](references/audit_blacklist.md).
+   - **Edition Divergences & Print Errata (standard-audit / `GB`-vs-`IEC` disputes only)**: [edition_divergences_and_errata.md](references/edition_divergences_and_errata.md).
    - **Regional Override (Isolated)**: Load concrete `references/regions/<country>.md` only when targeting another jurisdiction.
 3. *Done when*: Scope is locked and source text is ready.
 
@@ -35,4 +36,4 @@ Resolve `<SKILL_DIR>` from the directory containing this `SKILL.md` and run scri
    - **Clean Target Text** (`finding_count == 0`, zero unresolved `{{...}}`)
    - **Key Term Mapping Table**
    - **Pending Verification List** (if any missing or contradictory source ratings exist)
-3. *Done when*: Every matched term is mapped to a verified clause and zero ratings are fabricated.
+3. *Done when*: Every statutory term maps to a verified clause, every CHINT/industry extension is labelled, and zero ratings are fabricated.

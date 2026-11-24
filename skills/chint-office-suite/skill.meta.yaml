@@ -1,5 +1,5 @@
 name: chint-office-suite
-version: 1.0.0
+version: 1.0.1
 description: "Extract structured text and visual-page maps from .pdf/.docx/.xlsx, write non-destructive PDF review annotations, or route generic office authoring — standalone or when another skill calls it."
 author: CHINT Overseas PM Team
 tags:

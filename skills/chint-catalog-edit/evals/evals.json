@@ -1,6 +1,6 @@
 {
   "skill_name": "chint-catalog-edit",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "evals": [
     {
       "id": 0,
@@ -40,12 +40,12 @@
       "id": 2,
       "name": "en-catalog-l1-no-ortho-noise",
       "prompt": "Audit this EN ACB catalogue page under chint-catalog-edit default L1: 'P2: NXA Molded Case Circuit Breaker 250A, color gray, under-voltage, draw-out type. Equipped with Closed electromagnet (XF), Shunt Trip (MX), Earch current transformer. Selectivity category: A; Short-time pick-up Isd = 6 Ir.'",
-      "expected_output": "L1 EN audit catches severe mistranslations (Closed electromagnet, Shunt Trip, Earch current transformer), competitor codes (XF, MX), and Selectivity category A + Isd contradiction, while ignoring UK/US spelling (Molded, color), unhyphenated circuit breaker, under-voltage, draw-out, and 250A spacing.",
+      "expected_output": "L1 EN audit catches severe mistranslations (Closed electromagnet, Shunt Trip, Earch current transformer), competitor codes (XF, MX), and Selectivity category A + Isd without declared Icw contradiction (IEC 5.4), while ignoring UK/US spelling (Molded, color), unhyphenated circuit breaker, under-voltage, draw-out, and 250A spacing.",
       "files": [],
       "assertions": [
         {
           "id": "c1",
-          "text": "命中实质错译、竞品代号与技术矛盾：Closed electromagnet (XF) -> Closing release (CEM)、Shunt Trip (MX) -> Shunt release (SHT)、Earch current transformer -> Earth current transformer (ECT)、Selectivity category A + Isd 矛盾"
+          "text": "命中实质错译、竞品代号与技术矛盾：Closed electromagnet (XF) -> Closing release (CEM)、Shunt Trip (MX) -> Shunt release (SHT)、Earch current transformer -> Earth current transformer (ECT)、Selectivity category A 配 Isd 但未声明 Icw 的矛盾（IEC 5.4）"
         },
         {
           "id": "c2",

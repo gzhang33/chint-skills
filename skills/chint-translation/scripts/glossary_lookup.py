@@ -34,39 +34,42 @@ ZH_LEGACY_ALIASES: dict[str, list[dict[str, str]]] = {
         {"zh": "闭合电磁铁", "en": "Closing release (CEM)", "code": "CEM", "basis": "IEC 60947-2:2024 Cl. 3.19 / GB/T 14048.2—2020 Cl. 2.23; legacy ZH alias"},
         {"zh": "合闸电磁铁", "en": "Closing release (CEM)", "code": "CEM", "basis": "IEC 60947-2:2024 Cl. 3.19 / GB/T 14048.2—2020 Cl. 2.23; legacy ZH alias"},
         {"zh": "合闸线圈", "en": "Closing release (CEM)", "code": "CEM", "basis": "IEC 60947-2:2024 Cl. 3.19 / GB/T 14048.2—2020 Cl. 2.23; legacy ZH alias"},
-        {"zh": "分励线圈", "en": "Shunt release (SHT)", "code": "SHT", "basis": "IEC 60947-2:2024 Cl. 5.7.1, 8.2.1.2.3; legacy ZH alias"},
-        {"zh": "欠压脱扣器", "en": "Undervoltage release (UVT)", "code": "UVT", "basis": "IEC 60947-2:2024 Cl. 5.7.1, 8.2.1.2.2; legacy ZH alias"},
+        {"zh": "分励线圈", "en": "Shunt release (SHT)", "code": "SHT", "basis": "IEC 60947-2:2024 Cl. 5.7.1, 8.2.1.2.3 / GB/T 14048.2—2020 Cl. 4.7.1, 7.2.1.2.3; legacy ZH alias"},
+        {"zh": "欠压脱扣器", "en": "Undervoltage release (UVT)", "code": "UVT", "basis": "IEC 60947-2:2024 Cl. 5.7.1, 8.2.1.2.2 / GB/T 14048.2—2020 Cl. 4.7.1, 7.2.1.2.2; legacy ZH alias"},
         {"zh": "开孔器", "en": "panel hole saw", "code": "", "basis": "audit_blacklist.md; legacy ZH alias"},
-        {"zh": "飞弧距离", "en": "Arcing distance", "code": "", "basis": "IEC 60947-2:2024 Cl. 8.1.5; acb.md §3.1"},
+        {"zh": "飞弧距离", "en": "Arcing distance", "code": "", "basis": "Industry term (ref. IEC 60947-2:2024 Table 4 item 3.7 / GB/T 14048.2—2020 表 13 3.7); acb.md §3.1"},
         {"zh": "抽屉盒", "en": "Withdrawable cradle", "code": "", "basis": "IEC 60947-2:2024 Cl. 3.5; audit_blacklist.md"},
-        {"zh": "分离位置", "en": "Disconnected position", "code": "", "basis": "IEC 60947-2:2024 Cl. 8.1.2; audit_blacklist.md"},
-        {"zh": "连接位置", "en": "Connected position", "code": "", "basis": "IEC 60947-2:2024 Cl. 8.1.2; audit_blacklist.md"},
+        {"zh": "分离位置", "en": "Disconnected position", "code": "", "basis": "IEC 60947-2:2024 Cl. 8.1.2; GB statutory: 隔离位置 (7.1.2) / 抽出位置 (2.5); audit_blacklist.md"},
+        {"zh": "连接位置", "en": "Connected position", "code": "", "basis": "Industry term (IEC 8.1.2 only defines disconnected position); audit_blacklist.md"},
     ],
     "mccb": [
-        {"zh": "漏电断路器", "en": "Circuit-breaker incorporating residual current protection (CBR)", "code": "CBR", "basis": "IEC 60947-2:2024 Annex B; audit_blacklist.md"},
-        {"zh": "分励线圈", "en": "Shunt release (SHT)", "code": "SHT", "basis": "IEC 60947-2:2024 Cl. 5.7.1, 8.2.1.2.3; legacy ZH alias"},
-        {"zh": "欠压脱扣器", "en": "Undervoltage release (UVT)", "code": "UVT", "basis": "IEC 60947-2:2024 Cl. 5.7.1, 8.2.1.2.2; legacy ZH alias"},
+        {"zh": "漏电断路器", "en": "Circuit-breaker incorporating residual current protection (CBR)", "code": "CBR", "basis": "IEC 60947-2:2024 Annex B / GB/T 14048.2—2020 附录 B; audit_blacklist.md"},
+        {"zh": "分励线圈", "en": "Shunt release (SHT)", "code": "SHT", "basis": "IEC 60947-2:2024 Cl. 5.7.1, 8.2.1.2.3 / GB/T 14048.2—2020 Cl. 4.7.1, 7.2.1.2.3; legacy ZH alias"},
+        {"zh": "欠压脱扣器", "en": "Undervoltage release (UVT)", "code": "UVT", "basis": "IEC 60947-2:2024 Cl. 5.7.1, 8.2.1.2.2 / GB/T 14048.2—2020 Cl. 4.7.1, 7.2.1.2.2; legacy ZH alias"},
+        {"zh": "热磁式过电流脱扣器", "en": "Thermal-magnetic overcurrent release (TM)", "code": "TM", "basis": "GB/T 14048.2—2020 Cl. 7.1.6 b), 8.3.3.2.3 b) (statutory: 热磁脱扣器); legacy ZH alias"},
         {"zh": "板后接线", "en": "Rear connection (HR / VR)", "code": "HR / VR", "basis": "mccb.md §3; audit_blacklist.md"},
     ],
     "common": [
-        {"zh": "闭合电磁铁", "en": "Closing release", "code": "", "basis": "IEC 60947-2:2024 Cl. 3.19; legacy ZH alias"},
-        {"zh": "合闸电磁铁", "en": "Closing release", "code": "", "basis": "IEC 60947-2:2024 Cl. 3.19; legacy ZH alias"},
-        {"zh": "合闸线圈", "en": "Closing release", "code": "", "basis": "IEC 60947-2:2024 Cl. 3.19; legacy ZH alias"},
+        {"zh": "闭合电磁铁", "en": "Closing release", "code": "", "basis": "IEC 60947-2:2024 Cl. 3.19 / GB/T 14048.2—2020 Cl. 2.23; legacy ZH alias"},
+        {"zh": "合闸电磁铁", "en": "Closing release", "code": "", "basis": "IEC 60947-2:2024 Cl. 3.19 / GB/T 14048.2—2020 Cl. 2.23; legacy ZH alias"},
+        {"zh": "合闸线圈", "en": "Closing release", "code": "", "basis": "IEC 60947-2:2024 Cl. 3.19 / GB/T 14048.2—2020 Cl. 2.23; legacy ZH alias"},
         {"zh": "抽出式断路器", "en": "withdrawable circuit-breaker", "code": "", "basis": "IEC 60947-2:2024 Cl. 3.5; GB statutory: 抽屉式断路器"},
         {"zh": "塑壳断路器", "en": "moulded-case circuit-breaker", "code": "", "basis": "GB/T 14048.2—2020 Cl. 2.6; GB statutory: 塑料外壳式断路器"},
         {"zh": "万能式断路器", "en": "air circuit-breaker", "code": "", "basis": "GB/T 14048.2—2020 Cl. 2.7, 3.3"},
         {"zh": "功率损耗", "en": "power loss", "code": "", "basis": "IEC 60947-2:2024 Annex G; GB statutory: 功耗"},
         {"zh": "合闸涌流脱扣器", "en": "making-current release", "code": "", "basis": "IEC 60947-2:2024 Cl. 3.6; GB statutory: 接通电流脱扣器"},
         {"zh": "结构差异", "en": "construction break", "code": "", "basis": "IEC 60947-2:2024 Cl. 3.1.2; GB statutory: 结构段"},
-        {"zh": "机械寿命", "en": "operational performance without current", "code": "", "basis": "IEC 60947-2:2024 Cl. 8.2.4.2; endurance in Annex B/M/R"},
-        {"zh": "电寿命", "en": "operational performance with current", "code": "", "basis": "IEC 60947-2:2024 Cl. 8.2.4.2; endurance in Annex B/M/R"},
-        {"zh": "电气寿命", "en": "operational performance with current", "code": "", "basis": "IEC 60947-2:2024 Cl. 8.2.4.2; endurance in Annex B/M/R"},
+        {"zh": "机械寿命", "en": "operational performance without current", "code": "", "basis": "IEC 60947-2:2024 Cl. 8.2.4.2; Annex B: operational performance capability; Annex M: mechanical & electrical endurance; Annex R: mechanical endurance"},
+        {"zh": "电寿命", "en": "operational performance with current", "code": "", "basis": "IEC 60947-2:2024 Cl. 8.2.4.2; Annex B: operational performance capability; Annex M: mechanical & electrical endurance; Annex R: mechanical endurance"},
+        {"zh": "电气寿命", "en": "operational performance with current", "code": "", "basis": "IEC 60947-2:2024 Cl. 8.2.4.2; Annex B: operational performance capability; Annex M: mechanical & electrical endurance; Annex R: mechanical endurance"},
         {"zh": "安装调试", "en": "installation and commissioning", "code": "", "basis": "audit_blacklist.md"},
         {"zh": "注意事项", "en": "operating precautions", "code": "", "basis": "audit_blacklist.md"},
         {"zh": "订货须知", "en": "ordering information", "code": "", "basis": "audit_blacklist.md"},
         {"zh": "误动作", "en": "false tripping", "code": "", "basis": "audit_blacklist.md"},
         {"zh": "未注公差", "en": "unspecified linear tolerance", "code": "", "basis": "audit_blacklist.md"},
-        {"zh": "安装面", "en": "mounting surface", "code": "", "basis": "audit_blacklist.md"},
+        {"zh": "安装面", "en": "mounting surface", "code": "", "basis": "General engineering legacy ZH alias"},
+        {"zh": "剩余电流保护", "en": "Residual current protection", "code": "", "basis": "IEC 60947-2:2024 Annex B, M / GB/T 14048.2—2020 附录 B, M"},
+        {"zh": "临界直流负载电流", "en": "Critical DC load current", "code": "", "basis": "IEC 60947-2:2024 Cl. 9.3.10 / GB/T 14048.2—2020 Cl. 8.3.9"},
     ],
 }
 
@@ -77,12 +80,24 @@ def clean_md(text: str) -> str:
     s = re.sub(r"\*([^*]+)\*", r"\1", s)
     def _latex(m: re.Match[str]) -> str:
         inner = m.group(1)
-        inner = inner.replace(r"\Delta ", "Δ").replace(r"\Delta", "Δ")
+        inner = re.sub(r"\\Delta\s*", "Δ", inner)
+        inner = re.sub(r"\\geq?\b", "≥", inner)
+        inner = re.sub(r"\\leq?\b", "≤", inner)
+        inner = re.sub(r"\\pm\b", "±", inner)
+        inner = re.sub(r"\\times\b", "×", inner)
+        inner = re.sub(r"\\circ\b", "°", inner)
+        inner = inner.replace(r"\,", " ")
+        inner = re.sub(r"\\(?:text|mathrm)\{([^}]+)\}", r"\1", inner)
         inner = re.sub(r"_\{([^}]+)\}", r"\1", inner)
         inner = re.sub(r"\^\{([^}]+)\}", r"\1", inner)
         return re.sub(r"[{}\\]", "", inner)
     s = re.sub(r"\$([^$]+)\$", _latex, s)
     return re.sub(r"\s+", " ", s).strip()
+
+
+def _strip_gb_gap_note(text: str) -> str:
+    cleaned = re.sub(r"\s*[（(][^）)]*暂未收录[^）)]*[)）]", "", text)
+    return re.sub(r"\s+", " ", cleaned).strip()
 
 
 def _split_md_row(line: str) -> list[str]:
@@ -153,6 +168,9 @@ def split_keys(text: str, is_zh: bool) -> list[str]:
             head = p.split("：", 1)[0].strip()
             if len(head) >= 2:
                 keys.append(head)
+        elif not is_zh:
+            for abbr in re.findall(r"(?<=\()([A-Z]{3,6})(?:s(?=\)))?(?=[\s);,)])", p):
+                keys.append(abbr)
     out: list[str] = []
     for k in keys:
         if k in {"—", "-", "N/A"}:
@@ -212,15 +230,15 @@ def extract_rows_from_md(md_path: Path, role: str) -> list[dict]:
                 zh_col = idx
             elif "english" in h:
                 en_col = idx
-            elif "note" in h or "slot" in h or "meaning" in h or "rule" in h or "function" in h:
-                note_col = idx
-            elif "code" in h:
-                code_col = idx
-            elif "symbol" in h:
+            elif "code" in h or ("symbol" in h and "note" not in h):
                 if code_col is None:
                     code_col = idx
+            elif "note" in h or "meaning" in h or "rule" in h or "function" in h:
+                note_col = idx
             elif "clause" in h or "2024" in h:
                 clause_col = idx
+            elif "slot" in h:
+                note_col = idx
 
         if zh_col is None or en_col is None or zh_col >= len(cells) or en_col >= len(cells):
             continue
@@ -237,10 +255,10 @@ def extract_rows_from_md(md_path: Path, role: str) -> list[dict]:
         if zh_full.startswith("(") or zh_full.startswith("（"):
             continue
 
-        row_blob = " | ".join([zh_raw, en_raw, clause_raw, note_raw])
-        gb_gap = "暂未收录" in row_blob
         base_basis_parts = [p for p in [clean_md(clause_raw), clean_md(note_raw)] if p and p != "—"]
-        base_basis = "; ".join(base_basis_parts)[:140]
+        base_basis = "; ".join(base_basis_parts)
+        if len(base_basis) > 260:
+            base_basis = base_basis[:257].rstrip(" ;,") + "..."
 
         zh_slash = split_top_level(zh_full, seps="/")
         en_slash = split_top_level(en_full, seps="/")
@@ -257,12 +275,14 @@ def extract_rows_from_md(md_path: Path, role: str) -> list[dict]:
             pair_code = code_slash[idx] if len(pairs) > 1 and len(code_slash) == len(pairs) else code_clean
             if pair_code in {"—", "-"}:
                 pair_code = ""
-            pair_gb_gap = ("暂未收录" in z_txt) if len(pairs) > 1 else gb_gap
+            pair_gb_gap = ("暂未收录" in z_txt) or ("暂未收录" in e_txt)
+            clean_z = _strip_gb_gap_note(z_txt)
+            clean_e = _strip_gb_gap_note(e_txt)
             pair_basis = base_basis
-            if pair_gb_gap and "GB/T 14048.2—2020 暂未收录" not in pair_basis:
-                pair_basis = f"GB/T 14048.2—2020 暂未收录; {pair_basis}".strip("; ")
-            zh_keys = split_keys(z_txt, is_zh=True)
-            en_keys = split_keys(e_txt, is_zh=False)
+            if pair_gb_gap and "暂未收录" not in pair_basis:
+                pair_basis = f"GB/T 14048.2—2020 暂未收录（IEC 2024 新增）; {pair_basis}".strip("; ")
+            zh_keys = split_keys(clean_z, is_zh=True)
+            en_keys = split_keys(clean_e, is_zh=False)
             if pair_code:
                 for ck in split_keys(pair_code, is_zh=False):
                     if re.fullmatch(r"[A-Za-z][A-Za-z0-9Δ_-]{1,7}", ck) and ck.lower() not in GENERIC_EN_STOP:
@@ -270,8 +290,8 @@ def extract_rows_from_md(md_path: Path, role: str) -> list[dict]:
             entries.append({
                 "role": role,
                 "source_file": md_path.name,
-                "zh": z_txt,
-                "en": e_txt,
+                "zh": clean_z,
+                "en": clean_e,
                 "code": pair_code,
                 "gb_missing": pair_gb_gap,
                 "basis": pair_basis,
@@ -410,7 +430,7 @@ def lookup_terms(units: list[tuple[str, str]], entries: list[dict], direction: s
                 "target": f"{v1:,} to {v2:,} operating cycles",
                 "statutory_zh": "操作循环次数",
                 "code": "",
-                "basis": "IEC 60947-2:2024 Cl. 8.2.4.2, Table 7 / GB/T 14048.2—2020 Cl. 7.2.4.2",
+                "basis": "IEC 60947-2:2024 Cl. 8.2.4.2, Table 7 / GB/T 14048.2—2020 Cl. 7.2.4.2, 表 8",
                 "source_file": "numeric-rule",
                 "locations": locs,
             })
@@ -433,7 +453,7 @@ def lookup_terms(units: list[tuple[str, str]], entries: list[dict], direction: s
                 "target": f"{val:,} operating cycles",
                 "statutory_zh": "操作循环次数",
                 "code": "",
-                "basis": "IEC 60947-2:2024 Cl. 8.2.4.2, Table 7 / GB/T 14048.2—2020 Cl. 7.2.4.2",
+                "basis": "IEC 60947-2:2024 Cl. 8.2.4.2, Table 7 / GB/T 14048.2—2020 Cl. 7.2.4.2, 表 8",
                 "source_file": "numeric-rule",
                 "locations": locs,
             })
@@ -481,7 +501,7 @@ def run_self_test() -> int:
     acb_entries = build_glossary("acb", None)
     assert all(len(e["code"]) <= 28 or "/" in e["code"] for e in acb_entries), [e for e in acb_entries if len(e["code"]) > 28]
     ax_entry = next(e for e in acb_entries if e["code"] == "AX")
-    assert "O/|" in ax_entry["basis"], ax_entry
+    assert "O/I" in ax_entry["basis"], ax_entry
     assert lookup_terms([("P0:L1", "Series fuse per line pole.")], acb_entries, "en2zh")["match_count"] == 0
 
     zh_sample = [("P1:L1", "分励脱扣器、闭合电磁铁、抽屉式断路器、开孔器与合闸准备就绪触点，机械操作 2万次，电寿命 1万~2万次。"), ("P1:L2", "另测 2 万次。")]
@@ -502,6 +522,8 @@ def run_self_test() -> int:
     shunt_matches = [m for m in r_zh["matches"] if m["matched_source"] == "分励脱扣器"]
     assert len(shunt_matches) == 1 and shunt_matches[0]["target"] == "Shunt release (SHT)", shunt_matches
 
+    assert "≥ ± 10 K" == clean_md(r"$\ge \pm 10\text{ K}$"), clean_md(r"$\ge \pm 10\text{ K}$")
+
     mccb_entries = build_glossary("mccb", None)
     en_sample = [("P2:L1", "Moulded-case circuit-breaker (MCCB) Icu1 18 kA rms; ultimate short-circuit breaking capacity; power loss 42 W.")]
     r_en = lookup_terms(en_sample, mccb_entries, "en2zh")
@@ -509,20 +531,45 @@ def run_self_test() -> int:
     assert "塑料外壳式断路器" in targets_en, targets_en
     assert "功耗" in targets_en, targets_en
     icu1_hit = next(m for m in r_en["matches"] if "单极极限" in m["target"])
-    assert icu1_hit["gb_missing"] is True, icu1_hit
+    assert icu1_hit["target"] == "相-中性线交流电压下的额定单极极限短路分断能力", icu1_hit
+    assert "暂未收录" not in icu1_hit["target"] and "暂未收录" in icu1_hit["basis"] and icu1_hit["gb_missing"] is True, icu1_hit
     ult_hit = next(m for m in r_en["matches"] if m["target"] == "极限短路分断能力")
     assert ult_hit["gb_missing"] is False, ult_hit
 
-    r_codes = lookup_terms([("P3:L1", "UVT and PSU")], acb_entries, "en2zh")
+    cbi_hit = lookup_terms([("P2:L2", "CBI and Circuit-breakers not fulfilling the requirements for overcurrent protection (CBIs)")], mccb_entries, "en2zh")
+    assert cbi_hit["match_count"] == 1 and cbi_hit["matches"][0]["gb_missing"] is False, cbi_hit
+    annex_abbr = lookup_terms([("P2:L4", "CBR, CBI, MRCD, ICB, CBAR and PLC")], mccb_entries, "en2zh")
+    assert {m["matched_source"].upper() for m in annex_abbr["matches"]} == {"CBR", "CBI", "MRCD", "ICB", "CBAR", "PLC"}, annex_abbr
+
+    ext_hit = lookup_terms([("P2:L3", "Basic distribution trip unit and Thermal memory")], acb_entries, "en2zh")
+    ext_map = {m["matched_source"]: m for m in ext_hit["matches"]}
+    assert ext_map["Basic distribution trip unit"]["target"] == "基本配电型脱扣器" and ext_map["Basic distribution trip unit"]["gb_missing"] is False, ext_map
+    assert "CHINT" in ext_map["Basic distribution trip unit"]["basis"], ext_map["Basic distribution trip unit"]
+    assert ext_map["Thermal memory"]["target"] == "热记忆" and ext_map["Thermal memory"]["gb_missing"] is False, ext_map
+    assert "Industry" in ext_map["Thermal memory"]["basis"], ext_map["Thermal memory"]
+
+    r_codes = lookup_terms([("P3:L1", "UVT, PSU, ETU, MCR, ZSI and ACB")], acb_entries, "en2zh")
     code_map = {m["matched_source"].upper(): m["target"] for m in r_codes["matches"]}
     assert code_map.get("UVT") == "欠电压脱扣器", r_codes
     assert code_map.get("PSU") == "电源模块", r_codes
+    assert code_map.get("ETU") == "电子脱扣器", r_codes
+    assert code_map.get("MCR") == "接通电流脱扣器", r_codes
+    assert code_map.get("ZSI") == "区域选择性联锁", r_codes
+    assert code_map.get("ACB") == "空气断路器（分类：万能式）", r_codes
+
+    r_mccb_codes = lookup_terms([("P3:L2", "MCCB with TM-D release")], mccb_entries, "en2zh")
+    mc_map = {m["matched_source"].upper(): m["target"] for m in r_mccb_codes["matches"]}
+    assert mc_map.get("MCCB") == "塑料外壳式断路器", r_mccb_codes
+    assert mc_map.get("TM-D") == "热磁脱扣器", r_mccb_codes
 
     try:
         build_glossary("acb", "/nonexistent_region_path_xyz.md")
         raise AssertionError("Expected FileNotFoundError for missing --region")
     except FileNotFoundError:
         pass
+
+    region_tpl_entries = extract_rows_from_md(SKILL_ROOT / "references" / "regions" / "_region_template.md", "region")
+    assert len(region_tpl_entries) >= 1, region_tpl_entries
 
     chunks = build_chunks([("P1:L1", "a"), ("P1:L2", "b"), ("P1:L3", "c")], 2)
     assert len(chunks) == 2 and len(chunks[1]) == 1

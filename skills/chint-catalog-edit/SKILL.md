@@ -1,6 +1,6 @@
 ---
 name: chint-catalog-edit
-description: "Audit and proofread CHINT low-voltage product catalogues (ZH/EN PDF, Word, Excel, or text) for hard errors, typos, numbering defects, and PDF review annotations, with threshold profiles and optional IEC/GB checks."
+description: "Audit CHINT low-voltage product catalogues (ZH/EN PDF, Word, Excel, text) for hard errors, typos, numbering defects, optional IEC/GB compliance, and non-destructive PDF review annotations."
 ---
 
 # CHINT Catalogue Proofreading & Threshold Audit

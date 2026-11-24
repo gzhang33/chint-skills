@@ -10,9 +10,9 @@
 
 ## 2. Regional Term & Classification Overrides (区域强制替换词)
 
-| Statutory `IEC 60947-2:2024` / `GB/T 14048.2—2020` Concept | ✅ Required Regional Output | Standard Clause / Marking Rule |
+| Statutory Chinese (`GB/T 14048.2—2020`) | ✅ Regional Canonical English Output (`{{region_code}}`) | Standard Clause / Marking Rule |
 | :--- | :--- | :--- |
-| `{{concept}}` | **`{{regional_term}}`** | `{{regional_clause_or_label}}` |
+| `{{zh_term}}` | **`{{regional_en_term}}`** | `{{regional_clause_or_label}}` |
 
 ## 3. Regional Compliance Warnings (区域合规红线)
 
