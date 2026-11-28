@@ -10,7 +10,7 @@
   - `$I_{cu1}$` (`IEC 3.11.2, 5.3.6.2.3, 9.3.11` Seq VIII) — `GB` defines `2.15.1–2.15.2` ($I_{cu}$, $I_{cs}$) only.
   - `ground-fault` overcurrent release classification & test (`IEC 5.7.1 (2d), 8.2.1.2.4 c)`) — `GB 4.7.1 2)` lists `a)–c)` only, though `GB 表 K.1 / 图 K.1` already define `接地故障电流整定值 ($I_g$)` / `GF 接地故障`.
 - **`IEC 3.15` vs `GB 2.20`**: `IEC 2024 Cl. 3.15` dropped `"rated"` (`instantaneous short-circuit current setting`), whereas `GB 2.20` retains `额定` (`额定瞬时短路电流整定值`).
-- **`IEC 5.7.3` vs `GB 4.7.3`**: Ambient-independent `-5 °C` to `+40 °C` band applies to `overload releases` in `IEC 5.7.3` (plus external/remote display setting adjustment added in Ed. 6.0), vs non-thermal `过电流脱扣器（除热式外）` in `GB 4.7.3`.
+- **`IEC 5.7.3` vs `GB 4.7.3`**: Ambient-independent `-5℃` to `+40℃` band applies to `overload releases` in `IEC 5.7.3` (plus external/remote display setting adjustment added in Ed. 6.0), vs non-thermal `过电流脱扣器（除热式外）` in `GB 4.7.3`.
 - **Withdrawable `disconnected position`**: `GB 2.5` uses `抽出位置`, whereas `GB 7.1.2` uses `隔离位置`; both map to IEC **`disconnected position`**.
 - **Operational performance wording**: `GB 7.2.4.2` & `表 8` use `不通电流的操作性能` / `通电流的操作性能` (`操作循环次数`), whereas test subclauses `GB 8.3.3.4.3 / 8.3.3.4.4` & `表 9b/9c` use `不带电操作性能能力` / `带电操作性能能力`.
 - **Selectivity & coordination**: `IEC 2024` Title uses `Coordination` (`A.3` spells `co-ordination`) and delegates selectivity definitions (`A.5`) and curves (`Annex X`) to `IEC 60947-1:2020`; `GB 2.17.1–2.17.3` & `图 A.1–图 A.5` retain them directly (`IEC Fig. A.1` is single-pole `$I_{cu1}$` wiring).

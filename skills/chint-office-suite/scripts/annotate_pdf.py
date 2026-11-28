@@ -40,12 +40,12 @@ def _collect_terms(item: dict) -> list[str]:
         if st:
             raw.append(st)
     seen: set[str] = set()
-    terms: list[str] = []
+    out: list[str] = []
     for t in raw:
         if t and t not in seen:
             seen.add(t)
-            terms.append(t)
-    return terms
+            out.append(t)
+    return out
 
 
 def _page_lines_chars(page) -> list[tuple[tuple[float, float, float, float], list[tuple[str, tuple[float, float, float, float]]]]]:
@@ -152,7 +152,7 @@ def _find_occurrence_groups(page, lines, terms: list[str], whole_word: bool | No
         cs = case_sensitive if case_sensitive is not None else (len(t) <= 4 and any(c.isupper() for c in t) and t == t.upper())
         raw_rects = page.search_for(t)
         for grp in _group_multiline_rects(raw_rects, lines, t):
-            g_text, touches_alnum = _extract_group_text(lines, grp)
+            g_text, _ = _extract_group_text(lines, grp)
             if g_text:
                 if cs:
                     t_compact = re.sub(r"\s+", "", t)
@@ -160,7 +160,6 @@ def _find_occurrence_groups(page, lines, terms: list[str], whole_word: bool | No
                     if t_compact not in g_compact:
                         continue
                 if ww:
-                    # Check edge boundary only on alphanumeric edges of the query term.
                     lchars_0 = _matching_line(lines, grp[0])
                     lchars_n = _matching_line(lines, grp[-1])
                     bad_edge = False

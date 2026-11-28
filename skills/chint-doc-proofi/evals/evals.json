@@ -1,0 +1,149 @@
+{
+  "skill_name": "chint-doc-proofi",
+  "version": "2.0.0",
+  "evals": [
+    {
+      "id": 0,
+      "name": "zh-catalog-l1-default-strict-only",
+      "prompt": "请使用 chint-doc-proofi 默认档位（L1）审查以下中文断路器样本第 36 页和第 44 页片段：\n\n第 36 页：瞬时电流 Ii 可设定范围：1.5In~50KA/65KA/75KA；□UVTZ 失压延时(详见 P036)；闭合电磁铁、万能式断路器。\n第 44 页：额定绝缘电压 Ui(kV) 1000；额定冲击耐受电压 Uimp(V) 8；安装地点：海拨不超过2000m；环境温度-5℃~+40℃；功率损耗；涂润滑酯。",
+      "expected_output": "L1 strict-error audit catching Ui(kV)/Uimp(V), self-referencing 详见 P036, typos 海拨 and 涂润滑酯, while suppressing case-only 50KA, spacing 2000m, ℃, and legacy ZH industry terms (闭合电磁铁, 万能式断路器, 功率损耗).",
+      "files": [],
+      "assertions": [
+        {
+          "id": "a1",
+          "text": "默认 L1 必须命中并指出实质硬伤与错别字：Ui(kV) 与 Uimp(V) 单位互倒、第 36 页自引 P036、错别字「海拨」与「涂润滑酯」"
+        },
+        {
+          "id": "a2",
+          "text": "默认 L1 不得因大小写「50KA」、数字单位空格「2000m」、全角「℃」以及中文行业习惯词（闭合电磁铁、万能式断路器、功率损耗）产生刷屏告警"
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "name": "zh-catalog-l1-with-iec-overlay",
+      "prompt": "请用 chint-doc-proofi 的 L1 叠加 --with-iec（--dept acb）核查以下样本文本：第 3 页「万能式断路器、闭合电磁铁、使用类别 A、结构差异，海拔 2000m，-5℃~+40℃」。",
+      "expected_output": "L1 + --with-iec flags substantive standard deviations (使用类别 A -> 选择性类别 A, 结构差异 -> 结构段, 闭合电磁铁 -> 闭合脱扣器, 万能式断路器 -> 空气断路器（分类：万能式）) with zero spacing or ℃ formatting noise.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "b1",
+          "text": "准确报出与 GB/T 14048.2—2020 / IEC 60947-2:2024 实质不符项：使用类别 A（应为选择性类别 A）、结构差异（结构段）、闭合电磁铁（闭合脱扣器）、万能式断路器（空气断路器（分类：万能式））"
+        },
+        {
+          "id": "b2",
+          "text": "零空格与 ℃ 格式提示（不报 2000m 或 -5℃）"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "en-catalog-l2-term-consistency-no-ortho-noise",
+      "prompt": "Audit this EN ACB catalogue page under chint-doc-proofi L2 (publish consistency): 'P2: NXA Molded Case Circuit Breaker 250A, color gray, under-voltage, draw-out type. Equipped with Closed electromagnet (XF), Shunt Trip (MX), Earch current transformer. Selectivity category: A; Short-time pick-up Isd = 6 Ir.'",
+      "expected_output": "L2 reports the peer-valid legacy terms as consistency issues (Closed electromagnet, Shunt Trip, Earch current transformer), the competitor codes (XF, MX), and the Selectivity category A + Isd without declared Icw contradiction (IEC 5.4), while ignoring UK/US spelling (Molded, color), unhyphenated circuit breaker, under-voltage, draw-out, and 250A spacing. Under L1 those same legacy terms are correctly suppressed as EN_TERM_CONSISTENCY — only the codes and the Isd/Icw contradiction survive.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "c1",
+          "text": "L2 命中实质错译与竞品代号：Closed electromagnet (XF) -> Closing release (CEM)、Shunt Trip (MX) -> Shunt release (SHT)、Earch current transformer -> Earth current transformer (ECT)、Selectivity category A 配 Isd 但未声明 Icw 的矛盾（IEC 5.4）"
+        },
+        {
+          "id": "c2",
+          "text": "不报 Molded / color / Circuit Breaker / under-voltage / draw-out / 250A 等拼写、连字符与空格格式差异"
+        },
+        {
+          "id": "c3",
+          "text": "同一文本改用默认 L1 时，Closed electromagnet 与 Shunt Trip 作为 EN_TERM_CONSISTENCY 被正确抑制；XF / MX 竞品代号、Earch 拼写错误与 Isd/Icw 矛盾仍保留（Earch 属严重错译，不在降级名单）"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "pdf-standalone-two-step-gate",
+      "prompt": "请直接把这份样本册 PDF 里的错别字和硬伤批注写进 PDF（当前环境仅单独安装了 chint-doc-proofi）：第 1 页[纯图封面]，第 2 页「海拨超过 2000m，Ui(kV) 1000」。",
+      "expected_output": "Standalone chint-doc-proofi handles PDF directly without requiring chint-office-suite or chint-translation, stops at Step 3 after outputting Errata Table, Coverage Ledger (noting Page 1 visual page), and Pending Verification List, and waits for user confirmation before running --write-pdf.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "d1",
+          "text": "可仅凭 chint-doc-proofi 独立处理 PDF（不要求用户必须先装 chint-office-suite），首轮输出勘误表、覆盖台账（标出第 1 页纯视觉页）和待确认清单后即停，未调用 --write-pdf 或 --emit-annotate 写盘，等待用户确认"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "generic-layer-blind-sample",
+      "prompt": "请用 chint-doc-proofi 默认 L1 审第 5 页样例：「额定电流范围 63~32A；区间 4000~4000；Ics=65kA，Icu=50kA；断路器断路器；图 3-2 外形，该图号在第 9 页重复出现；多出括号 ) 收尾。」，再用 L2 复核第 6 页「瞬时电流 50KA、频率 60HZ、正常区间 16~63A」。",
+      "expected_output": "L1 命中通用结构缺陷：区间倒挂 63~32、单值区间 4000~4000、Ics>Icu、重复词 断路器断路器、图 3-2 全册重复、多余右括号；L2 追加 50KA/60HZ 的 SI 大小写规范化；不得对正常区间 16~63A 产生误报。整轮不依赖任何产品专用词表。",
+      "files": [],
+      "assertions": [
+        {
+          "id": "e1",
+          "text": "命中区间倒挂、单值区间、Ics>Icu、重复词、图号重复与多余右括号，且这些判定不依赖产品专用词表"
+        },
+        {
+          "id": "e2",
+          "text": "L2 命中 50KA 与 60HZ 的 SI 大小写问题；对正常区间 16~63A 零误报"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "pptx-slide-locator-errata",
+      "prompt": "请用 chint-doc-proofi 默认 L1 校对这份产品介绍 PPT：第 7 页标题文本框写「额定电流调节范围 63~32A」，第 12 页正文写「安装地点：海拨不超过 2000m」。",
+      "expected_output": "直接读取 .pptx（纯标准库，无需 python-pptx）并输出勘误表：区间倒挂 63~32 与错别字「海拨」，定位使用幻灯片原生定位 S7:T<shape>:P<para> 与 S12:…，而不是 PDF 页码；不调用 --write-pdf（pptx 无批注回写）。",
+      "files": [],
+      "assertions": [
+        {
+          "id": "f1",
+          "text": "命中区间倒挂「63~32」与错别字「海拨」，并落在勘误表（含原文与替换为两列）中"
+        },
+        {
+          "id": "f2",
+          "text": "定位为 S<slide>:T<shape>:P<para> 形式且分别以 S7: 与 S12: 开头，不是 P<n> 页码定位"
+        },
+        {
+          "id": "f3",
+          "text": "不调用 --write-pdf 或 --emit-annotate，并明确 pptx 只出勘误表、不回写批注"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "legacy-binary-unparseable-hard-error",
+      "prompt": "帮我把这两个旧版文件校对一遍：evals/files/corrupt_ole2.doc 和 evals/files/corrupt_ole2.xls（相对技能目录解析）。文件是十几年前的老 Word 和 Excel 另存的，用 Office 打开都提示已损坏。",
+      "expected_output": "脚本以退出码 2 报出可执行错误（无法解析 .doc/.xls（OLE2 结构异常：…），建议用 Office 另存为 .docx/.xlsx 后重试），并如实说明这两个文件未被审到；不得输出「0 错误」「未发现问题」之类结论，也不得编造勘误条目。",
+      "files": [
+        "evals/files/corrupt_ole2.doc",
+        "evals/files/corrupt_ole2.xls"
+      ],
+      "assertions": [
+        {
+          "id": "g1",
+          "text": "明确报错并给出「无法解析 .doc/.xls」与「另存为 .docx/.xlsx 后重试」的可执行建议，退出码为 2"
+        },
+        {
+          "id": "g2",
+          "text": "不得给出「0 错误 / 未发现问题」结论，也不得虚构勘误条目；须说明文件未完成审校"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "name": "markdown-fenced-code-exemption",
+      "prompt": "用 chint-doc-proofi 默认 L1 过一遍这份会议纪要 notes.md：「## 结论\n\n现场纪要里写成了「海拨 2000m」，需要改。\n\n```bash\n# 海拨 不应该在这里报错\necho 63~32A\n```\n\n行内代码 `海拨` 也不该算正文。",
+      "expected_output": "只对围栏与行内代码之外的正文报错：命中正文里的错别字「海拨」，但围栏内与反引号内的「海拨」、以及围栏内的倒挂区间「63~32A」都不报；定位使用 M<line> 行号。",
+      "files": [],
+      "assertions": [
+        {
+          "id": "h1",
+          "text": "命中围栏外正文的错别字「海拨」，定位为 M<line> 形式"
+        },
+        {
+          "id": "h2",
+          "text": "围栏代码块内与反引号内的「海拨」不报，围栏内的「63~32A」也不报区间倒挂"
+        }
+      ]
+    }
+  ]
+}

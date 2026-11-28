@@ -1,6 +1,6 @@
 ---
 name: chint-translation
-description: "Translate CHINT ACB/MCCB specs (ZH→EN IEC 60947-2:2024, EN→ZH GB/T 14048.2—2020), verify dual-standard terminology SSOT, or supply IEC/GB rules when chint-catalog-edit runs standard checks."
+description: "Translate CHINT ACB/MCCB specs (ZH→EN IEC 60947-2:2024, EN→ZH GB/T 14048.2—2020), verify dual-standard terminology SSOT, or supply IEC/GB rules when chint-doc-proofi runs standard checks."
 ---
 
 # CHINT Circuit-Breaker Translation & Terminology Standard
@@ -9,7 +9,7 @@ Resolve `<SKILL_DIR>` from the directory containing this `SKILL.md` and run scri
 
 - **Dual-Standard Statutory Anchors**: `ZH→EN` outputs one canonical **`IEC 60947-2:2024`** (Ed. 6.0) English term and clause; `EN→ZH` outputs one statutory **`GB/T 14048.2—2020`** Chinese term and clause, noting IEC 2024-only additions ($I_{cu1}$, `CBI Class W`).
 - **CHINT Accessory Ordering Codes**: Format accessories as **`Canonical IEC Term (CHINT Code)`** (e.g. `Closing release (CEM)`, `Shunt release (SHT)`, `Ready-to-close contact (SPC)`).
-- **Catalogue Proofreading & PDF Annotation**: For full PDF/Word/Excel catalogue error audits, threshold gating (`L1`/`L2`/`L3`), or PDF review annotations, route to `chint-catalog-edit` (and `chint-office-suite`).
+- **Catalogue Proofreading & PDF Annotation**: For full PDF/Word/Excel catalogue error audits, threshold gating (`L1`/`L2`/`L3`), or PDF review annotations, route to `chint-doc-proofi` (and `chint-office-suite`).
 
 ## Step 1 — Lock Scope & Load Active References
 
@@ -31,9 +31,21 @@ Resolve `<SKILL_DIR>` from the directory containing this `SKILL.md` and run scri
 
 ## Step 3 — Semantic Verification & Deliverable
 
-1. Verify `kA rms` ($I_{cu}/I_{cs}/I_{cw}/I_{cu1}$) vs `kA peak` ($I_{cm}$), `Selectivity category A` vs `Isd`/`Icw` (`IEC 5.4` / `GB 4.4`), `frame size` (`IEC 3.1.1` / `GB 2.1.1`), asymmetric bounds (`≥` vs `>`), normative `shall`, and datasheet-verified values (isolate missing/unverified figures into Pending Verification List).
+1. Verify `kA` without appending `rms` ($I_{cu}/I_{cs}/I_{cw}/I_{cu1}/I_s$) vs `kA peak` ($I_{cm}$), Celsius symbol `℃` (never `°C`), `Selectivity category A` vs `Isd`/`Icw` (`IEC 5.4` / `GB 4.4`), `frame size` (`IEC 3.1.1` / `GB 2.1.1`), asymmetric bounds (`≥` vs `>`), normative `shall`, and datasheet-verified values (isolate missing/unverified figures into Pending Verification List).
 2. Deliver directly in chat:
    - **Clean Target Text** (`finding_count == 0`, zero unresolved `{{...}}`)
    - **Key Term Mapping Table**
    - **Pending Verification List** (if any missing or contradictory source ratings exist)
 3. *Done when*: Every statutory term maps to a verified clause, every CHINT/industry extension is labelled, and zero ratings are fabricated.
+
+## Term Bank Maintenance (maintainers only)
+
+The four reference tables are generated from **`翻译术语对照表_v*.xlsx`** (main repo, `resources/agent database/`). Edit the workbook, not the tables.
+
+- `python3 "<SKILL_DIR>/scripts/sync_terms.py" --check` — read-only; reports `MATCH` / `DIFF` / `NOT_INSTRUMENTED` per section.
+- `--coverage` — which reference rows have no workbook entry yet.
+- `--write` — rewrite the marked blocks; never touches text outside them.
+- `--instrument` — one-off, wraps an unmarked table body in `<!-- AUTO:BEGIN <loc> -->` / `<!-- AUTO:END <loc> -->`.
+
+Only the first three columns of each table are generated. Every later column (clause notes, value slots, functions, key-clause rules) is human-maintained and preserved by Chinese-term key. The hidden `目标位置` column in the workbook selects the target section; unknown values abort the run. Workbook lookup order: `--xlsx`, `$CHINT_TERM_XLSX`, repository-relative path.
+

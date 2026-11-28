@@ -1,0 +1,417 @@
+{
+  "version": "1.1",
+  "notes": "Deterministic rule data for audit_catalog.py. Add product-line entries here; never hard-code single-catalogue one-offs in Python.",
+  "severity_overrides": {
+    "notes": "Blacklist patterns containing any listed term are downgraded from EN_SEVERE_ERROR (L1 hard error) to EN_TERM_CONSISTENCY (L2 terminology consistency). These forms are valid English or industry-standard at peers; they are style/consistency issues, not hard errors.",
+    "source": "Areas/竞品分析/data/pdfs 全量样本扫描 2026-11-27：ABB 495x 'withdrawable'，凯帆 103x 'drawer'、25x 'closing electromagnet'，常熟 48x 'closing electromagnet'、28x 'separation position'；ABB Emax 13x \"shunt opening release\"",
+    "downgrade_if_pattern_contains": [
+      "shunt trip",
+      "installation and debugging",
+      "ordering instruction",
+      "drawer",
+      "closed electromagnet",
+      "close electromagnet",
+      "closing electromagnet",
+      "closing magnet",
+      "closing preparation contact",
+      "separation position",
+      "connection position",
+      "hole opener",
+      "face mask",
+      "storage hole",
+      "body key lock",
+      "refuses to open",
+      "is forbidden to open",
+      "irrelevant to",
+      "pulse energization working mode",
+      "universal circuit",
+      "intelligent air circuit",
+      "lvpcb",
+      "phase space plate",
+      "plastic shell breaker",
+      "plastic case breaker",
+      "earth leakage breaker",
+      "elcb",
+      "motor circuit protector",
+      "rotate handle",
+      "wire cover",
+      "motor hand",
+      "back wiring",
+      "insert installation",
+      "double breaking point",
+      "interphased",
+      "inter phased",
+      "shunt opening release",
+      "excitation release"
+    ]
+  },
+  "zh_typos": [
+    {
+      "pattern": "海拨",
+      "fix": "海拔",
+      "source": "内部口径（正泰样本册用字；逐条经样本原文核实）"
+    },
+    {
+      "pattern": "遥至",
+      "fix": "摇至",
+      "source": "内部口径（正泰样本册用字；逐条经样本原文核实）"
+    },
+    {
+      "pattern": "特殊申明",
+      "fix": "特殊声明",
+      "source": "内部口径（正泰样本册用字；逐条经样本原文核实）"
+    },
+    {
+      "pattern": "轴侧图",
+      "fix": "轴测图",
+      "source": "内部口径（正泰样本册用字；逐条经样本原文核实）"
+    },
+    {
+      "pattern": "润滑酯",
+      "fix": "润滑脂",
+      "source": "内部口径（正泰样本册用字；逐条经样本原文核实）"
+    },
+    {
+      "pattern": "圆型",
+      "fix": "圆形",
+      "source": "《现代汉语词典》（圆形 为规范词形）"
+    },
+    {
+      "pattern": "灌(?<!入)(?:等)?容器",
+      "fix": "罐（容器用「罐」，非「灌」）",
+      "source": "内部口径（同音误用）"
+    },
+    {
+      "pattern": "免予维修",
+      "fix": "免于维修",
+      "source": "内部口径（同音误用）"
+    },
+    {
+      "pattern": "“黑色“",
+      "fix": "“黑色”（引号成对，前后同为右引号）",
+      "source": "GB/T 15834—2011 4.8（引号；4.9 为括号）"
+    }
+  ],
+  "same_page_conflicts": [
+    {
+      "desc": "防护罩名称同页不一致",
+      "variants": [
+        {
+          "pattern": "透明保护罩",
+          "label": "透明保护罩"
+        },
+        {
+          "pattern": "透明防护罩",
+          "label": "透明防护罩"
+        }
+      ]
+    },
+    {
+      "desc": "分闸/分断按钮名称同页不一致",
+      "variants": [
+        {
+          "pattern": "分断按钮",
+          "label": "分断按钮"
+        },
+        {
+          "pattern": "分闸按钮",
+          "label": "分闸按钮"
+        }
+      ]
+    },
+    {
+      "desc": "圆形/圆型 同页混用",
+      "variants": [
+        {
+          "pattern": "圆形",
+          "label": "圆形"
+        },
+        {
+          "pattern": "圆型",
+          "label": "圆型"
+        }
+      ],
+      "source": "同页术语一致性（内部口径）"
+    }
+  ],
+  "cross_page_synonyms": [
+    {
+      "desc": "欠电压脱扣器简称混用",
+      "variants": [
+        {
+          "pattern": "欠电压(?:延时|瞬时)?脱扣器",
+          "label": "欠电压脱扣器"
+        },
+        {
+          "pattern": "欠压(?:延时|瞬时)?脱扣器|无欠压",
+          "label": "欠压脱扣器/无欠压"
+        }
+      ],
+      "fix": "全册统一为「欠电压脱扣器 / 无欠电压」"
+    },
+    {
+      "desc": "电动操作机构名称混用",
+      "variants": [
+        {
+          "pattern": "电动储能机构",
+          "label": "电动储能机构"
+        },
+        {
+          "pattern": "储能电动机",
+          "label": "储能电动机"
+        },
+        {
+          "pattern": "储能电机",
+          "label": "储能电机"
+        },
+        {
+          "pattern": "电动操作机构",
+          "label": "电动操作机构"
+        },
+        {
+          "pattern": "电动机操作机构",
+          "label": "电动机操作机构"
+        }
+      ],
+      "fix": "全册统一为「电动机操作机构」（或明确区分机构与电机）"
+    },
+    {
+      "desc": "电子脱扣器/控制器名称混用",
+      "variants": [
+        {
+          "pattern": "智能型控制器",
+          "label": "智能型控制器"
+        },
+        {
+          "pattern": "智能控制器",
+          "label": "智能控制器"
+        },
+        {
+          "pattern": "智能脱扣器",
+          "label": "智能脱扣器"
+        }
+      ],
+      "fix": "全册统一控制器称谓（如「智能型控制器」或「电子脱扣器」）"
+    },
+    {
+      "desc": "外接/外置互感器混用",
+      "variants": [
+        {
+          "pattern": "外接互感器",
+          "label": "外接互感器"
+        },
+        {
+          "pattern": "外置互感器",
+          "label": "外置互感器"
+        }
+      ],
+      "fix": "全册统一为「外接互感器」或「外置互感器」"
+    },
+    {
+      "desc": "联锁/连锁混用",
+      "variants": [
+        {
+          "pattern": "联锁",
+          "label": "联锁"
+        },
+        {
+          "pattern": "连锁",
+          "label": "连锁"
+        }
+      ],
+      "fix": "全册统一为「联锁」",
+      "source": "GB/T 2900.18—2008《电工术语 低压电器》(联锁 interlock)；本册用语统一"
+    },
+    {
+      "desc": "连接/联接混用",
+      "variants": [
+        {
+          "pattern": "连接",
+          "label": "连接"
+        },
+        {
+          "pattern": "联接",
+          "label": "联接"
+        }
+      ],
+      "fix": "全册统一为「连接」",
+      "source": "GF 1001—2001 第一批异形词整理表（连接—联接）"
+    },
+    {
+      "desc": "热磁式/热电磁式混用",
+      "variants": [
+        {
+          "pattern": "热电磁式",
+          "label": "热电磁式"
+        },
+        {
+          "pattern": "热磁式",
+          "label": "热磁式"
+        }
+      ],
+      "fix": "全册统一为「热磁式」或「热电磁式」"
+    },
+    {
+      "desc": "电气寿命/电寿命混用",
+      "variants": [
+        {
+          "pattern": "电气寿命",
+          "label": "电气寿命"
+        },
+        {
+          "pattern": "(?<!电)电寿命",
+          "label": "电寿命"
+        }
+      ],
+      "fix": "全册统一为「电气寿命」"
+    },
+    {
+      "desc": "防护罩/保护罩跨页混用",
+      "variants": [
+        {
+          "pattern": "透明防护罩",
+          "label": "透明防护罩"
+        },
+        {
+          "pattern": "透明保护罩",
+          "label": "透明保护罩"
+        }
+      ],
+      "fix": "全册统一为「透明防护罩」"
+    },
+    {
+      "desc": "默认/缺省混用",
+      "variants": [
+        {
+          "pattern": "默认",
+          "label": "默认"
+        },
+        {
+          "pattern": "缺省",
+          "label": "缺省"
+        }
+      ],
+      "fix": "全册统一为「默认」"
+    },
+    {
+      "desc": "通信/通讯混用",
+      "variants": [
+        {
+          "pattern": "通信",
+          "label": "通信"
+        },
+        {
+          "pattern": "通讯",
+          "label": "通讯"
+        }
+      ],
+      "fix": "全册统一为「通信」",
+      "source": "《现代汉语词典》（两者为不同词，属本册用语统一，非异形词）"
+    },
+    {
+      "desc": "其他/其它混用",
+      "variants": [
+        {
+          "pattern": "其他",
+          "label": "其他"
+        },
+        {
+          "pattern": "其它",
+          "label": "其它"
+        }
+      ],
+      "fix": "全册统一为「其他」",
+      "source": "《现代汉语词典》（两者为不同词，属本册用语统一，非异形词）"
+    },
+    {
+      "desc": "短路瞬时/瞬动混用",
+      "variants": [
+        {
+          "pattern": "短路瞬时",
+          "label": "短路瞬时"
+        },
+        {
+          "pattern": "短路瞬动",
+          "label": "短路瞬动"
+        }
+      ],
+      "fix": "全册统一为「短路瞬时保护」"
+    },
+    {
+      "desc": "联结/连结混用",
+      "variants": [
+        {
+          "pattern": "联结",
+          "label": "联结"
+        },
+        {
+          "pattern": "连结",
+          "label": "连结"
+        }
+      ],
+      "fix": "全册统一为「联结」（GF 1001 推荐词形，指结合/关联，勿与「连接」混用）",
+      "source": "GF 1001—2001 第一批异形词整理表（联结—连结）"
+    }
+  ],
+  "case_notation": [
+    {
+      "pattern": "(?<![A-Za-z0-9])(?:\\d+(?:\\.\\d+)?)\\s*(?:KVA|KVAR|KWH|KV|KW|KA|KHZ|MHZ|HZ)(?![A-Za-z0-9])",
+      "fix": "按 SI 词头规范改写：kV / kW / kVA / kvar / kWh / kA / kHz / MHz / Hz（k 小写、Hz 的 z 小写）",
+      "source": "SI Brochure 9th ed. (BIPM) Table 5/6"
+    },
+    {
+      "pattern": "(?<![A-Za-z0-9\\-])(?:\\d+(?:\\.\\d+)?)\\s*MA(?![A-Za-z0-9])",
+      "fix": "mA（毫安）；若上下文为分断能力，疑为 kA 误写，须核实",
+      "source": "SI Brochure 9th ed. (BIPM) 词头大小写"
+    },
+    {
+      "pattern": "(?<![A-Za-z0-9])Sb\\d+(?![A-Za-z0-9])",
+      "fix": "SB（按钮代号字母须全大写，如 SB1）",
+      "source": "内部口径（CHINT 电气制图代号约定）"
+    },
+    {
+      "pattern": "(?<![A-Za-z])(?!cos[ \\t]*[φϕ])[Cc][Oo][Ss][ \\t]*[φϕΦ]",
+      "fix": "cos φ（功率因数符号规范写法）",
+      "source": "ISO 80000-2（功率因数符号）"
+    },
+    {
+      "pattern": "(?<=\\d)\\s*一\\s*(?=\\d)",
+      "fix": "数值范围改用「～」或「—」（误用汉字「一」作连接号）",
+      "source": "GB/T 15835—2011 5.1.3"
+    },
+    {
+      "pattern": "(?<![A-Za-z0-9])\\d+[kK]\\d+[bB](?![A-Za-z0-9])",
+      "fix": "改用标准中文表述（如「3 常开 3 常闭」，避免拼音简写）",
+      "source": "内部口径"
+    },
+    {
+      "pattern": "部份",
+      "fix": "部分（统一简体规范字形）",
+      "source": "《通用规范汉字表》（部份 为异体写法）"
+    },
+    {
+      "pattern": "订做",
+      "fix": "定制 / 定做（建议统一为「定制」）",
+      "source": "内部口径"
+    },
+    {
+      "pattern": "(?<![\\d.\\-−–])(\\d+(?:\\.\\d+)?)[-−–](\\d+(?:\\.\\d+)?)\\s*(?:[kKmM]?[A-Za-z]{1,3}|℃|%|％)(?![A-Za-z0-9])",
+      "fix": "数值范围连接号改用「～」或「—」（GB/T 15835—2011）",
+      "source": "GB/T 15835—2011 5.1.3；GB/T 15834—2011 4.13.3"
+    },
+    {
+      "pattern": "(?<![\\d.%％])(\\d+(?:\\.\\d+)?)\\s*[~～—至]\\s*(\\d+(?:\\.\\d+)?)\\s*[%％]",
+      "fix": "百分数范围两端都应带 %（GB/T 15835—2011）",
+      "source": "GB/T 15835—2011 5.1.3（例：15％～30％，不写为 15～30％）"
+    }
+  ],
+  "duplicate_word_exceptions": [
+    {
+      "pattern": "延时延时",
+      "unless_preceded_by": "长",
+      "unless_followed_by": "时间",
+      "note": "「过载长延时 + 延时时间」连写，非重复词",
+      "source": "内部口径（保护特性术语连写）"
+    }
+  ]
+}

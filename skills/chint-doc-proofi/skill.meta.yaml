@@ -1,0 +1,15 @@
+name: chint-doc-proofi
+version: 2.0.0
+description: "Audit and proofread CHINT low-voltage catalogues and general office documents (PDF, Word .docx/.doc, Excel .xlsx/.xls, PowerPoint .pptx, Markdown, text) for hard errors, typos, numbering defects, terminology drift and errata, with threshold profiles, optional IEC/GB checks, and two-step confirmed non-destructive PDF annotations."
+author: CHINT PM Team
+tags:
+  - catalog
+  - catalogue
+  - proofreading
+  - general-office
+  - audit
+  - pdf-annotation
+  - pptx
+  - markdown
+  - legacy-binary
+  - chint

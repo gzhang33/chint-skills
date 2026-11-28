@@ -257,8 +257,14 @@ def extract_rows_from_md(md_path: Path, role: str) -> list[dict]:
 
         base_basis_parts = [p for p in [clean_md(clause_raw), clean_md(note_raw)] if p and p != "—"]
         base_basis = "; ".join(base_basis_parts)
+        # Truncate on a clause boundary and mark the cut explicitly, so a downstream
+        # contract check can distinguish "shortened with notice" from a corrupted tail.
         if len(base_basis) > 260:
-            base_basis = base_basis[:257].rstrip(" ;,") + "..."
+            cut = base_basis[:257]
+            boundary = max(cut.rfind("; "), cut.rfind(" / "), cut.rfind(", "))
+            if boundary > 120:
+                cut = cut[:boundary]
+            base_basis = cut.rstrip(" ;,") + " …（依据摘录已截断）"
 
         zh_slash = split_top_level(zh_full, seps="/")
         en_slash = split_top_level(en_full, seps="/")
@@ -525,7 +531,7 @@ def run_self_test() -> int:
     assert "≥ ± 10 K" == clean_md(r"$\ge \pm 10\text{ K}$"), clean_md(r"$\ge \pm 10\text{ K}$")
 
     mccb_entries = build_glossary("mccb", None)
-    en_sample = [("P2:L1", "Moulded-case circuit-breaker (MCCB) Icu1 18 kA rms; ultimate short-circuit breaking capacity; power loss 42 W.")]
+    en_sample = [("P2:L1", "Moulded-case circuit-breaker (MCCB) Icu1 18 kA; ultimate short-circuit breaking capacity; power loss 42 W.")]
     r_en = lookup_terms(en_sample, mccb_entries, "en2zh")
     targets_en = " | ".join(f"{m['target']} [{m['basis']}]" for m in r_en["matches"])
     assert "塑料外壳式断路器" in targets_en, targets_en

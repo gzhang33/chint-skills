@@ -119,7 +119,7 @@ ED5_CLAUSE_RE = re.compile(
     r"(?:Cl\.|Clause)\s*(?:2\.(?:[1-9]|1\d|2[0-3])(?:\.\d+)?|4\.3\.[1-6](?:\.\d+)?|4\.[6-8](?:\.\d+)?|7\.[12](?:\.\d+)?|8\.3\.[1-9](?:\.\d+)?|8\.[45](?:\.\d+)?)\b",
     re.IGNORECASE,
 )
-ED5_GUARD_TAGS = ("60947-1", "60947-3", "14048.2", "GB/T", "GB ")
+ED5_GUARD_TAGS = ("60947-1", "60947-3", "14048.2", "GB/T", "GB ", "60947-2:2024", "60947-2:20")
 
 
 def load_units(source: str) -> dict:
@@ -152,6 +152,7 @@ HIGH_CATS = {
     "STD_CONCEPT_ERROR",
     "GB_STATUTORY_ZH",
     "UNRESOLVED_SLOT",
+    "UNIT_CONVENTION",
 }
 
 
@@ -218,6 +219,8 @@ def scan_units(units: list[tuple[str, str]], dept: str, mode: str) -> list[dict]
                 window = line[max(0, m.start() - 80):min(len(line), m.end() + 40)]
                 if not any(tag in window for tag in ED5_GUARD_TAGS):
                     add(loc, "OBSOLETE_CLAUSE_ED5", m.group(0), "Use IEC 60947-2:2024 Ed. 6.0 clause numbers", line)
+            for m in re.finditer(r"\bkA(?:\s+|\s*\(\s*)rms\b", line, re.IGNORECASE):
+                add(loc, "UNIT_CONVENTION", m.group(0), "kA (do not append 'rms' to breaking/withstand current ratings such as Icu/Ics/Icw/Icu1/Is)", line)
         else:
             for pat, fix in STD_CONCEPT_ZH:
                 for m in re.finditer(pat, line):
@@ -225,6 +228,9 @@ def scan_units(units: list[tuple[str, str]], dept: str, mode: str) -> list[dict]
             for pat, fix in STD_STATUTORY_ZH:
                 for m in re.finditer(pat, line):
                     add(loc, "GB_STATUTORY_ZH", m.group(0), fix, line)
+
+        for m in re.finditer(r"°\s*C\b", line):
+            add(loc, "UNIT_CONVENTION", m.group(0), "℃ (use the Celsius symbol ℃ instead of °C)", line)
 
         for m in re.finditer(r"\{\{[^}]+\}\}", line):
             add(loc, "UNRESOLVED_SLOT", m.group(0), "Resolve value slot from datasheet or rewrite qualitatively", line)
@@ -372,7 +378,15 @@ def run_self_test() -> int:
         ok_hits = scan_units([("P13:L2", ok_txt)], "all", "en")
         assert len(ok_hits) == 0, (ok_txt, ok_hits)
 
-    print("SELF-TEST PASS: 7/7 suites passed (EN/ZH/multi-model/substantive-only/relaxed-ortho-spacing).")
+    unit_en_dirty = scan_units([("P14:L1", "Icu 50 kA rms, ambient -5 °C to +40 °C.")], "acb", "en")
+    assert any(f["category"] == "UNIT_CONVENTION" and "rms" in f["match"] for f in unit_en_dirty), unit_en_dirty
+    assert sum(1 for f in unit_en_dirty if f["category"] == "UNIT_CONVENTION" and "C" in f["match"]) == 2, unit_en_dirty
+    unit_zh_dirty = scan_units([("P14:L2", "环境温度 -5 °C ~ +40 °C。")], "acb", "zh")
+    assert sum(1 for f in unit_zh_dirty if f["category"] == "UNIT_CONVENTION") == 2, unit_zh_dirty
+    unit_clean = scan_units([("P14:L3", "Icu 50 kA, Ics 36 kA, ambient -5℃ to +40℃.")], "acb", "en")
+    assert len(unit_clean) == 0, unit_clean
+
+    print("SELF-TEST PASS: 8/8 suites passed (EN/ZH/multi-model/substantive-only/relaxed-ortho-spacing/unit-conventions).")
     return 0
 
 

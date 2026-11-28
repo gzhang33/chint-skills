@@ -43,7 +43,7 @@
     {
       "id": 2,
       "name": "en-to-zh-datasheet-backtranslation",
-      "prompt": "请将以下 NXM-250S 英文数据表初稿反译为中文（严格按 GB/T 14048.2—2020 法定中文用词，不带俗称简称括号），并指出内部技术矛盾：\n\n\"NXM-250S Moulded-Case Circuit-Breaker (IEC 60947-2:2024)\n- Rated impulse withstand voltage Uimp: 8 kV\n- Rated individual pole ultimate short-circuit breaking capacity at phase-to-neutral AC voltage Icu1: 18 kA rms\n- Rated service short-circuit breaking capacity Ics: 36 kA rms at 415 V AC\n- Selectivity category: A\n- Power loss: 42 W\n- Short-time pick-up current setting Isd: 2 to 10 × Ir\"",
+      "prompt": "请将以下 NXM-250S 英文数据表初稿反译为中文（严格按 GB/T 14048.2—2020 法定中文用词，不带俗称简称括号），并指出内部技术矛盾：\n\n\"NXM-250S Moulded-Case Circuit-Breaker (IEC 60947-2:2024)\n- Rated impulse withstand voltage Uimp: 8 kV\n- Rated individual pole ultimate short-circuit breaking capacity at phase-to-neutral AC voltage Icu1: 18 kA\n- Rated service short-circuit breaking capacity Ics: 36 kA at 415 V AC\n- Selectivity category: A\n- Power loss: 42 W\n- Short-time pick-up current setting Isd: 2 to 10 × Ir\"",
       "expected_output": "Chinese EN->ZH back-translation aligned with GB/T 14048.2-2020 statutory Chinese (塑料外壳式断路器, 额定冲击耐受电压, 额定运行短路分断能力, 功耗, 选择性类别) with explicit IEC 2024-only note on Icu1 and Selectivity category A vs Isd contradiction flagged.",
       "files": [],
       "assertions": [
