@@ -25,7 +25,7 @@ A rule is only listed under a standard when the standard's own text supports it.
 | **GB/T 2900.18—2008**《电工术语 低压电器》 | `联锁` / `连锁` word choice | `catalog_rules.json` → `cross_page_synonyms` 联锁/连锁 entry | The standard defines `联锁 interlock` as the term; the choice to standardise the whole catalogue on it is a house convention, and the entry says so. No IEC 60050-441 backlink exists in the code — that standard is **not** claimed as a source anywhere. |
 | **IEC 60947-2:2024 (Ed. 6.0)** / **GB/T 14048.2—2020** | `Ics ≤ Icu`; `In ≤ Inm`; `Ue ≤ Ui`; Selectivity category A + `Isd` requires `Icw`; obsolete Ed. 5 clause numbers; `Ui`/`Uimp` unit inversion | `audit_catalog.py` → `ICS_RE`/`ICU_RE`/`IN_RE`/`INM_RE`/`UE_RE`/`UI_RE`, category-A block, `ED5_CLAUSE_RE` | `Ics ≤ Icu` (GB 4.3.6.2.3) and `Ue ≤ Ui` (IEC 5.3.4.1 ≤ 5.3.2.2) are standard-derived. `In ≤ Inm` is industry convention: **neither standard defines the symbol `Inm`** — GB/T 14048.2—2020 Cl. 2.1.1 defines 壳架等级 only. |
 | **IEC 62423** (GB/T 22794) | `Type F` / `Type B+` must cite IEC 62423, not IEC 60947-2 Annex B | `audit_catalog.py` → `type_fb_re` block | Clause reference only. |
-| **GB/T 4208—2017** (IEC 60529) | IP code direction and syntax | Semantic checklist (`不高于/不低于 IPxx`) | Reference only. |
+| **GB/T 4208—2017** (IEC 60529) | IP code direction and syntax | [domains/electrical_catalogue.md](domains/electrical_catalogue.md) §3 (`不超过/不低于 IP20`) | Reference only. |
 
 ## 3. Corpus-derived calibration (not standards)
 
@@ -48,7 +48,7 @@ Same corpus drove these detector calibrations — each suppressed a peer catalog
 - **Bracket pairing**: enumerated markers (`1)`, `a)`, `1a)`, `509)`), superscript footnote refs glued to text (`ETU15B1)`), and a lone trailing `)` are typography, not unmatched brackets.
 - **Duplicated words**: hyphenated line breaks (`under under-`) and cross-case product names (`Formula AIR air circuit-breakers`) are not duplicates.
 
-`COMPETITOR_CODE` fires only against CHINT-specific accessory codes (Schneider/ABB `MX`/`XF`/`MN`/`SDE`/`MCH`/`KLC`). Pass `--external-reference` when auditing a peer catalogue (or `--dept mccb` on a non-ACB document); the scanner also auto-suppresses `COMPETITOR_CODE` when the first 400 units contain zero CHINT identifiers and ≥3 peer brand mentions, while preserving checks on CHINT catalogues that merely cite a competitor once or twice.
+`COMPETITOR_CODE` targets CHINT-internal accessory codes mixed with peer codes (Schneider/ABB `MX`/`XF`/`MN`/`SDE`/`MCH`/`KLC`) and runs 100% false positives on external catalogues. See [domains/electrical_catalogue.md](domains/electrical_catalogue.md) §1 for `--external-reference` usage and the 400-unit auto-suppression threshold.
 
 ## 4. Rules deliberately not encoded
 

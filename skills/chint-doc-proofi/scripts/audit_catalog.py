@@ -1257,6 +1257,7 @@ def load_units(source: str, pages_spec: str | None = None, office_dir: Path | No
             obj = json.loads(raw)
             if isinstance(obj, dict) and obj.get("schema") == "chint-office-extract/v1":
                 units = [(str(u["location"]), str(u["text"])) for u in obj.get("units", [])]
+                fmt_ext = f".{str(obj.get('format', '')).lstrip('.').lower()}" if obj.get("format") else Path(str(obj.get("source", ""))).suffix.lower()
                 return {
                     "source": obj.get("source", source),
                     "format": obj.get("format", "extract-json"),
@@ -1266,7 +1267,7 @@ def load_units(source: str, pages_spec: str | None = None, office_dir: Path | No
                     "low_text_pages": obj.get("low_text_pages", []),
                     "uncached_formula_cells": obj.get("uncached_formula_cells", []),
                     "units": units,
-                    "doc_type": obj.get("doc_type") or classify_doc_type(units, ""),
+                    "doc_type": obj.get("doc_type") or classify_doc_type(units, fmt_ext or ".json"),
                 }
         except json.JSONDecodeError:
             pass
@@ -2179,11 +2180,22 @@ def build_summary(loaded: dict, batch_size: int = 20) -> dict:
     }
 
 
-def format_report_md(loaded: dict, findings: list[dict], profile: str, with_iec: bool) -> str:
+def format_report_md(loaded: dict, findings: list[dict], profile: str, with_iec: bool, ssot_source: str = "") -> str:
     high = [f for f in findings if f["severity"] == "HIGH"]
     med = [f for f in findings if f["severity"] != "HIGH"]
     mode_tag = f"{profile}{'+IEC' if with_iec else ''}"
+    scanned = loaded.get("scanned", loaded["total"])
+    low_pages = loaded.get("low_text_pages", [])
+    summary_line = (
+        f"[{mode_tag}] Scanned {scanned}/{loaded['total']} containers, "
+        f"{len(loaded.get('units', []))} text units | doc_type={loaded.get('doc_type', '')} | "
+        f"office={loaded.get('office_engine', '')} | ssot={ssot_source or 'n/a'} | "
+        f"low_text_pages={low_pages} | findings={len(findings)} "
+        f"(HIGH={len(high)}, MEDIUM={len(med)})"
+    )
     lines = [
+        summary_line,
+        "",
         f"### Coverage Ledger (`{mode_tag}`)",
         "| Containers (pages/slides/sheets) | Text units audited | Visual Pages (<50 chars) | HIGH hits | MEDIUM hits |",
         "| :--- | :--- | :--- | :--- | :--- |",
@@ -2760,6 +2772,22 @@ def run_self_test() -> int:
         except ValueError as exc:
             assert "Git LFS" in str(exc), exc
 
+        # Report summary + pre-extracted JSON doc_type regression
+        ext_json = tdir / "extract_cat.json"
+        ext_json.write_text(json.dumps({
+            "schema": "chint-office-extract/v1",
+            "source": "cat.pdf",
+            "format": "pdf",
+            "total_units": 1,
+            "scanned_units": 1,
+            "low_text_pages": [],
+            "units": [{"location": "P1:L1", "text": "NXA 断路器 额定电流 Icu 65kA"}],
+        }, ensure_ascii=False), encoding="utf-8")
+        loaded_ext = load_units(str(ext_json), office_dir=None)
+        assert loaded_ext["doc_type"] == "catalogue", loaded_ext
+        md_out = format_report_md(loaded_ext, [], "L1", False, ssot_source="builtin:parity")
+        assert "doc_type=catalogue" in md_out and "office=pre-extracted-json" in md_out and "ssot=builtin:parity" in md_out, md_out
+
     print("SELF-TEST PASS: 13/13 suites passed (anti-drift/solo-PDF-write/solo-DOCX/L1-strict/L2-drift/L1+IEC/generic-layer/standard-relations/table-checks/defect-guards/pptx/markdown/legacy-ole2).")
     return 0
 
@@ -2940,7 +2968,7 @@ def main() -> int:
         if args.json:
             print(json.dumps(report, ensure_ascii=False, indent=2))
         elif args.report_md:
-            print(format_report_md(loaded, clean_findings, args.profile, args.with_iec))
+            print(format_report_md(loaded, clean_findings, args.profile, args.with_iec, ssot_source=ssot_source))
         else:
             print(f"[{args.profile}{'+IEC' if args.with_iec else ''}] Scanned {report['scanned_units']}/{report['total_units']} containers, {len(units)} text units | doc_type={report['doc_type']} | office={report['office_engine']} | ssot={ssot_source} | low_text_pages={report['low_text_pages']} | findings={report['finding_count']} (HIGH={report['high_count']}, MEDIUM={report['medium_count']})")
         if chunk_meta and not (args.json or args.report_md):

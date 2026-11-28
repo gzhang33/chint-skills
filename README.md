@@ -109,7 +109,7 @@ cp -r skills/chint-translation ~/.gemini/config/skills/
 
 - `SKILL.md` & `requirements.txt`：完全独立的三步阈值审校 + 确认后批注交接 SOP（`L1` 默认仅严格错误、`L2` 发版统稿、`L3` 实质国标/IEC 合规及 `--with-iec`），输入路由覆盖 `.pdf` / `.docx` / `.xlsx` / `.xlsm` / `.pptx` / `.md` / `.txt` / `.doc` / `.xls` 与 `chint-office-extract/v1` JSON，并附 `--check-env` 运行时自检。
 - `scripts/audit_catalog.py`（**独立内置引擎 + 单向同级联动**）：优先委托同级 `chint-office-suite`（提取/批注）与 `chint-translation`（术语规则真源）；单装环境下自动启用内置 `.pdf`/`.docx`/`.xlsx` 提取器、与 `annotate_pdf.py` 同等全词边界/短代号大小写/跨行折词/旋转页保护的 PyMuPDF 批注器（`--write-pdf`）及对等校验的内置标准兜底表。新增 `.pptx`（`zipfile` + ElementTree，定位 `S<slide>:T<shape>:P<para>`，跳过备注页、递归组合形状）、`.md`（跳过围栏与行内代码，定位 `M<line>`）、旧版 `.doc`/`.xls`（纯标准库 OLE2：DIFAT/FAT/MiniFAT + Word CLX 片段表 + BIFF8 `SST`/`CONTINUE`，定位 `D<n>` 与 `X<sheet>:R<row>`；解析失败退出码 2 并给出转存建议，绝不静默返回「0 错误」）。`doc_type` 按前 400 个单元的电气信号密度区分 `catalogue` / `office-generic`，并按扩展名区分 `markdown` / `legacy-binary` / `text`，在 `--summary`、`--json`、`--chunks-info` 与汇总行展示。非 PDF 格式只出勘误表、不支持批注回写（回写需 Office 写库，与零依赖约束冲突）。
-- `references/semantic_checklist.md` & `references/pdf_annotation_handoff.md`：纯语义/版面/视觉页核对清单（含通用办公文档分节）与两步确认 PDF 批注流程。
+- `references/domains/`（`electrical_catalogue.md` / `office_generic.md`）& `references/sources.md` & `references/pdf_annotation_handoff.md`：按 `doc_type` 渐进式披露的电气样本与通用办公领域规则/语义清单、规范依据映射表及两步确认 PDF 批注流程（替代原 `semantic_checklist.md`）。
 - `scripts/verify_doc_skills.py`（仓库级，`scripts/` 根下）：7 道硬门禁锁定自测、SSOT 对等、Office 提取对等、词表契约、相对链接与版本同步、eval 确定性冒烟（translation 4 条 + 样本册 4 条），以及 gate 7 跨 skill 复制函数漂移检测（AST 归一化哈希 + `DUP_PAIRS` 的 `in-sync` / `intentional-divergence:<reason>` 登记）。
 
 ---

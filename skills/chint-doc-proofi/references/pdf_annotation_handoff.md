@@ -10,7 +10,7 @@
 ## 2. Prepare Confirmed Semantic Additions (`chint-office-annotate/v1`)
 
 1. Format any user-confirmed **semantic findings** from Step 3 in memory using `chint-office-annotate/v1`:
-   - `{"schema": "chint-office-annotate/v1", "annotations": [{"page": <1-based int>, "search": "<exact PDF phrase>", "comment": "替换为：<修正文本>", "match_mode": "all", "author": "CHINT Catalog Edit"}]}`
+   - `{"schema": "chint-office-annotate/v1", "annotations": [{"page": <1-based int>, "search": "<exact PDF phrase>", "comment": "替换为：<修正文本>", "match_mode": "all"}]}`
 2. **Copy-Paste Comment Rule**: Every `comment` inside the PDF states solely the actionable fix (`替换为：<修正文本>` or `核实：<待核查项>`). Keep clause citations and long explanations in chat.
 
 ## 3. Write Non-Destructive Annotated PDF Copy
